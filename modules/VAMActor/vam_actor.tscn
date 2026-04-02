@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dkpvupck5lb4d"]
+
+[ext_resource type="Script" uid="uid://m3rl1cqv77dl" path="res://modules/VAMActor/scripts/vam_actor.gd" id="1_pcuk1"]
+[ext_resource type="PackedScene" uid="uid://clgdsk2dyck7w" path="res://modules/physics/physics_toggle.tscn" id="2_0kabd"]
+[ext_resource type="Script" uid="uid://cg6vxokro0d8a" path="res://modules/VAMActor/scripts/bone_character_body.gd" id="3_wpamn"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_0kabd"]
+radius = 0.05
+height = 0.1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wpamn"]
+radius = 0.05
+
+[node name="VAMActor" type="Node3D" unique_id=1805902460]
+script = ExtResource("1_pcuk1")
+eyes_color = 0.907
+metadata/_custom_type_script = "uid://m3rl1cqv77dl"
+
+[node name="PhysicsToggle" parent="." unique_id=363090071 instance=ExtResource("2_0kabd")]
+activate_physics = true
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=1452950415]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24430251, 1.707379, 0.011032492)
+script = ExtResource("3_wpamn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D" unique_id=1974655857]
+mesh = SubResource("SphereMesh_0kabd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=27104290]
+shape = SubResource("SphereShape3D_wpamn")

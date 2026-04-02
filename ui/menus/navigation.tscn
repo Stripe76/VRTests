@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnj21dhnh64wb"]
+
+[ext_resource type="Script" uid="uid://bhacmcxoek4dp" path="res://ui/scripts/menu_item.gd" id="1_2w5am"]
+
+[node name="Navigation" type="Node"]
+script = ExtResource("1_2w5am")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Shaders" type="Node" parent="."]
+script = ExtResource("1_2w5am")
+Title = "Shaders"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Head" type="Node" parent="Shaders"]
+script = ExtResource("1_2w5am")
+Title = "Head"
+Command = "set_main_panel"
+Parameter = "shader_head"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Body" type="Node" parent="Shaders"]
+script = ExtResource("1_2w5am")
+Title = "Body"
+Command = "set_main_panel"
+Parameter = "shader_body"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AB" type="Node" parent="."]
+script = ExtResource("1_2w5am")
+Title = "aas"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AE" type="Node" parent="AB"]
+script = ExtResource("1_2w5am")
+Title = "sdgsdg"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AD" type="Node" parent="AB"]
+script = ExtResource("1_2w5am")
+Title = "gsdg"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AC" type="Node" parent="."]
+script = ExtResource("1_2w5am")
+Title = "dfgds"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"

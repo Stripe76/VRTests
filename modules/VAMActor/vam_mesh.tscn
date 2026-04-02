@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dajnc1y1ugvwt"]
+
+[ext_resource type="Script" uid="uid://dk4nwmvswo88r" path="res://modules/VAMActor/scripts/vam_mesh.gd" id="1_631gf"]
+
+[node name="VAMMesh" type="MeshInstance3D" unique_id=376543259]
+script = ExtResource("1_631gf")
+metadata/_custom_type_script = "uid://dk4nwmvswo88r"

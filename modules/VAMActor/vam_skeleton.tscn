@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cjf723kuvhwmq"]
+
+[ext_resource type="Script" uid="uid://ddsrhe8tinqa8" path="res://modules/VAMActor/scripts/vam_skeleton.gd" id="1_0y0b4"]
+
+[node name="VAMSkeleton" type="Skeleton3D" unique_id=825482312]
+script = ExtResource("1_0y0b4")
+metadata/_custom_type_script = "uid://ddsrhe8tinqa8"

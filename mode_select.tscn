@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://wymklot60fsn"]
+
+[ext_resource type="Script" uid="uid://cgn68d4wtakck" path="res://mode_select.gd" id="1_m1dgs"]
+
+[node name="ModeSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m1dgs")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.267708
+anchor_top = 0.27037
+anchor_right = 0.731417
+anchor_bottom = 0.704593
+offset_right = -0.320004
+offset_bottom = 0.0400009
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Flat"
+
+[node name="Button2" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3D SBS"
+
+[node name="Button3" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "VR"
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.102539
+anchor_top = 0.459635
+anchor_right = 0.89557
+anchor_bottom = 0.506417
+offset_right = -0.0640259
+offset_bottom = 0.0719604
+metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="HBoxContainer/Button2" to="." method="_on_button_sbs_pressed"]
+[connection signal="pressed" from="HBoxContainer/Button3" to="." method="_on_button_vr_pressed"]

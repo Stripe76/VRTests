@@ -1,0 +1,84 @@
+[gd_scene load_steps=4 format=3 uid="uid://dkph50epex63g"]
+
+[ext_resource type="Script" uid="uid://bnkjhls1jxx2n" path="res://main_panel.gd" id="1_bbaqd"]
+[ext_resource type="Script" uid="uid://c58ev8cljuuny" path="res://h_slider.gd" id="2_f3agw"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pdekv"]
+
+[node name="MainPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bbaqd")
+
+[node name="Panel" type="Panel" parent="."]
+material = SubResource("CanvasItemMaterial_pdekv")
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.00056
+anchor_bottom = 0.998259
+offset_right = 0.351929
+offset_bottom = 0.127991
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel2" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.0326523
+anchor_bottom = 0.0569892
+offset_right = 0.351929
+offset_bottom = 0.127991
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel3" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.96791
+anchor_top = 0.941267
+anchor_right = 1.00056
+anchor_bottom = 0.998257
+offset_right = 0.351929
+offset_bottom = 0.127991
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel4" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00346921
+anchor_top = 0.941267
+anchor_right = 0.0361215
+anchor_bottom = 0.998257
+offset_right = 0.351929
+offset_bottom = 0.127991
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel5" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.965308
+anchor_right = 0.99796
+anchor_bottom = 0.0569892
+offset_right = 0.351929
+offset_bottom = 0.127991
+metadata/_edit_use_anchors_ = true
+
+[node name="HSlider" type="HSlider" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.118
+anchor_top = 0.726
+anchor_right = 0.873
+anchor_bottom = 0.798
+offset_left = -0.0540161
+offset_top = 0.277985
+offset_right = -22.569
+offset_bottom = 26.694
+max_value = 360.0
+script = ExtResource("2_f3agw")
+
+[connection signal="gui_input" from="Panel/HSlider" to="Panel/HSlider" method="_on_gui_input"]
+[connection signal="slider_clicked" from="Panel/HSlider" to="." method="_on_h_slider_slider_clicked"]
+[connection signal="value_changed" from="Panel/HSlider" to="." method="_on_h_slider_value_changed"]

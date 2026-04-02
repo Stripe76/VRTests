@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cey8kihrt5xnv"]
+
+[ext_resource type="Script" uid="uid://bohj5sj4238ow" path="res://modules/world_vr/scripts/vr.gd" id="1_l6ae3"]
+[ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://modules/world_vr/xr-simulator/XRSimulator.tscn" id="2_swt12"]
+[ext_resource type="PackedScene" uid="uid://df0a0if1po4qn" path="res://modules/player_vr/player_vr.tscn" id="3_swt12"]
+[ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="4_l8mqy"]
+
+[node name="VR" type="Node3D" unique_id=294629443]
+script = ExtResource("1_l6ae3")
+
+[node name="XRSimulator" parent="." unique_id=2092799703 instance=ExtResource("2_swt12")]
+
+[node name="PlayerVR" parent="." unique_id=505521647 instance=ExtResource("3_swt12")]
+transform = Transform3D(0.9367027, 0, 0.35012564, 0, 1, 0, -0.35012564, 0, 0.9367027, 0.13225678, 1.8425163, 0.69423133)
+
+[node name="World" parent="." unique_id=1079324566 instance=ExtResource("4_l8mqy")]

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://gagie8v6nwch"]
+
+[ext_resource type="Script" uid="uid://paalp0kq5bbc" path="res://databinding/scripts/data_binder.gd" id="1_v71fd"]
+
+[node name="DataBinder" type="Node"]
+script = ExtResource("1_v71fd")

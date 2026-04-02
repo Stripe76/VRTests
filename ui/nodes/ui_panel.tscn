@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ciclhqdf77c58"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_aitaa"]
+
+[node name="UIPanel" type="Sprite3D"]
+texture = SubResource("ViewportTexture_aitaa")

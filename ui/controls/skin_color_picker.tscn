@@ -1,0 +1,365 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3nh7x4drknf4"]
+
+[ext_resource type="Script" uid="uid://v4s7c2nn1wos" path="res://ui/scripts/color_picker_group_button.gd" id="1_pnd5f"]
+[ext_resource type="Script" uid="uid://buus1idk8g1pg" path="res://ui/scripts/color_picker_button.gd" id="2_2amm8"]
+
+[node name="SkinColorPicker" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -0.00012207
+offset_bottom = 0.199951
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Groups" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.480753
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Fair" type="Button" parent="Groups"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_pnd5f")
+
+[node name="#EBD3C5" type="ColorRect" parent="Groups/Fair"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 19.0
+offset_top = 19.0
+offset_right = -15.0
+offset_bottom = -27.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.921569, 0.827451, 0.772549, 1)
+
+[node name="Dark" type="Button" parent="Groups"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_pnd5f")
+
+[node name="#65371E" type="ColorRect" parent="Groups/Dark"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.396078, 0.215686, 0.117647, 1)
+
+[node name="Caucasian" type="Button" parent="Groups"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_pnd5f")
+
+[node name="#EAC086" type="ColorRect" parent="Groups/Caucasian"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.917647, 0.752941, 0.52549, 1)
+
+[node name="Colors" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 0.393402
+metadata/_edit_use_anchors_ = true
+
+[node name="Fair" type="HBoxContainer" parent="Colors"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="#FFEFEE" type="Button" parent="Colors/Fair"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Fair/#FFEFEE"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 0.937255, 0.933333, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#EFE6DD" type="Button" parent="Colors/Fair"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Fair/#EFE6DD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.937255, 0.901961, 0.866667, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#EBD3C5" type="Button" parent="Colors/Fair"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Fair/#EBD3C5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.921569, 0.827451, 0.772549, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#D7B6A5" type="Button" parent="Colors/Fair"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Fair/#D7B6A5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.843137, 0.713726, 0.647059, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#9F7967" type="Button" parent="Colors/Fair"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Fair/#9F7967"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.623529, 0.47451, 0.403922, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Dark" type="HBoxContainer" parent="Colors"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="#70361C" type="Button" parent="Colors/Dark"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Dark/#70361C"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.439216, 0.211765, 0.109804, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#714937" type="Button" parent="Colors/Dark"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Dark/#714937"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.443137, 0.286275, 0.215686, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#65371E" type="Button" parent="Colors/Dark"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Dark/#65371E"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.396078, 0.215686, 0.117647, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#492816" type="Button" parent="Colors/Dark"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Dark/#492816"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.286275, 0.156863, 0.0862745, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#321B0F" type="Button" parent="Colors/Dark"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Dark/#321B0F"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.196078, 0.105882, 0.0588235, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Caucasian" type="HBoxContainer" parent="Colors"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="#FFCD94" type="Button" parent="Colors/Caucasian"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Caucasian/#FFCD94"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 0.803922, 0.580392, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#FFE0BD" type="Button" parent="Colors/Caucasian"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Caucasian/#FFE0BD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 0.878431, 0.741176, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#EAC086" type="Button" parent="Colors/Caucasian"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Caucasian/#EAC086"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.917647, 0.752941, 0.52549, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#FFE39F" type="Button" parent="Colors/Caucasian"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Caucasian/#FFE39F"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 0.890196, 0.623529, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="#FFAD60" type="Button" parent="Colors/Caucasian"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_2amm8")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Colors/Caucasian/#FFAD60"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 0.678431, 0.376471, 1)
+metadata/_edit_use_anchors_ = true

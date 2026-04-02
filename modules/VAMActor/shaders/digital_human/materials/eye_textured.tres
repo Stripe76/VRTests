@@ -1,0 +1,52 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://djigntaiy3h6x"]
+
+[ext_resource type="Shader" uid="uid://7cuk1vaxhnt6" path="res://modules/VAMActor/shaders/digital_human/shaders/eye_colorized.gdshader" id="1_va1gb"]
+[ext_resource type="Texture2D" uid="uid://d0uiijjg8q1lc" path="res://modules/VAMActor/shaders/digital_human/resources/iris_depth.webp" id="2_ym12w"]
+[ext_resource type="Texture2D" uid="uid://d2wsqpn4nnodw" path="res://modules/VAMActor/shaders/digital_human/resources/iris_displacement.webp" id="3_iwy53"]
+[ext_resource type="Texture2D" uid="uid://bq54fmu5xgksk" path="res://modules/VAMActor/shaders/human_shaders/Resources/Eye/eye_iris_diff.png" id="4_1obib"]
+[ext_resource type="Texture2D" uid="uid://cfttb0ix0yoes" path="res://modules/VAMActor/shaders/human_shaders/Resources/Eye/eye_sclera_nrm.png" id="5_klutc"]
+[ext_resource type="Texture2D" uid="uid://bye2oqplgx3f7" path="res://modules/VAMActor/shaders/human_shaders/Resources/Eye/eye_sclera_diff.png" id="6_p1nb8"]
+[ext_resource type="Texture2D" uid="uid://cpoxmqd6ybmm7" path="res://modules/VAMActor/shaders/digital_human/resources/eye_tangent.webp" id="7_ggvh4"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_va1gb")
+shader_parameter/normal_texture = ExtResource("5_klutc")
+shader_parameter/tangent_texture = ExtResource("7_ggvh4")
+shader_parameter/depth_texture = ExtResource("2_ym12w")
+shader_parameter/displacement_texture = ExtResource("3_iwy53")
+shader_parameter/sclera_texture = ExtResource("6_p1nb8")
+shader_parameter/iris_texture = ExtResource("4_1obib")
+shader_parameter/refraction_strength = 1.0
+shader_parameter/iris_depth_scale = 1.03
+shader_parameter/iris_uv_radius = 0.12
+shader_parameter/iris_brightness = 1.0
+shader_parameter/iris_roughness = 0.1
+shader_parameter/iris_specular = 0.4
+shader_parameter/iris_color_outer_1 = Color(1, 1, 1, 1)
+shader_parameter/iris_color_inner_1 = Color(0.768627, 0.894118, 0.972549, 1)
+shader_parameter/iris_color_outer_2 = Color(0.768627, 0.894118, 0.972549, 1)
+shader_parameter/iris_color_inner_2 = Color(0.129412, 0.490196, 0.694118, 1)
+shader_parameter/iris_color_radius = 0.5
+shader_parameter/iris_color_hardness = 0.2
+shader_parameter/limbus_uv_width = 0.035
+shader_parameter/limbus_darkness = 2.1
+shader_parameter/limbus_power = 8.0
+shader_parameter/limbus_color = Color(0, 0, 0, 1)
+shader_parameter/pupil_scale = 0.96
+shader_parameter/pupil_scale_x = 1.0
+shader_parameter/pupil_scale_y = 1.0
+shader_parameter/sclera_brightness = 0.9
+shader_parameter/sclera_roughness = 0.1
+shader_parameter/sclera_specular = 0.4
+shader_parameter/veins_power = 0.74
+shader_parameter/eye_shadow_color = Color(0.52, 0.32, 0.2, 1)
+shader_parameter/eye_shadow_radius = 0.45
+shader_parameter/eye_shadow_hardness = 0.75
+shader_parameter/displace_strength = 10.0
+shader_parameter/displace_min_layers = 8.0
+shader_parameter/displace_max_layers = 32.0
+shader_parameter/displace_reference_plane = 1.0
+shader_parameter/sss_strength = 1.0
+shader_parameter/sss_strength_iris = 0.0
+shader_parameter/sss_strength_sclera = 0.5

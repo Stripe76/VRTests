@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bxh8sv5k2eqhi"]
+
+[ext_resource type="Script" uid="uid://b6plq81won2sc" path="res://modules/VAMActor/scripts/vam_eye.gd" id="1_7lw1u"]
+[ext_resource type="ArrayMesh" uid="uid://vlm0ytivaf46" path="res://modules/VAMActor/resources/vam_eye.tres" id="2_ry3fp"]
+[ext_resource type="Material" uid="uid://6aiw850gvwbf" path="res://modules/VAMActor/shaders/digital_human/materials/eye_colorized.tres" id="3_ry3fp"]
+
+[node name="VAMEye" type="Node3D" unique_id=1867560165]
+script = ExtResource("1_7lw1u")
+eye_color = 0.907
+
+[node name="Eye" type="MeshInstance3D" parent="." unique_id=2090751949]
+mesh = ExtResource("2_ry3fp")
+surface_material_override/0 = ExtResource("3_ry3fp")

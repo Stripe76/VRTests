@@ -1,0 +1,208 @@
+[gd_scene load_steps=9 format=3 uid="uid://wutuptmut11w"]
+
+[ext_resource type="Script" uid="uid://brknvgd8e0qbl" path="res://ui/scripts/shader_skin.gd" id="1_s23fu"]
+[ext_resource type="Script" uid="uid://d4g102ailq6fs" path="res://databinding/scripts/data_context.gd" id="2_jn2oy"]
+[ext_resource type="PackedScene" uid="uid://qk4bcd0g78es" path="res://databinding/nodes/data_updater.tscn" id="2_q7iyh"]
+[ext_resource type="PackedScene" uid="uid://c3nh7x4drknf4" path="res://ui/controls/skin_color_picker.tscn" id="4_3y6wc"]
+[ext_resource type="Texture2D" uid="uid://cu4j1s8qr1rjq" path="res://addons/godot-xr-tools/images/teleport_target.png" id="5_nx2k8"]
+[ext_resource type="Script" uid="uid://cox4pjw5po78x" path="res://ui/panels/sprite_2d.gd" id="6_uqnpt"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_jv1fu"]
+font_size = 26
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_83wc5"]
+diffuse_texture = ExtResource("5_nx2k8")
+
+[node name="ShaderSkin" type="Control" groups=["Global_UI"]]
+show_behind_parent = true
+top_level = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s23fu")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.036
+anchor_right = 0.99375
+anchor_bottom = 0.0571667
+offset_left = -0.600002
+offset_bottom = 0.400002
+grow_horizontal = 2
+text = "Skin shader"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.04125
+anchor_top = 0.0525
+anchor_right = 0.9925
+anchor_bottom = 0.936333
+offset_bottom = 0.399994
+current_tab = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Base tone" type="Panel" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="SkinColorPicker" parent="TabContainer/Base tone" instance=ExtResource("4_3y6wc")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0348226
+anchor_top = 0.0273963
+anchor_right = 0.976347
+anchor_bottom = 0.279187
+offset_top = 0.000999451
+offset_bottom = -0.32901
+grow_vertical = 1
+
+[node name="DataContext" type="Control" parent="TabContainer/Base tone"]
+layout_mode = 1
+anchor_left = 0.0328515
+anchor_top = 0.323875
+anchor_right = 0.978318
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_jn2oy")
+metadata/_custom_type_script = "uid://d4g102ailq6fs"
+metadata/_edit_use_anchors_ = true
+
+[node name="BoxContainer" type="VBoxContainer" parent="TabContainer/Base tone/DataContext"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.019989
+offset_bottom = -0.226013
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Title3" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Light value"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="LightValue" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="DataUpdater" parent="TabContainer/Base tone/DataContext/BoxContainer/LightValue" instance=ExtResource("2_q7iyh")]
+property_name = "light_value"
+
+[node name="Title2" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Ligth scale"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="LightScale" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 5.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="DataUpdater" parent="TabContainer/Base tone/DataContext/BoxContainer/LightScale" instance=ExtResource("2_q7iyh")]
+property_name = "light_scale"
+
+[node name="Title6" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Dark value"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="DarkValue" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="DataUpdater" parent="TabContainer/Base tone/DataContext/BoxContainer/DarkValue" instance=ExtResource("2_q7iyh")]
+property_name = "dark_value"
+
+[node name="Title7" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Dark scale"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="DarkScale" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="DataUpdater" parent="TabContainer/Base tone/DataContext/BoxContainer/DarkScale" instance=ExtResource("2_q7iyh")]
+property_name = "dark_scale"
+
+[node name="Title4" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Skin depth"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="HSlider2" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="Title5" type="Label" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+text = "Skin scale"
+label_settings = SubResource("LabelSettings_jv1fu")
+metadata/_edit_use_anchors_ = true
+
+[node name="SkinScale" type="HSlider" parent="TabContainer/Base tone/DataContext/BoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.05
+metadata/_edit_use_anchors_ = true
+
+[node name="DataUpdater" parent="TabContainer/Base tone/DataContext/BoxContainer/SkinScale" instance=ExtResource("2_q7iyh")]
+property_name = "light_value"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.765
+anchor_top = 0.0691667
+anchor_right = 0.917
+anchor_bottom = 0.138167
+offset_right = -0.200012
+offset_bottom = 0.199997
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.15, 0.14)
+texture = SubResource("CanvasTexture_83wc5")
+script = ExtResource("6_uqnpt")
+
+[connection signal="value_changed" from="TabContainer/Base tone/DataContext/BoxContainer/LightValue" to="." method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Base tone/DataContext/BoxContainer/LightScale" to="." method="_on_h_slider_3_value_changed"]
+[connection signal="value_changed" from="TabContainer/Base tone/DataContext/BoxContainer/DarkValue" to="." method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Base tone/DataContext/BoxContainer/DarkScale" to="." method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Base tone/DataContext/BoxContainer/HSlider2" to="." method="_on_h_slider_2_value_changed"]

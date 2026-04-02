@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://w4sqmuen0rvq"]
+
+[ext_resource type="PackedScene" uid="uid://b4tucqjwbd08" path="res://ui/panels/navigation.tscn" id="1_27xfg"]
+[ext_resource type="Script" uid="uid://dnhnp0rwm10bw" path="res://ui/scripts/ui_viewports.gd" id="1_cjxbg"]
+[ext_resource type="PackedScene" uid="uid://wutuptmut11w" path="res://ui/panels/shader_skin.tscn" id="3_cjxbg"]
+[ext_resource type="PackedScene" uid="uid://cnj21dhnh64wb" path="res://ui/menus/navigation.tscn" id="3_vfatw"]
+
+[node name="UIViewports" type="Node"]
+script = ExtResource("1_cjxbg")
+
+[node name="Navigation" type="SubViewport" parent="."]
+transparent_bg = true
+canvas_cull_mask = 4293918721
+size = Vector2i(400, 1200)
+render_target_update_mode = 4
+
+[node name="Navigation" parent="Navigation" node_paths=PackedStringArray("Menu") instance=ExtResource("1_27xfg")]
+offset_right = 0.0
+offset_bottom = 0.0
+Menu = NodePath("../../Menus/Navigation")
+
+[node name="MainPanel" type="SubViewport" parent="."]
+transparent_bg = true
+size = Vector2i(1600, 1200)
+render_target_update_mode = 4
+
+[node name="ShaderSkin" parent="MainPanel" instance=ExtResource("3_cjxbg")]
+
+[node name="Menus" type="Node" parent="."]
+
+[node name="Navigation" parent="Menus" instance=ExtResource("3_vfatw")]

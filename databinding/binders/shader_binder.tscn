@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dikefecvl0ja3"]
+
+[ext_resource type="Script" uid="uid://br584b5ytwmpy" path="res://databinding/scripts/shader.gd" id="1_4d5ey"]
+
+[node name="ShaderBinder" type="Node"]
+script = ExtResource("1_4d5ey")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://beae3crssek6p"]
+
+[ext_resource type="Script" uid="uid://d4g102ailq6fs" path="res://databinding/scripts/data_context.gd" id="1_2dxvt"]
+
+[node name="DataContext" type="Node"]
+script = ExtResource("1_2dxvt")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://qk4bcd0g78es"]
+
+[ext_resource type="Script" uid="uid://bhyd5re72q162" path="res://databinding/scripts/data_updater.gd" id="1_rtn6u"]
+
+[node name="DataUpdater" type="Node"]
+script = ExtResource("1_rtn6u")

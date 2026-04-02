@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://o0owxybjvmd6"]
+
+[ext_resource type="Script" uid="uid://cbnmlqa6qgi4c" path="res://ui/scripts/panel.gd" id="1_5j8jr"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_h57j3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5j8jr"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_h57j3"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_al8wa"]
+size = Vector3(0.8, 0.6, 0.1)
+
+[node name="UIPanel" type="OpenXRCompositionLayerQuad"]
+alpha_blend = true
+script = ExtResource("1_5j8jr")
+
+[node name="Pointer" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Pointer"]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
+mesh = SubResource("SphereMesh_h57j3")
+surface_material_override/0 = SubResource("StandardMaterial3D_5j8jr")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Pointer"]
+transform = Transform3D(1, -1.81899e-16, -3.8147e-08, 0, 1, -4.76837e-09, 3.8147e-08, 4.76837e-09, 1, 0, 0, 0)
+collision_layer = 196607
+collision_mask = 4194305
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pointer/CharacterBody3D"]
+transform = Transform3D(0.01, 0, -2.32831e-10, 0, 0.01, 0, -2.32831e-10, -5.82077e-11, 0.01, 0, 0, 0)
+shape = SubResource("SphereShape3D_h57j3")
+
+[node name="XRToolsInteractableArea" type="CharacterBody3D" parent="."]
+collision_layer = 16711680
+collision_mask = 4278255615
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="XRToolsInteractableArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0420743)
+shape = SubResource("BoxShape3D_al8wa")

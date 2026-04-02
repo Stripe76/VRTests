@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqtudc0n0gptr"]
+
+[ext_resource type="Script" uid="uid://bnsa7nedg0jek" path="res://modules/player_sbs/scripts/player_sbs.gd" id="1_k4vf3"]
+
+[node name="PlayerSBS" type="Node3D"]
+script = ExtResource("1_k4vf3")

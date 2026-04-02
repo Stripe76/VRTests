@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://clgdsk2dyck7w"]
+
+[ext_resource type="Script" uid="uid://ba536julv4gld" path="res://modules/physics/physics_toggle.gd" id="1_1qh72"]
+
+[node name="PhysicsToggle" type="Node3D"]
+script = ExtResource("1_1qh72")

@@ -1,0 +1,67 @@
+[gd_scene load_steps=4 format=3 uid="uid://cybk5mrw71mls"]
+
+[ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="1_1v4le"]
+[ext_resource type="Script" uid="uid://emv75wo0ugp2" path="res://modules/world_sbs/scripts/sbs.gd" id="1_a4746"]
+[ext_resource type="PackedScene" uid="uid://dqtudc0n0gptr" path="res://modules/player_sbs/player_sbs.tscn" id="2_oqv1b"]
+
+[node name="SBS" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a4746")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftEye" type="SubViewportContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/LeftEye"]
+handle_input_locally = false
+size = Vector2i(510, 768)
+render_target_update_mode = 4
+
+[node name="LeftOrigin" type="Node3D" parent="HBoxContainer/LeftEye/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58896, 0.564011)
+
+[node name="Camera3D" type="Camera3D" parent="HBoxContainer/LeftEye/SubViewport/LeftOrigin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, 0, 0)
+current = true
+
+[node name="RightEye" type="SubViewportContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/RightEye"]
+handle_input_locally = false
+size = Vector2i(510, 768)
+render_target_update_mode = 4
+
+[node name="RightOrigin" type="Node3D" parent="HBoxContainer/RightEye/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58896, 0.564011)
+
+[node name="Camera3D" type="Camera3D" parent="HBoxContainer/RightEye/SubViewport/RightOrigin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 0, 0)
+current = true
+
+[node name="World" parent="." instance=ExtResource("1_1v4le")]
+
+[node name="PlayerSBS" parent="." instance=ExtResource("2_oqv1b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58896, 0.564011)
+
+[node name="LeftCamera" type="RemoteTransform3D" parent="PlayerSBS"]
+remote_path = NodePath("../../HBoxContainer/LeftEye/SubViewport/LeftOrigin")
+
+[node name="RightCamera" type="RemoteTransform3D" parent="PlayerSBS"]
+remote_path = NodePath("../../HBoxContainer/RightEye/SubViewport/RightOrigin")

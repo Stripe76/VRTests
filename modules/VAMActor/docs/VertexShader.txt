@@ -1,0 +1,151 @@
+shader_type spatial;
+
+render_mode skip_vertex_transform;
+
+uniform mat4 skin_matrices[256]; // Matrici dei bones (max 256)
+uniform int bone_count = 0;
+
+attribute vec4 bone_indices;     // Indici dei bones (fino a 4)
+attribute vec4 bone_weights_x;   // Pesi per asse X
+attribute vec4 bone_weights_y;   // Pesi per asse Y
+attribute vec4 bone_weights_z;   // Pesi per asse Z
+
+void vertex() {
+	vec3 skinned_pos = vec3(0.0);
+
+	for (int i = 0; i < 4; i++) {
+		int bone = int(bone_indices[i]);
+		if (bone >= bone_count) continue;
+
+		mat4 bone_matrix = skin_matrices[bone];
+		vec3 transformed = (bone_matrix * vec4(VERTEX, 1.0)).xyz;
+
+		skinned_pos.x += transformed.x * bone_weights_x[i];
+		skinned_pos.y += transformed.y * bone_weights_y[i];
+		skinned_pos.z += transformed.z * bone_weights_z[i];
+	}
+
+	VERTEX = skinned_pos;
+}
+
+
+
+func create_skin_texture(skin_matrices: Array) -> ImageTexture:
+	var img := Image.create(1024, 1, false, Image.FORMAT_RGBAF)
+	img.lock()
+	for i in range(skin_matrices.size()):
+		var v := skin_matrices[i]
+		img.set_pixel(i, 0, Color(v.x, v.y, v.z, v.w))
+	img.unlock()
+
+	var tex := ImageTexture.new()
+	tex.create_from_image(img)
+	return tex
+
+
+mat4 get_skin_matrix(int index) {
+	int base = index * 4;
+	return mat4(
+		texelFetch(skin_texture, ivec2(base + 0, 0), 0),
+		texelFetch(skin_texture, ivec2(base + 1, 0), 0),
+		texelFetch(skin_texture, ivec2(base + 2, 0), 0),
+		texelFetch(skin_texture, ivec2(base + 3, 0), 0)
+	);
+}
+
+
+
+
+	/*
+	int index = int(COLOR.r*256.0) + int((COLOR.g*256.0)*65535.0);
+	vec3 skinned_pos = vec3(0);
+
+	for (int i = 0; i < 1; i++) {
+		vec4 b = vec4(0,0,0,0);
+		vec4 w = vec4(1,0,0,0);
+
+		int bone = int(b.x);
+		float weight = w.x;
+
+		mat4 bone_matrix = skin_matrices[bone];
+		vec3 transformed = (bone_matrix * vec4(VERTEX,0.0)).xyz * weight;
+
+		skinned_pos += transformed;
+	}
+	VERTEX = skinned_pos;
+*/
+/*
+	int index = int(COLOR.r*255.0) + int(COLOR.g*255.0) * 256 + int(COLOR.b*255.0) * 65536;
+	vec3 skinned_pos = vec3(0);
+
+	for (int i = 0; i < 2; i++) {
+		vec4 b = texelFetch(bones,ivec2(index,i),0);
+		vec4 w = texelFetch(weights,ivec2(index,i),0);
+
+		skinned_pos.x += get_offset_x(int(b.x*255.0),w.x,VERTEX);
+		skinned_pos.x += get_offset_x(int(b.y*255.0),w.y,VERTEX);
+		skinned_pos.x += get_offset_x(int(b.z*255.0),w.z,VERTEX);
+		skinned_pos.x += get_offset_x(int(b.w*255.0),w.w,VERTEX);
+
+		b = texelFetch(bones,ivec2(index,i+2),0);
+		w = texelFetch(weights,ivec2(index,i+2),0);
+
+		skinned_pos.y += get_offset_y(int(b.x*255.0),w.x,VERTEX);
+		skinned_pos.y += get_offset_y(int(b.y*255.0),w.y,VERTEX);
+		skinned_pos.y += get_offset_y(int(b.z*255.0),w.z,VERTEX);
+		skinned_pos.y += get_offset_y(int(b.w*255.0),w.w,VERTEX);
+
+		b = texelFetch(bones,ivec2(index,i+4),0);
+		w = texelFetch(weights,ivec2(index,i+4),0);
+
+		skinned_pos.z += get_offset_z(int(b.x*255.0),w.x,VERTEX);
+		skinned_pos.z += get_offset_z(int(b.y*255.0),w.y,VERTEX);
+		skinned_pos.z += get_offset_z(int(b.z*255.0),w.z,VERTEX);
+		skinned_pos.z += get_offset_z(int(b.w*255.0),w.w,VERTEX);
+	}
+	VERTEX = skinned_pos;
+*/
+	int index = int(COLOR.r * 255.0) + int(COLOR.g * 255.0) * 256 + int(COLOR.b * 255.0) * 65536;
+	//vec3 skinned_pos = VERTEX;
+	vec3 skinned_pos = vec3(0);
+
+	vec4 b,w;
+	mat4 transformed;
+	for (int i = 0; i < 2; i++) {
+		// --- Coordinata Z ---
+		b = texelFetch(bones, ivec2(index, i + 4), 0);
+		w = texelFetch(weights, ivec2(index, i + 4), 0);
+
+		transformed = mat4(0);
+		for (int j = 0; j < 4; j++) {
+			int bone_index = int(b[j] * 255.0);
+			float weight = w[j];
+			transformed += skin_matrices[bone_index] * weight;
+		}
+		skinned_pos.z += (transformed * vec4(VERTEX - skin_matrices[bone_index], 1.0));
+
+		// --- Coordinata Y ---
+		b = texelFetch(bones, ivec2(index, i + 2), 0);
+		w = texelFetch(weights, ivec2(index, i + 2), 0);
+
+		transformed = mat4(0);
+		for (int j = 0; j < 4; j++) {
+			int bone_index = int(b[j] * 255.0);
+			float weight = w[j];
+			transformed += skin_matrices[bone_index] * weight;
+		}
+		skinned_pos.y += (transformed * vec4(VERTEX, 1.0)).y;
+
+		// --- Coordinata X ---
+		b = texelFetch(bones, ivec2(index, i), 0);
+		w = texelFetch(weights, ivec2(index, i), 0);
+
+		transformed = mat4(0);
+		for (int j = 0; j < 4; j++) {
+			int bone_index = int(b[j] * 255.0);
+			float weight = w[j];
+			transformed += skin_matrices[bone_index] * weight;
+		}
+		skinned_pos.x += (transformed * vec4(VERTEX, 1.0)).x;
+	}
+	VERTEX = skinned_pos;
