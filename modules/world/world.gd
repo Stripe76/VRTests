@@ -34,7 +34,7 @@ func _ready() -> void:
 	var scene_file = get_relative_scene_file(MESHES[current_mesh])
 	
 	$VAMActor.load_skeleton(daz_model)
-	$VAMActor.load_mesh_async(daz_model,genitals_model,scene_folder,scene_file)
+	$VAMActor.load_mesh(daz_model,genitals_model,scene_folder,scene_file)
 	
 	#$VAMActor.look_at = $Player
 	$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)

@@ -114,7 +114,47 @@ func _init(skeleton: Skeleton3D,parent: Node3D) -> void:
 		both_ankles = DoubleJoint.new(left_ankle,right_ankle,[1])
 
 
+var do_that := true
+#func _process(delta: float) -> void:
+
+func _physics_process(delta: float) -> void:
+	if do_that:
+		cippa(weight_on)
+	do_that = true
+	#update_skeleton(skeleton)
+	#update_position( weight_on );
+	pass
+
+
+var poses := {}
+func _on_skeleton_updated():
+	var count := skeleton_springs.get_bone_count()
+	for i in count:
+		poses[i] = skeleton_springs.get_bone_pose_rotation(i)
+	update_position( weight_on );
+
+
+func _process_modification() -> void:
+	##print("_process_modification")
+	#update_skeleton(skeleton)
+	pass
+
+
 func create_collisions(parent: Node3D,skeleton: Skeleton3D, surfaces: Array,bones_number: int ):
+	var bones_vertices := get_bones_vertices(surfaces,bones_number)
+
+	var physical_skeleton := PhysicalBoneSimulator3D.new()
+	physical_skeleton.name = "PhysicalBones"
+	skeleton.add_child(physical_skeleton)
+	physical_skeleton.owner = parent
+	
+	add_physical_bone("left_collar",physical_skeleton,skeleton,59,bones_vertices,parent)
+	add_physical_bone("right_collar",physical_skeleton,skeleton,38,bones_vertices,parent)
+
+	#add_physical_bone("left_collar",physical_skeleton,skeleton,60,bones_vertices,parent)
+
+
+func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
 	var bones_vertices := {}
 	
 	for i in surfaces.size():
@@ -135,38 +175,8 @@ func create_collisions(parent: Node3D,skeleton: Skeleton3D, surfaces: Array,bone
 							bones_vertices[bone].push_back( vertices[v*3] )
 							bones_vertices[bone].push_back( vertices[v*3+1] )
 							bones_vertices[bone].push_back( vertices[v*3+2] )
-
-	var physical_skeleton := PhysicalBoneSimulator3D.new()
-	physical_skeleton.name = "PhysicalBones"
-	skeleton.add_child(physical_skeleton)
-	physical_skeleton.owner = parent
 	
-	add_physical_bone("left_collar",physical_skeleton,skeleton,59,bones_vertices,parent)
-	add_physical_bone("right_collar",physical_skeleton,skeleton,38,bones_vertices,parent)
-
-	add_physical_bone("left_collar",physical_skeleton,skeleton,60,bones_vertices,parent)
-
-	#for b in bones_vertices:
-		#if b == 59:
-			#print(b)
-			#
-			#var collision := create_bone_shape(b,bones_vertices,true)
-			#var bone_global = skeleton.get_bone_global_pose(b)
-			#var bone_inverse = bone_global.affine_inverse()
-			#
-			#var bone = VAMPhysicalBone3D.new()
-			#bone.name = skeleton.get_bone_name(b)
-			#bone.body_offset = bone_inverse
-			#bone.spring_pusher = add_spring_pusher("LeftCollar",skeleton.find_child("left_collar"),collision,parent)
-			#
-			#print(bone.spring_pusher)
-			#
-			#bone.set( "bone_name",skeleton.get_bone_name(b))
-			#bone.add_child(collision)
-			#
-			#physical_skeleton.add_child(bone)
-			#bone.owner = parent
-			#collision.owner = parent
+	return bones_vertices
 
 
 func add_physical_bone(name: String,physical_skeleton : PhysicalBoneSimulator3D,skeleton: Skeleton3D,bone_idx: int,bones_vertices: Dictionary,parent: Node3D):
@@ -250,32 +260,6 @@ func create_bone_full_mesh(bone: int,bones_vertices: Dictionary,horizontal: bool
 	collision.name = skeleton.get_bone_name(bone)
 	
 	return collision
-
-
-var do_that := true
-#func _process(delta: float) -> void:
-
-func _physics_process(delta: float) -> void:
-	if do_that:
-		cippa(weight_on)
-	do_that = true
-	#update_skeleton(skeleton)
-	#update_position( weight_on );
-	pass
-
-
-var poses := {}
-func _on_skeleton_updated():
-	var count := skeleton_springs.get_bone_count()
-	for i in count:
-		poses[i] = skeleton_springs.get_bone_pose_rotation(i)
-	update_position( weight_on );
-
-
-func _process_modification() -> void:
-	##print("_process_modification")
-	#update_skeleton(skeleton)
-	pass
 
 
 func update_skeleton(skeleton: Skeleton3D):
