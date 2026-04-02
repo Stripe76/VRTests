@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://m3rl1cqv77dl" path="res://modules/VAMActor/scripts/vam_actor.gd" id="1_pcuk1"]
 [ext_resource type="PackedScene" uid="uid://clgdsk2dyck7w" path="res://modules/physics/physics_toggle.tscn" id="2_0kabd"]
+[ext_resource type="Script" uid="uid://duo4dmrhihu73" path="res://modules/VAMActor/scripts/generate_collisions_shapes.gd" id="3_8ur11"]
 [ext_resource type="Script" uid="uid://cg6vxokro0d8a" path="res://modules/VAMActor/scripts/bone_character_body.gd" id="3_wpamn"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_0kabd"]
@@ -18,6 +19,9 @@ metadata/_custom_type_script = "uid://m3rl1cqv77dl"
 
 [node name="PhysicsToggle" parent="." unique_id=363090071 instance=ExtResource("2_0kabd")]
 activate_physics = true
+
+[node name="CollisionsShapes" type="Node3D" parent="." unique_id=1450721987]
+script = ExtResource("3_8ur11")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=1452950415]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24430251, 1.707379, 0.011032492)

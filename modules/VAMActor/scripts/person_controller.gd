@@ -186,7 +186,7 @@ func add_physical_bone(name: String,physical_skeleton : PhysicalBoneSimulator3D,
 	
 	var bone = VAMPhysicalBone3D.new()
 	bone.name = skeleton.get_bone_name(bone_idx)
-	bone.body_offset = bone_inverse
+	#bone.body_offset = bone_inverse
 	bone.spring_pusher = add_spring_pusher(name,skeleton.find_child(name),collision,parent)
 	
 	print(bone.spring_pusher)

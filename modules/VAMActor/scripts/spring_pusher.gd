@@ -20,7 +20,7 @@ func _physics_process(delta: float) -> void:
 	#print(spring_bone)
 	#print(force)
 	
-	spring_bone.external_force = force * delta * 300
+	spring_bone.external_force = force * delta * 600
 	if counter == 0:
 		force = Vector3(0,0,0)
 	else:
