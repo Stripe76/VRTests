@@ -4,4 +4,21 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="modules\person_controller\arm.gd" />
+    <Content Include="modules\person_controller\arm.gd.uid" />
+    <Content Include="modules\person_controller\cog.gd" />
+    <Content Include="modules\person_controller\cog.gd.uid" />
+    <Content Include="modules\person_controller\leg.gd" />
+    <Content Include="modules\person_controller\leg.gd.uid" />
+    <Content Include="modules\person_controller\movement.gd" />
+    <Content Include="modules\person_controller\movement.gd.uid" />
+    <Content Include="modules\person_controller\movements\walking.gd" />
+    <Content Include="modules\person_controller\movements\walking.gd.uid" />
+    <Content Include="modules\person_controller\movements\walking.tscn" />
+    <Content Include="modules\person_controller\step.gd" />
+    <Content Include="modules\person_controller\step.gd.uid" />
+    <Content Include="modules\person_controller\value.gd" />
+    <Content Include="modules\person_controller\value.gd.uid" />
+  </ItemGroup>
 </Project>

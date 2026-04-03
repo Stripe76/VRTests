@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dukv6yw4w6ttp"]
+
+[ext_resource type="Script" uid="uid://co87d0v2j3qv" path="res://modules/person_controller/animation/move.gd" id="1_mp0k1"]
+[ext_resource type="Script" uid="uid://bvlpdhvjokofl" path="res://modules/person_controller/animation/step.gd" id="2_cjslm"]
+[ext_resource type="Script" uid="uid://c158hsqhgrfpy" path="res://modules/person_controller/animation/value.gd" id="3_cjslm"]
+
+[node name="Walking" type="Node" unique_id=620316155]
+script = ExtResource("1_mp0k1")
+
+[node name="MovementStep" type="Node" parent="." unique_id=1320599861 node_paths=PackedStringArray("joint")]
+script = ExtResource("2_cjslm")
+duration = 0.5
+end = 0.3333333333333333
+previous_steps = null
+joint = NodePath("../..")
+
+[node name="frontal" type="Node" parent="MovementStep" unique_id=442620556]
+script = ExtResource("3_cjslm")
+end = -1.0
+metadata/_custom_type_script = "uid://c158hsqhgrfpy"
+
+[node name="MovementStep2" type="Node" parent="." unique_id=1400898340 node_paths=PackedStringArray("joint")]
+script = ExtResource("2_cjslm")
+duration = 0.5
+start = 0.3333333333333333
+end = 0.6666666666666666
+previous_steps = null
+joint = NodePath("../..")
+
+[node name="MovementStep3" type="Node" parent="." unique_id=1201165105 node_paths=PackedStringArray("joint")]
+script = ExtResource("2_cjslm")
+duration = 0.5
+start = 0.6666666666666666
+end = 1.0
+previous_steps = null
+joint = NodePath("../..")

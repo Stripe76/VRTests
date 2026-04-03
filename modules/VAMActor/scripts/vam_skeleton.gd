@@ -15,6 +15,16 @@ extends Skeleton3D
 	#print(property["name"])
 
 
+var editor_owner
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			editor_owner = owner
+			owner = null
+		NOTIFICATION_EDITOR_POST_SAVE:
+			owner = editor_owner
+
+
 func load_skeleton(base_model: Daz3DMesh):
 	if base_model:
 		var skeleton : Skeleton3D = self

@@ -1,8 +1,9 @@
 @tool
-class_name VAMActor
-extends Node3D
+class_name VAMActor extends Node3D
 
-@export var look_at: Node3D
+@export_tool_button("Generate","Add") var generate_action = generate_model
+
+@export var look_at_target: Node3D
 @export_range(0,5) var eyes_color : float = 0:
 	set(value):
 		if left_eye:
@@ -14,159 +15,160 @@ extends Node3D
 @onready var left_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 @onready var right_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 
-var mesh := VAMMesh.new()
-var skeleton := VAMSkeleton.new()
+var _mesh := VAMMesh.new()
+var _skeleton := VAMSkeleton.new()
 
-var mesh_thread : Thread
-var materials_thread : Thread
+var _mesh_thread : Thread
+var _materials_thread : Thread
+
 
 func _ready() -> void:
-	mesh.name = "VAMMesh"
-	skeleton.name = "VAMSkeleton"
+	print("--- VAMActor._ready")
 
+	_mesh.name = "VAMMesh"
+	_skeleton.name = "VAMSkeleton"
+	_skeleton.skeleton_updated.connect( skeleton_updated )
+	
 	left_eye.name = "LeftEye"
 	right_eye.name = "RightEye"
-
+	
 	if Engine.is_editor_hint() and false:
 		left_eye.transform = left_eye.transform.scaled_local(Vector3(0.035,0.035,0.035))
 		right_eye.transform = left_eye.transform.scaled_local(Vector3(0.035,0.035,0.035))
-
-	if Engine.is_editor_hint() and true:
-		var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-
-		load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json")
-		#load_scene(daz_model,null,"","","")
+	
+	if Engine.is_editor_hint() and not get_parent() is Node3D:
+		generate_model()
 
 
-var d : float
-func _process(delta: float) -> void:
-	if look_at:
-		left_eye.look_at(look_at.global_position,Vector3(0,1,0),true)
-		right_eye.look_at(look_at.global_position,Vector3(0,1,0),true)
+func _process(_delta: float) -> void:
+	if look_at_target:
+		left_eye.look_at(look_at_target.global_position,Vector3(0,1,0),true)
+		right_eye.look_at(look_at_target.global_position,Vector3(0,1,0),true)
 		#right_eye.rotation = left_eye.rotation
 
-	if skeleton.get_bone_count() > 0:
-		left_eye.position = skeleton.get_bone_global_pose(Bones.EYE_LEFT_BONE).origin
-		right_eye.position = skeleton.get_bone_global_pose(Bones.EYE_RIGHT_BONE).origin
-		
+	#if skeleton.get_bone_count() > 0:
+	#	left_eye.position = skeleton.get_bone_global_pose(Bones.EYE_LEFT_BONE).origin
+	#	right_eye.position = skeleton.get_bone_global_pose(Bones.EYE_RIGHT_BONE).origin
 
-		d += delta*5
-		#if (d as int/1)%2 == 0:
-		#self.rotation.y = sin(d*5.0)*0.30
-		#self.position.y = 1+sin(d*10.0)*0.05
-		#skeleton.set_bone_pose_rotation(21,Quaternion( Vector3(0,1,0 ),sin(d)/10 ))
-		#skeleton.set_bone_pose_rotation(22,Quaternion( Vector3(0,1,0 ),sin(d)/6 ))
-		#skeleton.set_bone_pose_rotation(24,Quaternion( Vector3(0,1,0 ),-sin(d)/8 ))
-		#skeleton.set_bone_pose_rotation(25,Quaternion( Vector3(0,1,0 ),-sin(d)/12 ))
-		#skeleton.set_bone_pose_rotation(SHOULDER_RIGHT_BONE,Quaternion( Vector3(0,0,1 ),-sin(d)/12 ))
 
-		#skeleton.set_bone_pose_rotation(37,Quaternion( Vector3(0,1,0 ),-sin(d)/2 ))
-		#skeleton.set_bone_pose_rotation(58,Quaternion( Vector3(0,1,0 ),-sin(d)/2 ))
+func generate_model():
+	var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
+
+	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json")
+	load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
+	#load_scene(daz_model,null,"","","")
+
+
+func skeleton_updated() -> void:
+	if _skeleton.get_bone_count() > 0:
+		left_eye.position = _skeleton.get_bone_global_pose(Bones.EYE_LEFT_BONE).origin
+		right_eye.position = _skeleton.get_bone_global_pose(Bones.EYE_RIGHT_BONE).origin
 
 
 func _exit_tree():
-	if mesh_thread:
-		mesh_thread.wait_to_finish()
+	if _mesh_thread:
+		_mesh_thread.wait_to_finish()
 		#mesh_thread.free()
-	if materials_thread:
-		materials_thread.wait_to_finish()
+	if _materials_thread:
+		_materials_thread.wait_to_finish()
 		#materials_thread.free()
 
 
-func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,load_materials : bool = true):
+func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,materials : bool = true):
 	load_skeleton(daz_model)
 	
 	load_mesh(daz_model,genitals_model,scene_folder,scene_file)	
-	if  load_materials:
+	if materials:
 		load_materials_async(library_folder,scene_folder,scene_file)
 	
 	add_person_controller( )
 
 
 func add_person_controller( )-> void:
-	var person_controller = PersonController.new(skeleton,self)
+	var person_controller = PersonController.new(_skeleton)
 	person_controller.name = "PersonController"
 	
 	self.add_child(person_controller)
-	self.move_child(person_controller,1)
+	self.move_child(person_controller,self.get_child_count()-2)
 	person_controller.owner = self
+	person_controller.initialize(self,_skeleton,_mesh.mesh_surfaces,8)
 	
-	person_controller.create_collisions(self,skeleton,mesh.mesh_surfaces,8)
+	if $Movements and $PersonController:
+		$Movements.person_controller = $PersonController
 
 
 func load_skeleton(base_model: Daz3DMesh):
-	skeleton.load_skeleton(base_model)
+	_skeleton.load_skeleton(base_model)
 
-	self.add_child(skeleton)
-	skeleton.owner = self
+	self.add_child(_skeleton)
+	_skeleton.owner = self
 
-	if skeleton.get_child_count() == 0:
-		skeleton.add_child(mesh)
-		mesh.owner = self
+	if _skeleton.get_child_count() == 0:
+		_skeleton.add_child(_mesh)
+		_mesh.owner = self
 
-		skeleton.add_child(left_eye)
+		_skeleton.add_child(left_eye)
 		left_eye.owner = self
-		skeleton.add_child(right_eye)
+		_skeleton.add_child(right_eye)
 		right_eye.owner = self
 
-	left_eye.set_offset(left_eye.position - skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
-	right_eye.set_offset(right_eye.position - skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
+	left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
+	right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
 
 
 func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):
-	if mesh_thread:
-		mesh_thread.wait_to_finish()
+	if _mesh_thread:
+		_mesh_thread.wait_to_finish()
 	else:
-		mesh_thread = Thread.new()
-	mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file))
+		_mesh_thread = Thread.new()
+	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file))
 
 
 func load_mesh_async_done():
-	mesh.mesh = mesh.full_body
+	_mesh.mesh = _mesh.full_body
 
-	if mesh.left_eye:
-		set_eye_position(left_eye,mesh.left_eye)
-	if mesh.right_eye:
-		set_eye_position(right_eye,mesh.right_eye)
+	if _mesh.left_eye:
+		set_eye_position(left_eye,_mesh.left_eye)
+	if _mesh.right_eye:
+		set_eye_position(right_eye,_mesh.right_eye)
 
-	if skeleton.get_bone_count() > 0:
-		left_eye.set_offset(left_eye.position - skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
-		right_eye.set_offset(right_eye.position - skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
+	if _skeleton.get_bone_count() > 0:
+		left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
+		right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
 
 
 func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):
-	mesh.load_mesh(daz_model,genitals_model,scene_folder,scene_file)
-
+	_mesh.load_mesh(daz_model,genitals_model,scene_folder,scene_file)
+	
 	call_deferred("load_mesh_async_done")
 
 
 func load_materials_async(library_folder: String,scene_folder: String,scene_file: String):
-	if materials_thread:
-		materials_thread.wait_to_finish()
+	if _materials_thread:
+		_materials_thread.wait_to_finish()
 	else:
-		materials_thread = Thread.new()
-	materials_thread.start(load_materials.bind(library_folder,scene_folder,scene_file))
+		_materials_thread = Thread.new()
+	_materials_thread.start(load_materials.bind(library_folder,scene_folder,scene_file))
 
 
 func load_materials(library_folder: String,scene_folder: String,scene_file: String):
-	mesh.load_materials(library_folder,scene_folder,scene_file)
-	pass
+	_mesh.load_materials(library_folder,scene_folder,scene_file)
 
 
 func set_eye_position(eye_node: VAMEye,eye_mesh: Mesh):
 	var aabb : AABB = eye_mesh.get_aabb()
-	var position := aabb.position
+	var eye_position := aabb.position
 	var size := aabb.size
 	if size.x > 0:
 		var ratio = 1 / (0.035 / size.x)
-		position.x += size.x / 2
-		position.y += size.y / 2
-		position.z += size.z / 2 - 0.003
-		eye_node.position = position
+		eye_position.x += size.x / 2
+		eye_position.y += size.y / 2
+		eye_position.z += size.z / 2 - 0.003
+		eye_node.position = eye_position
 		eye_node.scale = Vector3(ratio,ratio,ratio);
 
 
-func add_breast_spring(skeleton: Skeleton3D,bone: int,variance: float):
+func add_breast_spring(skeleton: Skeleton3D,bone: int,_variance: float):
 	add_spring(skeleton,bone,0,0.5,0.12)
 
 

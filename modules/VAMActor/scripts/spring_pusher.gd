@@ -1,6 +1,6 @@
 @tool
 class_name SpringPusher
-extends Node3D
+extends Node
 
 @export var force : Vector3:
 	set(value):
