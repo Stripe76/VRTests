@@ -7,98 +7,110 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("PersonController/RightLeg:frontal")
+tracks/0/path = NodePath("PersonController/LeftLeg:hips_horizontal")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.407]
+"values": [-1.0]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("PersonController/RightLeg:straight")
+tracks/1/path = NodePath("PersonController/LeftLeg:hips_vertical")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.333]
+"values": [1.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("PersonController/LeftLeg:hips_vertical")
+tracks/2/path = NodePath("PersonController/RightLeg:frontal")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.516]
+"values": [-0.24]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("PersonController/LeftLeg:lateral")
+tracks/3/path = NodePath("PersonController/RightLeg:straight")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.17]
+"values": [0.0]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("PersonController/RightLeg:lateral")
+tracks/4/path = NodePath("PersonController/LeftLeg:lateral")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.7]
+"values": [-0.17100000000000004]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("PersonController:pelvis:pose_y")
+tracks/5/path = NodePath("PersonController/RightLeg:lateral")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.378]
+"values": [0.0]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("PersonController/LeftArm:twist")
+tracks/6/path = NodePath("PersonController:abdomen:pose_y")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.487]
+"values": [0.0]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("PersonController/RightArm:twist")
+tracks/7/path = NodePath("PersonController/LeftLeg:weight_on")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.473]
+"update": 1,
+"values": [true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("PersonController/RightLeg:weight_on")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_fm15u"]
@@ -232,87 +244,87 @@ length = 2.0
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
-tracks/0/enabled = false
-tracks/0/path = NodePath("PersonController/LeftLeg:weight_on")
-tracks/0/interp = 1
+tracks/0/enabled = true
+tracks/0/path = NodePath("PersonController/LeftLeg:frontal")
+tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.9952361),
+"times": PackedFloat32Array(0, 0.96666664),
 "transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
+"update": 0,
+"values": [0.28, -0.24]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("PersonController/LeftLeg:frontal")
+tracks/1/path = NodePath("PersonController/LeftLeg:straight")
 tracks/1/interp = 2
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 1.1333333),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 1.0333333, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [0.65, 0.53]
+"values": [0.0, 0.33000000000000007, 0.33000000000000007]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("PersonController/LeftLeg:straight")
+tracks/2/path = NodePath("PersonController/LeftLeg:lateral")
 tracks/2/interp = 2
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.73333335, 0.9, 1.8),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.5, 1.06, 1.58),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.257, 0.091, 0.234]
+"values": [-0.21299999999999997, -0.389, -0.028000000000000025, 0.016999999999999904]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("PersonController/LeftLeg:lateral")
+tracks/3/path = NodePath("PersonController/LeftLeg:hips_horizontal")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.66, 1.5333333),
+"times": PackedFloat32Array(0, 0.96),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.337, 0.17]
+"values": [-1.0, 1.0]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("PersonController/RightLeg:frontal")
+tracks/4/path = NodePath("PersonController/LeftLeg:hips_vertical")
 tracks/4/interp = 2
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 1.02),
+"times": PackedFloat32Array(0.42, 1.54),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.53, 0.65]
+"values": [1.0, -1.0]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("PersonController/RightLeg:straight")
+tracks/5/path = NodePath("PersonController/RightLeg:frontal")
 tracks/5/interp = 2
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0.099999994, 0.8333333, 1.9333333),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.96666664),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.091, 0.234, 0.257]
+"values": [-0.24, 0.28]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("PersonController/LeftLeg:hips_vertical")
+tracks/6/path = NodePath("PersonController/RightLeg:straight")
 tracks/6/interp = 2
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0.6666667, 1.6333333),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.06666667, 0.4, 0.96666664),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [0.419, 0.76]
+"values": [0.33000000000000007, 0.33000000000000007, 0.0]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -321,46 +333,46 @@ tracks/7/path = NodePath("PersonController/RightLeg:lateral")
 tracks/7/interp = 2
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0.6666667, 1.5333333),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.93, 1.53, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [0.783, 0.578]
+"values": [-0.02200000000000002, 0.20300000000000007, -0.20199999999999996]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PersonController:pelvis:pose_y")
+tracks/8/path = NodePath("PersonController:abdomen:pose_y")
 tracks/8/interp = 2
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 0.99),
+"times": PackedFloat32Array(0, 0.92),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.8, 0.2]
+"values": [0.16599999999999993, -0.281]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PersonController/LeftArm:twist")
-tracks/9/interp = 2
+tracks/9/path = NodePath("PersonController/LeftLeg:weight_on")
+tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(0, 0.8),
+"times": PackedFloat32Array(0, 0.52),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.442, 0.806]
+"update": 1,
+"values": [true, false]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PersonController/RightArm:twist")
-tracks/10/interp = 2
+tracks/10/path = NodePath("PersonController/RightLeg:weight_on")
+tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
-"times": PackedFloat32Array(0, 0.8),
+"times": PackedFloat32Array(1.11, 1.57),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.55, 0.187]
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gdd01"]

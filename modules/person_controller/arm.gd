@@ -11,36 +11,37 @@ class_name PersonArm extends Node
 	get:
 		return pinned_on
 
-@export_range(0,1) var straight : float = 1:
+@export_range(-1,1) var straight : float = 0:
 	set(value):
 		straight = value
 		update_pose()
 	get:
 		return straight
-@export_range(0,1) var horizontal : float = 0:
+@export_range(-1,1) var horizontal : float = 0:
 	set(value):
 		horizontal = value
 		update_pose()
 	get:
 		return horizontal
-@export_range(0,1) var vertical : float = 0:
+@export_range(-1,1) var vertical : float = 0:
 	set(value):
 		vertical = value
 		update_pose()
 	get:
 		return vertical
-@export_range(0,1) var twist : float = 0:
+@export_range(-1,1) var twist : float = 0:
 	set(value):
 		twist = value
 		update_pose()
 	get:
 		return twist
-@export_range(0,1) var wrist : float = 0:
+@export_range(-1,1) var wrist : float = 0:
 	set(value):
 		wrist = value
 		update_pose()
 	get:
 		return wrist
+
 @export_range(0,1) var ik_influence : float = 0:
 	set(value):
 		ik_influence = value

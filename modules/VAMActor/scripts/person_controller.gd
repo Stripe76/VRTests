@@ -318,6 +318,7 @@ func add_placeholder(mesh: MeshInstance3D,color: Color) -> void:
 	sphere.material = material
 	
 	mesh.mesh = sphere
+	mesh.visible = false
 
 
 func create_controllers( )-> void:

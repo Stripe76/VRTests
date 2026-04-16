@@ -1,17 +1,16 @@
-#@tool
 class_name JointController extends Resource
 
-@export_range(0,1) var pose_x : float = 0:
+@export_range(-1,1) var pose_x : float = 0:
 	set(value):
 		pose_x = value
 		update_pose(pose_x,pose_y,pose_z)
 	get: return pose_x
-@export_range(0,1) var pose_y : float = 0:
+@export_range(-1,1) var pose_y : float = 0:
 	set(value):
 		pose_y = value
 		update_pose(pose_x,pose_y,pose_z)
 	get: return pose_y
-@export_range(0,1) var pose_z : float = 0:
+@export_range(-1,1) var pose_z : float = 0:
 	set(value):
 		pose_z = value
 		update_pose(pose_x,pose_y,pose_z)
@@ -66,12 +65,9 @@ func _init(skeleton: Skeleton3D,bone: int,limits : Dictionary = {}) -> void:
 
 
 func reset_pose():
-	if x_max + x_min != 0:
-		pose_x = x_min / (x_max + x_min)
-	if y_max + y_min != 0:
-		pose_y = y_min / (y_max + y_min)
-	if z_max + z_min != 0:
-		pose_z = z_min / (z_max + z_min)
+	pose_x = 0
+	pose_y = 0
+	pose_z = 0
 
 
 func update_pose(x: float,y: float,z: float):
@@ -84,6 +80,13 @@ func update_pose(x: float,y: float,z: float):
 
 
 static func update_rotation(to_set: float,pose_min: float,pose_max: float) -> float:
-	var rng := pose_max + pose_min
-	
-	return (-pose_min) + (rng * to_set)
+	if pose_max > pose_min:
+		if to_set > 0:
+			return to_set * pose_max
+		else:
+			return max( -pose_min,to_set * pose_max )
+	else:
+		if to_set > 0:
+			return min( pose_max,to_set * pose_min )
+		else:
+			return to_set * pose_min
