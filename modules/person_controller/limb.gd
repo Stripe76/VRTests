@@ -1,10 +1,13 @@
 class_name PersonLimb extends Node
 
+signal weight_on_changed
+
 @export var weight_on: bool = false:
 	set(value):
 		weight_on = value
 		if weight_on:
 			wo_position = ik_bone.global_position
+		weight_on_changed.emit(self,weight_on)
 	get:
 		return weight_on
 @export var pinned_on: bool = false:
@@ -48,5 +51,6 @@ class_name PersonLimb extends Node
 @export var ik_bone : Node3D
 @export var ik_target : Node3D
 
+var ik_bone_idx : int
 var ik_position : Vector3
 var wo_position : Vector3

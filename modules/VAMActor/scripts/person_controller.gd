@@ -3,14 +3,6 @@ class_name PersonController extends Node3D
 
 @export_tool_button("Reset","Reload") var reset_action = reset_pose
 	
-@export var weight_on : int = 0:
-	set(value): 
-		if weight_on != value:
-			weight_on = update_position(value)
-	get: return weight_on
-@export var left_foot_origin : Vector3
-@export var right_foot_origin : Vector3
-
 @export_group("Left arm")
 @export var left_collar : JointController
 @export var left_shoulder : JointController
@@ -48,12 +40,8 @@ class_name PersonController extends Node3D
 
 @export_group("Skeletons")
 @export var _skeleton : Skeleton3D
-@export var _skeleton_pose : Skeleton3D
-@export var _skeleton_springs : Skeleton3D
-@export_range(0,1) var skeletons_lerp := 0.0:
-	set(value): 
-		skeletons_lerp = value
-		update_skeleton(_skeleton)
+
+var current_weight_on : PersonLimb
 
 var _left_arm: PersonArm
 var _right_arm: PersonArm
@@ -68,19 +56,14 @@ func _init(skeleton: Skeleton3D) -> void:
 	if _skeleton:
 		#_skeleton.add_child(self)
 		#self.owner = _skeleton
-		_skeleton_pose = _skeleton
-		_skeleton_springs = _skeleton
 		
 		#_skeleton_pose = duplicate_skeleton(parent,skeleton,"SkeletonPose")
 		#_skeleton_springs = duplicate_skeleton(parent,skeleton,"SkeletonSprings")
 		
-		_skeleton_springs.skeleton_updated.connect(_on_skeleton_updated)
-		
-		left_foot_origin = _skeleton.get_bone_global_rest(Bones.ANKLE_LEFT_BONE).origin
-		right_foot_origin = _skeleton.get_bone_global_rest(Bones.ANKLE_RIGHT_BONE).origin
+		_skeleton.skeleton_updated.connect(_on_skeleton_updated)
 		
 		create_joints(_skeleton)
-		create_springs(_skeleton_springs)
+		create_springs(_skeleton)
 
 
 var _editor_owner
@@ -93,91 +76,37 @@ func _notification(what: int) -> void:
 			owner = _editor_owner
 
 
-var do_that := true
-#func _process(delta: float) -> void:
-
-func _physics_process(delta: float) -> void:
-	if do_that:
-		cippa(weight_on)
-	do_that = true
-	#update_skeleton(skeleton)
-	#update_position( weight_on );
+func _physics_process(_delta: float) -> void:
+	#update_weight_on()
 	pass
 
 
-var poses := {}
 func _on_skeleton_updated():
-	var count := _skeleton_springs.get_bone_count()
-	for i in count:
-		poses[i] = _skeleton_springs.get_bone_pose_rotation(i)
-	cippa(weight_on)
-	#print("weight_on")
-	#update_position( weight_on );
-
-
-func _process_modification() -> void:
-	##print("_process_modification")
-	#update_skeleton(skeleton)
-	pass
-
-
-func update_skeleton(skeleton: Skeleton3D):
-	pass
-	print("update_skeleton")
-	var count := skeleton.get_bone_count()
-	for i in count:
-		var pos_pose := _skeleton_pose.get_bone_pose_position(i)
-		var pos_spring = poses[i]
-		var position = lerp(pos_pose,pos_spring,0)
-		
-		skeleton.set_bone_pose_position(i,position)
-		
-		_skeleton_springs.set_bone_pose_position(0,skeleton.position)
-	
-		var rot_pose := _skeleton_pose.get_bone_pose_rotation(i)
-		var rot_spring = poses[i]
-		#var rotation = lerp(rot_pose,rot_spring,lerp)
-		var rotation = rot_pose+(rot_spring)
-		
-		skeleton.set_bone_pose_rotation(i,rotation)
+	update_weight_on()
 
 
 var _skeleton_offset := Vector3()
-func cippa(current_weight_on: int,apply : bool = true) -> Vector3:
-	if _skeleton:
-		var diff : Vector3
-		if _left_leg.weight_on or current_weight_on == 1:
-			diff = _left_leg.wo_position - _skeleton.get_bone_global_pose(Bones.ANKLE_LEFT_BONE).origin
-		elif _right_leg.weight_on or current_weight_on == 2:
-			diff = _right_leg.wo_position - _skeleton.get_bone_global_pose(Bones.ANKLE_RIGHT_BONE).origin
-		if diff and apply:
-			diff.x = 0
-			diff.z = 0
-			_skeleton.position = _skeleton_offset + diff
-		return diff
+func update_weight_on(apply : bool = true) -> Vector3:
+	if _skeleton and current_weight_on:
+		#var delta : Vector3 = current_weight_on.wo_position - current_weight_on.ik_bone.global_position
+		var delta : Vector3 = current_weight_on.wo_position - _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).origin
+		
+		if apply:
+			#delta.x = 0
+			#delta.z = 0
+			_skeleton.position = _skeleton_offset + delta
+		return delta
 	return Vector3()
-	#if _skeleton:
-		#var diff : Vector3
-		#if _left_leg.weight_on or current_weight_on == 1:
-			#diff = left_foot_origin - _skeleton.get_bone_global_pose(Bones.ANKLE_LEFT_BONE).origin
-		#elif _right_leg.weight_on or current_weight_on == 2:
-			#diff = right_foot_origin - _skeleton.get_bone_global_pose(Bones.ANKLE_RIGHT_BONE).origin
-		#if diff and apply:
-			#diff.x = 0
-			#diff.z = 0
-			#_skeleton.position = _skeleton_offset + diff
-		#return diff
-	#return Vector3()
 
 
 func update_position(new_weight_on: int)-> int:
 	if _skeleton:
 		var parent : Node3D = _skeleton.get_parent()
 		if parent:
-			var position1 := cippa(weight_on,false)
+			var position1 := update_weight_on(false)
 			#print(position1)
 	
-			var position2 := cippa(new_weight_on,false)
+			var position2 := update_weight_on(false)
 			#print(position2)
 	
 			var posDelta := Vector3()
@@ -194,7 +123,7 @@ func update_position(new_weight_on: int)-> int:
 
 
 func reset_pose():
-	weight_on = 0
+	current_weight_on = null
 	
 	if _skeleton:
 		_skeleton.position = Vector3()
@@ -216,15 +145,29 @@ func reset_pose():
 	right_knee.reset_pose()
 	left_ankle.reset_pose()
 	right_ankle.reset_pose()
+	
+	_left_arm.pinned_on = false
+	_right_arm.pinned_on = false
+	_left_leg.pinned_on = false
+	_right_leg.pinned_on = false
 
 
 func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
-	reset_pose()
-	
 	create_controllers( )
 	create_collisions(parent,skeleton)
 	create_center_of_gravity(_skeleton,parent)
 	create_iks(_skeleton,parent)
+	
+	reset_pose()
+
+
+func weight_on_changed(limb: PersonLimb,weight_on: bool):
+	if weight_on:
+		if current_weight_on:
+			current_weight_on.weight_on = false
+		current_weight_on = limb
+	elif limb == current_weight_on:
+		current_weight_on = null
 
 
 func create_joints(skeleton: Skeleton3D) -> void:
@@ -340,6 +283,9 @@ func create_controllers( )-> void:
 	
 	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
 	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)
+	
+	_left_leg.weight_on_changed.connect(weight_on_changed)
+	_right_leg.weight_on_changed.connect(weight_on_changed)
 
 
 func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
@@ -412,8 +358,9 @@ func add_physical_bone(skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : 
 	bone.add_child(area)
 	
 	if limb:
-		limb.ik_bone = bone
 		area.limb = limb
+		limb.ik_bone = bone
+		limb.ik_bone_idx = bone_idx
 	
 	skeleton.add_child(bone)
 	bone.owner = parent
