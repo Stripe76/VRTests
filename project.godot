@@ -30,9 +30,8 @@ XRToolsUserSettings="*uid://c6g3ihox3mn8m"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-window/size/mode=3
+window/size/viewport_width=1024
+window/size/viewport_height=768
 
 [dotnet]
 

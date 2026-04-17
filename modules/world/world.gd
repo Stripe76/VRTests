@@ -38,7 +38,6 @@ func _ready() -> void:
 	
 	#$VAMActor.look_at = $Player
 	$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)
-	$VAMActor.add_person_controller( )
 	
 	if not Engine.is_editor_hint():
 		$AnimationPlayer.play("walking")

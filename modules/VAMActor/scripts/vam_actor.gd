@@ -77,21 +77,22 @@ func _exit_tree():
 func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,materials : bool = true):
 	load_skeleton(daz_model)
 	
-	load_mesh(daz_model,genitals_model,scene_folder,scene_file)	
+	load_mesh(daz_model,genitals_model,scene_folder,scene_file)
 	if materials:
 		load_materials_async(library_folder,scene_folder,scene_file)
-	
-	add_person_controller( )
 
 
 func add_person_controller( )-> void:
+	if find_child("PersonController"):
+		return
+		
 	var person_controller = PersonController.new(_skeleton)
 	person_controller.name = "PersonController"
 	
 	self.add_child(person_controller)
 	self.move_child(person_controller,self.get_child_count()-2)
 	person_controller.owner = self
-	person_controller.initialize(self,_skeleton,_mesh.mesh_surfaces,8)
+	person_controller.initialize(self,_skeleton,_mesh)
 	
 	if $Movements and $PersonController:
 		$Movements.person_controller = $PersonController
@@ -121,20 +122,21 @@ func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: Str
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
-	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file))
+	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file,true))
 
 
 func load_mesh_async_done():
 	_mesh.mesh = _mesh.full_body
-
 	if _mesh.left_eye:
 		set_eye_position(left_eye,_mesh.left_eye)
 	if _mesh.right_eye:
 		set_eye_position(right_eye,_mesh.right_eye)
-
+	
 	if _skeleton.get_bone_count() > 0:
 		left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
 		right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
+	
+	add_person_controller( )
 
 
 func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):

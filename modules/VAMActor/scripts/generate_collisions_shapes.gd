@@ -1,5 +1,5 @@
 @tool
-extends Node3D
+class_name GenerateCollisionShape extends Node3D
 
 @export_tool_button("Generate","Reload") var reset_action = generate_collision_shapes
 
@@ -15,7 +15,6 @@ extends Node3D
 		update_configuration_warnings()
 	get:
 		return physical_simulator_path
-
 ##Select path of meshes (usually Skeleton3D again), or a single mesh path
 @export var mesh_instance_path: NodePath:
 	set(value):
@@ -72,22 +71,25 @@ func generate_collision_shapes() -> void:
 		push_error("PhysicalBoneSimulator3D not found. Set physical_simulator_path.")
 		return
 	
-	var meshs: Array = []
-	if mesh_instance is MeshInstance3D:
-		meshs.append(mesh_instance)
-		meshs += mesh_instance.get_children().filter(func(c): return c is MeshInstance3D)
-	print(meshs)
+	generate_shapes(skeleton,simulator,mesh_instance)
 
-	if meshs.is_empty():
+
+func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3D) -> void:
+	var meshes: Array = []
+	if mesh_instance is MeshInstance3D:
+		meshes.append(mesh_instance)
+		meshes += mesh_instance.get_children().filter(func(c): return c is MeshInstance3D)
+
+	if meshes.is_empty():
 		push_error("No MeshInstance3D found under mesh_instance_path")
 		return
 
-	var bone_vertex_map := generate_bones_vertices(skeleton,meshs)
+	var bone_vertex_map := generate_bones_vertices(skeleton,meshes)
 	
 	var mesh_global_xform: Transform3D = mesh_instance.global_transform
 	#print(bone_vertex_map)
 	for bone_idx in bone_vertex_map.keys():
-		print("Bone: ", bone_idx, " Name:", skeleton.get_bone_name(bone_idx), " Count:", bone_vertex_map[bone_idx].size())
+		#print("Bone: ", bone_idx, " Name:", skeleton.get_bone_name(bone_idx), " Count:", bone_vertex_map[bone_idx].size())
 		var bone_name = skeleton.get_bone_name(bone_idx)
 		if bone_name == "":
 			continue
@@ -129,6 +131,7 @@ func generate_collision_shapes() -> void:
 		#var shape = generate_shape(transformed_points,use_capsules)
 		
 		var cs := CollisionShape3D.new()
+		cs.name = physical_bone_node.name
 		cs.shape = generate_shape(cs,transformed_points,use_capsules)
 		physical_bone_node.add_child(cs)
 		cs.owner = physical_bone_node.owner
@@ -138,7 +141,7 @@ func generate_collision_shapes() -> void:
 			if spring is SpringPusher:
 				spring.shape = cs
 		
-	print("Bone collision generation complete.")
+	#print("Bone collision generation complete.")
 
 
 func generate_shape(cs: CollisionShape3D,transformed_points : Array,capsules: bool) -> Shape3D:
@@ -185,14 +188,17 @@ func generate_shape(cs: CollisionShape3D,transformed_points : Array,capsules: bo
 	return shape
 
 
-func generate_bones_vertices(skeleton: Skeleton3D,meshs: Array)-> Dictionary:
+func generate_bones_vertices(skeleton: Skeleton3D,meshes: Array)-> Dictionary:
 	var bone_vertex_map := {}
 	var bone_count := skeleton.get_bone_count()
 	for i in bone_count:
 		bone_vertex_map[i] = []
 		
-	for m in meshs:
+	for m in meshes:
 		var mesh: Mesh = m.mesh
+		if not mesh:
+			continue
+		
 		var surface_count := mesh.get_surface_count()
 		for s in surface_count:
 			var arrays := mesh.surface_get_arrays(s)
@@ -212,7 +218,7 @@ func generate_bones_vertices(skeleton: Skeleton3D,meshs: Array)-> Dictionary:
 			if bones_arr.size() < verts.size() * 4 or weights_arr.size() < verts.size() * 4:
 				continue
 			
-			print("Surface: ", s, " Verts: ", verts.size(), " Bones_length: ", bones_arr.size(), " Weights_length: ", weights_arr.size())
+			#print("Surface: ", s, " Verts: ", verts.size(), " Bones_length: ", bones_arr.size(), " Weights_length: ", weights_arr.size())
 
 			for vi in verts.size():
 				var v: Vector3 = verts[vi]

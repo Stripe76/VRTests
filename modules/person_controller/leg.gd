@@ -1,20 +1,4 @@
-class_name PersonLeg extends Node
-
-@export var weight_on: bool = false
-@export var pinned_on: bool = false:
-	set(value):
-		pinned_on = value
-		if pinned_on:
-			front = 0
-			side = 0
-			height = 0
-			
-			ik_position = ik_bone.global_position
-			ik_target.global_position = ik_position
-		if ik:
-			ik.active = value;
-	get:
-		return pinned_on
+class_name PersonLeg extends PersonLimb
 
 @export_range(-1,1) var hips_vertical : float = 0:
 	set(value):
@@ -59,18 +43,6 @@ class_name PersonLeg extends Node
 		update_pose()
 	get:
 		return ankle
-
-@export_range(0,1) var ik_influence : float = 0:
-	set(value):
-		ik_influence = value
-		if ik:
-			ik.influence = ik_influence
-		#if ik_influence > 0 and not pinned_on:
-		#	pinned_on = true
-		#elif ik_influence == 0 and pinned_on:
-		#	pinned_on = false
-	get:
-		return ik_influence
 
 @export_group("Multipliers")
 @export_range(0,1) var hips_vertical_min : float = 1:
@@ -146,56 +118,23 @@ class_name PersonLeg extends Node
 	get:
 		return twist_max
 
-@export_group("Inverse kinematics")
-@export_range(-1,1) var front: float:
-	set(value):
-		front = value
-		ik_target.position.z = ik_position.z + front
-@export_range(-0.5,0.5) var side: float:
-	set(value):
-		side = value
-		ik_target.position.x = ik_position.x + side
-@export_range(-1,1) var height: float:
-	set(value):
-		height = value
-		ik_target.position.y = ik_position.y + height
-
-@export_group("IK Nodes")
-@export var ik: IKModifier3D
-@export var ik_target : Node3D
-@export var ik_bone : VAMPhysicalBone3D
-
 var _hip : JointController
 var _pelvis : JointController
 var _knee : JointController
 var _ankle : JointController
 
-var ik_position : Vector3
-
-var i := true
-func _init(name: String,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
-	self.name = name
+func _init(limb_name: String,hip : JointController,pelvis : JointController,knee : JointController,foot : JointController,parent: Node3D) -> void:
+	name = limb_name
 	parent.add_child(self)
-	self.owner = parent.get_parent()
+	owner = parent.get_parent()
 	
 	_hip = hip
 	_pelvis = pelvis
 	_knee = knee
-	_ankle = ankle
-	
-	hips_vertical = _hip.pose_z
-	frontal = _pelvis.pose_x
-	twist = _pelvis.pose_y
-	lateral = _pelvis.pose_z
-	straight = _knee.pose_x
-	self.ankle = _ankle.pose_z
-	
-	i = false
+	_ankle = foot
 
 
 func update_pose():
-	if i: return
-	
 	_hip.pose_z = hips_vertical * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
 	_hip.pose_y = hips_horizontal * (hips_horizontal_max if hips_horizontal > 0 else hips_horizontal_min)
 	
