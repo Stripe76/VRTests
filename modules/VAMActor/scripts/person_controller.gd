@@ -218,11 +218,11 @@ func reset_pose():
 	right_ankle.reset_pose()
 
 
-func initialize(parent: Node3D,skeleton: Skeleton3D, mesh: MeshInstance3D) -> void:
+func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
 	reset_pose()
 	
 	create_controllers( )
-	create_collisions(parent,skeleton,mesh)
+	create_collisions(parent,skeleton)
 	create_center_of_gravity(_skeleton,parent)
 	create_iks(_skeleton,parent)
 
@@ -331,7 +331,7 @@ func add_placeholder(mesh: MeshInstance3D,color: Color) -> void:
 	sphere.material = material
 	
 	mesh.mesh = sphere
-	mesh.visible = true
+	mesh.visible = Engine.is_editor_hint()
 
 
 func create_controllers( )-> void:
@@ -355,24 +355,22 @@ func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
 	#	cog.mesh = parent.find_child("CoG")
 
 
-func create_collisions(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D):
-	var physical_skeleton := PhysicalBoneSimulator3D.new()
-	physical_skeleton.name = "PhysicalBones"
-	skeleton.add_child(physical_skeleton)
-	physical_skeleton.owner = parent
+func create_collisions(parent: Node3D,skeleton: Skeleton3D):
+	add_physical_bone(skeleton,59,parent)
+	add_physical_bone(skeleton,38,parent)
 	
-	add_physical_bone("left_collar",physical_skeleton,skeleton,59,parent)
-	add_physical_bone("right_collar",physical_skeleton,skeleton,38,parent)
+	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
+	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
 	
-	_left_arm.ik_bone = add_physical_bone("left_hand",physical_skeleton,skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
-	_right_arm.ik_bone = add_physical_bone("right_hand",physical_skeleton,skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
-	
-	_left_leg.ik_bone = add_physical_bone("left_feet",physical_skeleton,skeleton,Bones.ANKLE_LEFT_BONE,parent,_left_leg)
-	_right_leg.ik_bone = add_physical_bone("right_feet",physical_skeleton,skeleton,Bones.ANKLE_RIGHT_BONE,parent,_right_leg)
-	
+	add_physical_bone(skeleton,Bones.ANKLE_LEFT_BONE,parent,_left_leg)
+	add_physical_bone(skeleton,Bones.ANKLE_RIGHT_BONE,parent,_right_leg)
+
+
+func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
 	var shapes := GenerateCollisionShape.new()
 	shapes.use_capsules = true
-	shapes.generate_shapes(skeleton,physical_skeleton,mesh)
+	shapes.remove_existing_collision_shapes = true
+	shapes.generate_shapes(skeleton,skeleton,mesh)
 
 
 func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
@@ -400,23 +398,26 @@ func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
 	return bones_vertices
 
 
-func add_physical_bone(_bone_name: String,physical_skeleton : PhysicalBoneSimulator3D,skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : PersonLimb = null) -> VAMPhysicalBone3D:
-	var bone = VAMPhysicalBone3D.new()
-	bone.name = skeleton.get_bone_name(bone_idx)
-	bone.collision_layer = XRToolsFunctionPickup.DEFAULT_GRAB_MASK
+func add_physical_bone(skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : PersonLimb = null) -> void:
+	var bone_name := skeleton.get_bone_name(bone_idx)
+	var bone = BoneAttachment3D.new()
+	bone.name = bone_name
+	bone.bone_idx = bone_idx
+	
+	var area = PersonHandle.new()
+	area.name = bone_name
+	area.collision_layer = XRToolsFunctionPickup.DEFAULT_GRAB_MASK
 	#if bones_vertices.size() > 0:
 	#	bone.spring_pusher = add_spring_pusher(bone_name,skeleton.find_child(name),collision,parent)
+	bone.add_child(area)
 	
 	if limb:
-		#limb.ik_bone = bone
-		bone.limb = limb
+		limb.ik_bone = bone
+		area.limb = limb
 	
-	bone.set( "bone_name",skeleton.get_bone_name(bone_idx))
-	
-	physical_skeleton.add_child(bone)
+	skeleton.add_child(bone)
 	bone.owner = parent
-	
-	return bone
+	area.owner = parent
 
 
 func add_spring_pusher(pusher_name:String,bone: SpringBoneSimulator3D,shape: CollisionShape3D,parent: Node3D):

@@ -8,7 +8,7 @@ func _physics_process(delta: float) -> void:
 	if collision and collision.get_collision_count() > 0:
 		var bone = collision.get_collider()
 		
-		if bone is VAMPhysicalBone3D:
+		if bone is PersonHandle:
 			#print("Yep!")
 			var spring = bone.spring_pusher
 			

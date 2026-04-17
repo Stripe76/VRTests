@@ -14,7 +14,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.45]
+"values": [0.30099999999999993]
 }
 
 [sub_resource type="Animation" id="Animation_fm15u"]
@@ -246,13 +246,13 @@ tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
 tracks/8/path = NodePath("PersonController/LeftLeg:hips_vertical")
-tracks/8/interp = 1
+tracks/8/interp = 2
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0.46, 1.48),
+"times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.45, -0.453]
+"update": 1,
+"values": [0.30099999999999993, -0.30100000000000005]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
@@ -303,7 +303,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_7jqo0"]
 resource_name = "jump"
-length = 1.8666667
+length = 1.3
 loop_mode = 2
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -312,113 +312,16 @@ tracks/0/path = NodePath(".:position")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.49, 1),
+"times": PackedFloat32Array(0, 0.43333334, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector3(0, -0.022, 0), Vector3(0, -0.347, 0), Vector3(0, 0.448, 0)]
+"values": [Vector3(0, -0.022, 0), Vector3(0, -0.347, 0), Vector3(0, 0.488, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_k8ylq"]
 _data = {
 &"RESET": SubResource("Animation_qwgur"),
 &"jump": SubResource("Animation_7jqo0")
-}
-
-[sub_resource type="Animation" id="Animation_60kmb"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("LeftLeg/Walking:movement")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [1.0]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("LeftLeg:straight")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.05299999999999993]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("LeftLeg:frontal")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.02499999999999991]
-}
-
-[sub_resource type="Animation" id="Animation_8ur11"]
-resource_name = "new_animation"
-length = 1.1666666
-loop_mode = 2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("LeftLeg:straight")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.0200623),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [1.0, 0.05299999999999993]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("LeftLeg:frontal")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 1.0200623),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.5779999999999998, 0.02499999999999991]
-}
-
-[sub_resource type="Animation" id="Animation_wpamn"]
-resource_name = "still"
-length = 10.0
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_0kabd"]
-resource_name = "walking"
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("LeftLeg/Walking:movement")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 1.0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_wpamn"]
-_data = {
-&"RESET": SubResource("Animation_60kmb"),
-&"new_animation": SubResource("Animation_8ur11"),
-&"still": SubResource("Animation_wpamn"),
-&"walking": SubResource("Animation_0kabd")
 }
 
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
@@ -433,7 +336,3 @@ speed_scale = 1.75
 [node name="Skeleton" type="AnimationPlayer" parent="." unique_id=1325153257]
 root_node = NodePath("../VAMSkeleton")
 libraries/ = SubResource("AnimationLibrary_k8ylq")
-
-[node name="Controller" type="AnimationPlayer" parent="." unique_id=1930384192]
-libraries/ = SubResource("AnimationLibrary_wpamn")
-speed_scale = 1.474

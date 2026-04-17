@@ -94,19 +94,10 @@ func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3
 		if bone_name == "":
 			continue
 		
-		var physical_bone_node: PhysicalBone3D = null
-		if simulator.has_node(bone_name):
-			physical_bone_node = simulator.get_node(bone_name)
-		else:
-			var alt_name = "Physical Bone " + bone_name
-			if simulator.has_node(alt_name):
-				physical_bone_node = simulator.get_node(alt_name)
-			else:
-				for child in simulator.get_children():
-					if child is Node3D and bone_name in child.name:
-						physical_bone_node = child
-						break
-		
+		var physical_bone_node: Node3D = simulator.find_child(bone_name)
+		if physical_bone_node is BoneAttachment3D:
+			physical_bone_node = physical_bone_node.find_child(bone_name)
+			
 		if not physical_bone_node:
 			continue
 		
@@ -136,7 +127,7 @@ func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3
 		physical_bone_node.add_child(cs)
 		cs.owner = physical_bone_node.owner
 		
-		if physical_bone_node is VAMPhysicalBone3D:
+		if physical_bone_node is PersonHandle:
 			var spring = physical_bone_node.spring_pusher
 			if spring is SpringPusher:
 				spring.shape = cs

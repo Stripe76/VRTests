@@ -1,5 +1,5 @@
-class_name VAMPhysicalBone3D
-extends PhysicalBone3D
+class_name PersonHandle
+extends Area3D
 
 @export var spring_pusher : SpringPusher
 

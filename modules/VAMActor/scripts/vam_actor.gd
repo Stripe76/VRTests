@@ -80,22 +80,21 @@ func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String
 	load_mesh(daz_model,genitals_model,scene_folder,scene_file)
 	if materials:
 		load_materials_async(library_folder,scene_folder,scene_file)
+	
+	add_person_controller( )
 
 
 func add_person_controller( )-> void:
-	if find_child("PersonController"):
-		return
-		
 	var person_controller = PersonController.new(_skeleton)
 	person_controller.name = "PersonController"
 	
 	self.add_child(person_controller)
 	self.move_child(person_controller,self.get_child_count()-2)
 	person_controller.owner = self
-	person_controller.initialize(self,_skeleton,_mesh)
+	person_controller.initialize(self,_skeleton)
 	
-	if $Movements and $PersonController:
-		$Movements.person_controller = $PersonController
+	#if $Movements and $PersonController:
+	#	$Movements.person_controller = $PersonController
 
 
 func load_skeleton(base_model: Daz3DMesh):
@@ -127,6 +126,7 @@ func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: Str
 
 func load_mesh_async_done():
 	_mesh.mesh = _mesh.full_body
+	
 	if _mesh.left_eye:
 		set_eye_position(left_eye,_mesh.left_eye)
 	if _mesh.right_eye:
@@ -135,8 +135,10 @@ func load_mesh_async_done():
 	if _skeleton.get_bone_count() > 0:
 		left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
 		right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
-	
-	add_person_controller( )
+		
+		var person_controller : PersonController = find_child("PersonController")
+		if person_controller:
+			person_controller.create_collisions_shapes(_skeleton,_mesh)
 
 
 func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):
