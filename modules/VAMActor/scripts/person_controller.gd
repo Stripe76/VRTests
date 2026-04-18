@@ -43,6 +43,8 @@ class_name PersonController extends Node3D
 
 var current_weight_on : PersonLimb
 
+var _torso: PersonTorso
+
 var _left_arm: PersonArm
 var _right_arm: PersonArm
 
@@ -291,6 +293,8 @@ func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) ->
 
 
 func create_controllers( )-> void:
+	_torso = PersonTorso.new("Torso",hips,self)
+	
 	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
 	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
 	
