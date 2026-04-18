@@ -13,14 +13,12 @@ signal weight_on_changed
 @export var pinned_on: bool = false:
 	set(value):
 		if value and pinned_on != value:
-			print("Yep!")
 			front = 0
 			side = 0
 			height = 0
 			
 			ik_position = ik_bone.global_position
 			ik_target.global_position = ik_position
-			print(ik_position)
 		if ik:
 			ik.active = value;
 		pinned_on = value
@@ -39,14 +37,20 @@ signal weight_on_changed
 	set(value):
 		front = value
 		ik_target.position.z = ik_position.z + front
+	get:
+		return front
 @export_range(-0.5,0.5) var side: float:
 	set(value):
 		side = value
 		ik_target.position.x = ik_position.x + side
+	get:
+		return side
 @export_range(-1,1) var height: float:
 	set(value):
 		height = value
 		ik_target.position.y = ik_position.y + height
+	get:
+		return height
 
 @export_group("IK Nodes")
 @export var ik: IKModifier3D

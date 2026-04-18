@@ -4,18 +4,6 @@
 
 [sub_resource type="Animation" id="Animation_b8mxy"]
 length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("PersonController/LeftLeg:hips_vertical")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.30099999999999993]
-}
 
 [sub_resource type="Animation" id="Animation_fm15u"]
 resource_name = "jump"
@@ -140,6 +128,46 @@ tracks/9/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [0.0, 0.43700000000000006, 0.119, 0.119, 0.2370000000000001, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_0kabd"]
+resource_name = "new_animation"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PersonController/Torso:height")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.04500000000000004, -0.364]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PersonController/LeftLeg:hips_horizontal")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.05900000000000005, 0.3759999999999999]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PersonController/LeftLeg:hips_vertical")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.30099999999999993, -0.32199999999999995]
 }
 
 [sub_resource type="Animation" id="Animation_gdd01"]
@@ -279,11 +307,258 @@ tracks/10/keys = {
 "values": [true, false]
 }
 
+[sub_resource type="Animation" id="Animation_60kmb"]
+resource_name = "walking_ik"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PersonController/Torso:height")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.07699999999999996, -0.08899999999999997, -0.07599999999999996, -0.08799999999999997]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PersonController/LeftLeg:pinned_on")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PersonController/RightLeg:pinned_on")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PersonController/LeftLeg:front")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.5, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.28800000000000003, -0.419]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PersonController/LeftLeg:height")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.23333333, 0.51),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.01800000000000001, 0.01200000000000001]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PersonController/RightLeg:front")
+tracks/5/interp = 2
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.56666666, 1.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.43999999999999995, 0.2789999999999999]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PersonController/RightLeg:height")
+tracks/6/interp = 2
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.2, 1.51),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.04200000000000004, 0.02400000000000002]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("PersonController/LeftLeg:hips_vertical")
+tracks/7/interp = 2
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.52, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.32299999999999995, 0.31099999999999994]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("PersonController/LeftLeg:hips_horizontal")
+tracks/8/interp = 2
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.5, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.21199999999999997, 0.19999999999999996]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("PersonController:abdomen:pose_y")
+tracks/9/interp = 2
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.52, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.20300000000000007, -0.20399999999999996]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("PersonController/LeftLeg:ankle_front")
+tracks/10/interp = 2
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.51, 1.04, 1.51),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [-0.06399999999999995, 0.18100000000000005, -0.239, 0.09899999999999998]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("PersonController/RightArm:twist")
+tracks/11/interp = 2
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0.26666668, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.32899999999999996, 0.254]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("PersonController/LeftLeg:side")
+tracks/12/interp = 2
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 0.53, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [-0.07800000000000001, -0.14200000000000002, -0.125]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("PersonController/RightLeg:side")
+tracks/13/interp = 2
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.51, 1, 1.52),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.09399999999999996, 0.01600000000000001, 0.08299999999999996]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("PersonController/Head:tilt")
+tracks/14/interp = 2
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(1.01, 1.88),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.28200000000000003, 0.05099999999999993]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("PersonController/LeftArm:twist")
+tracks/15/interp = 2
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0.57, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.224, 0.0209999999999999]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("PersonController/LeftArm:straight")
+tracks/16/interp = 2
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0.56, 1.57),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.131, -0.13]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("PersonController/LeftArm:horizontal")
+tracks/17/interp = 2
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0.55, 1.54),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.01500000000000001, -0.16000000000000003]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("PersonController/LeftArm:vertical")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.8240000000000001]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("PersonController/RightArm:vertical")
+tracks/19/interp = 2
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.835]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gdd01"]
 _data = {
 &"RESET": SubResource("Animation_b8mxy"),
 &"jump": SubResource("Animation_fm15u"),
-&"walking": SubResource("Animation_gdd01")
+&"new_animation": SubResource("Animation_0kabd"),
+&"walking": SubResource("Animation_gdd01"),
+&"walking_ik": SubResource("Animation_60kmb")
 }
 
 [sub_resource type="Animation" id="Animation_qwgur"]
@@ -324,6 +599,10 @@ _data = {
 &"jump": SubResource("Animation_7jqo0")
 }
 
+[sub_resource type="QuadMesh" id="QuadMesh_60kmb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_60kmb"]
+
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
 script = ExtResource("1_pcuk1")
 eyes_color = 0.907
@@ -331,8 +610,13 @@ metadata/_custom_type_script = "uid://m3rl1cqv77dl"
 
 [node name="Actor" type="AnimationPlayer" parent="." unique_id=87833383]
 libraries/ = SubResource("AnimationLibrary_gdd01")
-speed_scale = 1.75
+speed_scale = 1.377
 
 [node name="Skeleton" type="AnimationPlayer" parent="." unique_id=1325153257]
 root_node = NodePath("../VAMSkeleton")
 libraries/ = SubResource("AnimationLibrary_k8ylq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2087755849]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.0033645295, -0.0074919164, 0.007217467)
+mesh = SubResource("QuadMesh_60kmb")
+surface_material_override/0 = SubResource("StandardMaterial3D_60kmb")

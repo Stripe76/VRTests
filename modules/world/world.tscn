@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cv8m650d0g7tu" path="res://modules/world/world.gd" id="1_fj7yv"]
 [ext_resource type="PackedScene" uid="uid://bys6ttbl47v2s" path="res://rooms/room/room.tscn" id="2_tlwt5"]
+[ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="3_rmlpf"]
 [ext_resource type="PackedScene" uid="uid://dkpvupck5lb4d" path="res://modules/VAMActor/vam_actor.tscn" id="4_aqk2v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_aqk2v"]
@@ -599,6 +600,7 @@ _data = {
 &"still_1": SubResource("Animation_wse8f"),
 &"still_2": SubResource("Animation_ic0uy"),
 &"walking": SubResource("Animation_gbfbk"),
+&"walking_ik": ExtResource("3_rmlpf"),
 &"walking_right_leg": SubResource("Animation_ioo17")
 }
 
@@ -678,9 +680,9 @@ light_indirect_energy = 0.748
 omni_range = 4.343
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=838419763]
-root_node = NodePath("")
+root_node = NodePath("../VAMActor")
 libraries/ = SubResource("AnimationLibrary_70uel")
 autoplay = &"new_animation"
-speed_scale = 0.645
+speed_scale = 1.475
 
 [node name="VAMActor" parent="." unique_id=1805902460 instance=ExtResource("4_aqk2v")]

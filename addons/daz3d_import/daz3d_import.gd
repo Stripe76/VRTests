@@ -78,7 +78,7 @@ func _import(source_file, save_path, options, r_platform_variants, r_gen_files):
 	
 	var indices := get_as_indexes_array(data,"geometry_library/polylist",unused_indices)
 	var materials := get_as_materials_array(data,"geometry_library/polylist")
-	if vam_data and true:
+	if vam_data:
 		add_vam_data(vam_data,vertices,normals,indices,uvs,materials,linked_vertices)
 	
 	var bones := get_as_bones_array(data,"node_library","modifier_library")

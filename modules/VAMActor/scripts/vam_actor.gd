@@ -121,7 +121,7 @@ func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: Str
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
-	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file,true))
+	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file))
 
 
 func load_mesh_async_done():

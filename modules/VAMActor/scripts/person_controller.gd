@@ -2,7 +2,11 @@
 class_name PersonController extends Node3D
 
 @export_tool_button("Reset","Reload") var reset_action = reset_pose
-	
+
+@export_group("Head")
+@export var head : JointController
+@export var neck : JointController
+
 @export_group("Left arm")
 @export var left_collar : JointController
 @export var left_shoulder : JointController
@@ -19,8 +23,9 @@ class_name PersonController extends Node3D
 @export_group("Torso")
 @export var hips : JointController
 @export var pelvis : JointController
-@export var abdomen : JointController
-@export var neck : JointController
+@export var abdomen_1 : JointController
+@export var abdomen_2 : JointController
+@export var chest : JointController
 
 @export_group("Left leg")
 @export var left_hip : JointController
@@ -43,6 +48,7 @@ class_name PersonController extends Node3D
 
 var current_weight_on : PersonLimb
 
+var _head: PersonHead
 var _torso: PersonTorso
 
 var _left_arm: PersonArm
@@ -95,6 +101,7 @@ func update_weight_on(apply : bool = true) -> Vector3:
 		
 		if apply:
 			delta.x = 0
+			delta.y = 0
 			delta.z = 0
 			_skeleton.position = _skeleton_offset + delta
 		return delta
@@ -131,6 +138,8 @@ func reset_pose():
 		_skeleton.position = Vector3()
 		_skeleton.get_parent().position = Vector3()
 	
+	head.reset_pose()
+	neck.reset_pose()
 	left_collar.reset_pose()
 	right_collar.reset_pose()
 	left_shoulder.reset_pose()
@@ -139,8 +148,9 @@ func reset_pose():
 	right_elbow.reset_pose()
 	hips.reset_pose()
 	pelvis.reset_pose()
-	abdomen.reset_pose()
-	neck.reset_pose()	
+	abdomen_1.reset_pose()
+	abdomen_2.reset_pose()
+	chest.reset_pose()
 	left_hip.reset_pose()
 	right_hip.reset_pose()
 	left_knee.reset_pose()
@@ -173,6 +183,9 @@ func weight_on_changed(limb: PersonLimb,weight_on: bool):
 
 
 func create_joints(skeleton: Skeleton3D) -> void:
+		head = JointController.new(skeleton,Bones.HEAD_BONE,{"x_min":0.18,"x_max":0.05,"y_min":0.15,"y_max":0.15,"z_min":0.05,"z_max":0.05})
+		neck = JointController.new(skeleton,Bones.NECK_BONE,{"x_min":0.15,"x_max":0.20,"y_min":0.20,"y_max":0.20,"z_min":0.05,"z_max":0.05})
+			
 		left_collar = JointController.new(skeleton,Bones.COLLAR_LEFT_BONE,{"x_min":0.1,"x_max":0.05,"y_min":0.15,"y_max":0.05,"z_min":0.053,"z_max":0.11})
 		right_collar = JointController.new(skeleton,Bones.COLLAR_RIGHT_BONE,{"x_min":0.05,"x_max":0.1,"y_min":0.05,"y_max":0.15,"z_min":0.11,"z_max":0.053})
 		left_shoulder = JointController.new(skeleton,Bones.SHOULDER_LEFT_BONE,{"x_min":0.3,"x_max":0.2,"y_min":0.5,"y_max":0.15,"z_min":0.47,"z_max":0.135})
@@ -186,8 +199,9 @@ func create_joints(skeleton: Skeleton3D) -> void:
 		
 		hips = JointController.new(skeleton,Bones.HIPS_BONE,{"x_min":1,"x_max":1,"y_min":1,"y_max":1,"z_min":1,"z_max":1})
 		pelvis = JointController.new(skeleton,Bones.PELVIS_BONE,{"y_min":0.123,"y_max":0.123,"z_min":0.150,"z_max":0.150})
-		abdomen = JointController.new(skeleton,Bones.ABDOMEN_BONE_2,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
-		neck = JointController.new(skeleton,Bones.NECK_BONE)
+		abdomen_1 = JointController.new(skeleton,Bones.ABDOMEN_BONE_1,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
+		abdomen_2 = JointController.new(skeleton,Bones.ABDOMEN_BONE_2,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
+		chest = JointController.new(skeleton,Bones.CHEST_BONE,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
 		
 		left_hip = JointController.new(skeleton,Bones.HIP_LEFT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.1,"y_max":0.15,"z_min":0.11,"z_max":0.19})
 		right_hip = JointController.new(skeleton,Bones.HIP_RIGHT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.15,"y_max":0.1,"z_min":0.19,"z_max":0.11})
@@ -215,49 +229,89 @@ func create_springs(skeleton: Skeleton3D) -> void:
 
 
 func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
-	add_limb_ik(skeleton,parent,_left_arm,Bones.SHOULDER_LEFT_BONE,"LeftArm","Hand",Vector3(0.2,1,-0.5))
-	add_limb_ik(skeleton,parent,_right_arm,Bones.SHOULDER_RIGHT_BONE,"RightArm","Hand",Vector3(-0.2,1,-0.5))
+	add_head_ik(skeleton,parent,_head,Bones.HEAD_BONE)
 	
-	add_limb_ik(skeleton,parent,_left_leg,Bones.HIP_LEFT_BONE,"LeftLeg","Foot",Vector3(0.1,1,1))
-	add_limb_ik(skeleton,parent,_right_leg,Bones.HIP_RIGHT_BONE,"RightLeg","Foot",Vector3(-0.1,1,1))
+	add_limb_ik("Left","Arm","Hand",skeleton,parent,_left_arm,Bones.SHOULDER_LEFT_BONE,Vector3(0.2,1,-0.5))
+	add_limb_ik("Right","Arm","Hand",skeleton,parent,_right_arm,Bones.SHOULDER_RIGHT_BONE,Vector3(-0.2,1,-0.5))
+	
+	add_limb_ik("Left","Leg","Foot",skeleton,parent,_left_leg,Bones.HIP_LEFT_BONE,Vector3(0.1,1,1))
+	add_limb_ik("Right","Leg","Foot",skeleton,parent,_right_leg,Bones.HIP_RIGHT_BONE,Vector3(-0.1,1,1))
 
 
-func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int,node_name: String,target_name: String,pole_position: Vector3):
+func add_head_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int):
+	var ik_node := LookAtModifier3D.new()
+	ik_node.name = "HeadIK"
+	ik_node.bone = start_bone
+	ik_node.active = false
+	
+	var container : Node3D = skeleton.find_child("IKControllers")
+	if not container:
+		container = Node3D.new()
+		container.name = "IKControllers"
+		skeleton.add_child(container)
+		container.owner = parent
+	
+	var target_origin := Node3D.new()
+	target_origin.name = "LookAtOrigin"
+	target_origin.position = Vector3(0,1.65,0)
+	container.add_child(target_origin)
+	target_origin.owner = parent
+	
+	var target_node := MeshInstance3D.new()
+	target_node.name = "LookAtTarget"
+	target_node.position = Vector3(0,0,1)
+	add_placeholder(target_node,Color(0,0,1),0.025)
+	
+	target_origin.add_child(target_node)
+	target_node.owner = parent
+	
+	ik_node.set_target_node(target_node.get_path())
+	
+	skeleton.add_child(ik_node)
+	ik_node.owner = parent
+	
+	controller.ik = ik_node
+	controller.ik_target = target_origin
+
+
+func add_limb_ik(side: String,limb: String,handle: String,skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int,pole_position: Vector3):
 	var ik_node := TwoBoneIK3D.new()
-	ik_node.name = node_name + "IK"
+	ik_node.name = side+limb+"IK"
 	ik_node.set_setting_count(1)
 	ik_node.set_root_bone(0,start_bone)
 	ik_node.set_middle_bone(0,start_bone+1)
-	ik_node.set_end_bone(0,start_bone+2)
+	ik_node.set_end_bone(0,start_bone+3)
 	ik_node.active = false
 	
-	var container := Node.new()
-	container.name = "IK"
-	controller.add_child(container)
-	container.owner = parent
+	var container : Node3D = skeleton.find_child("IKControllers")
+	if not container:
+		container = Node3D.new()
+		container.name = "IKControllers"
+		skeleton.add_child(container)
+		container.owner = parent
 	
 	var target_node := MeshInstance3D.new()
-	target_node.name = target_name
+	target_node.name = side+handle
 	container.add_child(target_node)
 	target_node.owner = parent
 	
-	if target_name == "Foot":
-		var toes := MeshInstance3D.new()
-		toes.name = "Toes"
-		toes.position = Vector3(0,0,.25)
-		add_placeholder(toes,Color(1,0,0),0.01)
-		
-		target_node.add_child(toes)
-		toes.owner = parent
-		
-		var ik_toes := LookAtModifier3D.new()
-		ik_toes.bone = start_bone+3
-		ik_toes.target_node = toes.get_path()
-		skeleton.add_child(ik_toes)
-		ik_toes.owner = parent
+	#if target_name == "Foot":
+		#var toes := MeshInstance3D.new()
+		#toes.name = "Toes"
+		#toes.position = Vector3(0,0,.25)
+		#add_placeholder(toes,Color(1,0,0),0.01)
+		#
+		#target_node.add_child(toes)
+		#toes.owner = parent
+		#
+		#var ik_toes := LookAtModifier3D.new()
+		#ik_toes.bone = start_bone+3
+		#ik_toes.target_node = toes.get_path()
+		#skeleton.add_child(ik_toes)
+		#ik_toes.owner = parent
 	
 	var pole_node := MeshInstance3D.new()
-	pole_node.name = "Pole"
+	pole_node.name = side+limb+"Pole"
 	pole_node.position = pole_position
 	container.add_child(pole_node)
 	pole_node.owner = parent
@@ -293,10 +347,12 @@ func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) ->
 
 
 func create_controllers( )-> void:
-	_torso = PersonTorso.new("Torso",hips,self)
+	_head = PersonHead.new("Head",head,neck,self)
 	
 	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
 	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
+	
+	_torso = PersonTorso.new("Torso",hips,pelvis,abdomen_1,abdomen_2,chest,self)
 	
 	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
 	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)

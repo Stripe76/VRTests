@@ -40,7 +40,7 @@ func _ready() -> void:
 	#$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)
 	
 	if not Engine.is_editor_hint():
-		$AnimationPlayer.play("walking")
+		$AnimationPlayer.play("walking_ik")
 
 
 func set_target(target: Node3D):
