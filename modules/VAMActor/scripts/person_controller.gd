@@ -92,8 +92,8 @@ func update_weight_on(apply : bool = true) -> Vector3:
 		var delta : Vector3 = current_weight_on.wo_position - _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).origin
 		
 		if apply:
-			#delta.x = 0
-			#delta.z = 0
+			delta.x = 0
+			delta.z = 0
 			_skeleton.position = _skeleton_offset + delta
 		return delta
 	return Vector3()
@@ -236,10 +236,23 @@ func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone
 	
 	var target_node := MeshInstance3D.new()
 	target_node.name = target_name
-	target_node.visible = Engine.is_editor_hint()
-	
 	container.add_child(target_node)
 	target_node.owner = parent
+	
+	if target_name == "Foot":
+		var toes := MeshInstance3D.new()
+		toes.name = "Toes"
+		toes.position = Vector3(0,0,.25)
+		add_placeholder(toes,Color(1,0,0),0.01)
+		
+		target_node.add_child(toes)
+		toes.owner = parent
+		
+		var ik_toes := LookAtModifier3D.new()
+		ik_toes.bone = start_bone+3
+		ik_toes.target_node = toes.get_path()
+		skeleton.add_child(ik_toes)
+		ik_toes.owner = parent
 	
 	var pole_node := MeshInstance3D.new()
 	pole_node.name = "Pole"
@@ -250,8 +263,8 @@ func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone
 	add_placeholder(pole_node,Color(0,1,0))
 	add_placeholder(target_node,Color(1,0,0))
 	
-	ik_node.set_target_node(0,"../../PersonController/" + controller.name + "/" + container.name + "/" + target_node.name)
-	ik_node.set_pole_node(0,"../../PersonController/" + controller.name + "/" + container.name + "/" + pole_node.name)
+	ik_node.set_pole_node(0,pole_node.get_path())
+	ik_node.set_target_node(0,target_node.get_path())
 	
 	skeleton.add_child(ik_node)
 	ik_node.owner = parent
@@ -261,14 +274,14 @@ func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone
 	controller.ik_target = target_node
 
 
-func add_placeholder(mesh: MeshInstance3D,color: Color) -> void:
+func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) -> void:
 	var material := StandardMaterial3D.new()
 	material.albedo_color =  color
-	material.no_depth_test = true	
+	material.no_depth_test = true
 	
 	var sphere := SphereMesh.new()
-	sphere.radius = 0.025
-	sphere.height = 0.05
+	sphere.radius = radius
+	sphere.height = radius * 2
 	sphere.rings = 8
 	sphere.radial_segments = 16
 	sphere.material = material
@@ -308,8 +321,8 @@ func create_collisions(parent: Node3D,skeleton: Skeleton3D):
 	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
 	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
 	
-	add_physical_bone(skeleton,Bones.ANKLE_LEFT_BONE,parent,_left_leg)
-	add_physical_bone(skeleton,Bones.ANKLE_RIGHT_BONE,parent,_right_leg)
+	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent,_left_leg)
+	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent,_right_leg)
 
 
 func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):

@@ -12,16 +12,18 @@ signal weight_on_changed
 		return weight_on
 @export var pinned_on: bool = false:
 	set(value):
-		pinned_on = value
-		if pinned_on:
+		if value and pinned_on != value:
+			print("Yep!")
 			front = 0
 			side = 0
 			height = 0
 			
 			ik_position = ik_bone.global_position
 			ik_target.global_position = ik_position
+			print(ik_position)
 		if ik:
 			ik.active = value;
+		pinned_on = value
 	get:
 		return pinned_on
 

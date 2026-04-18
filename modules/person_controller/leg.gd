@@ -36,13 +36,20 @@ class_name PersonLeg extends PersonLimb
 		update_pose()
 	get:
 		return twist
-@export_range(-1,1) var ankle : float = 0:
+@export_range(-1,1) var ankle_side : float = 0:
 	
 	set(value):
-		ankle = value
+		ankle_side = value
 		update_pose()
 	get:
-		return ankle
+		return ankle_side
+@export_range(-1,1) var ankle_front : float = 0:
+	
+	set(value):
+		ankle_front = value
+		update_pose()
+	get:
+		return ankle_front
 
 @export_group("Multipliers")
 @export_range(0,1) var hips_vertical_min : float = 1:
@@ -123,7 +130,7 @@ var _pelvis : JointController
 var _knee : JointController
 var _ankle : JointController
 
-func _init(limb_name: String,hip : JointController,pelvis : JointController,knee : JointController,foot : JointController,parent: Node3D) -> void:
+func _init(limb_name: String,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
 	name = limb_name
 	parent.add_child(self)
 	owner = parent.get_parent()
@@ -131,7 +138,7 @@ func _init(limb_name: String,hip : JointController,pelvis : JointController,knee
 	_hip = hip
 	_pelvis = pelvis
 	_knee = knee
-	_ankle = foot
+	_ankle = ankle
 
 
 func update_pose():
@@ -144,4 +151,5 @@ func update_pose():
 	
 	_knee.pose_x = straight * (straight_max if straight > 0 else straight_min)
 	
-	_ankle.pose_z = ankle
+	_ankle.pose_z = ankle_side
+	_ankle.pose_x = ankle_front
