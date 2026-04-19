@@ -39,7 +39,7 @@ class_name PersonHead extends Node
 	set(value):
 		up_down = value
 		if ik_target:
-			ik_target.rotation.x = -up_down * PI/5.0
+			ik_target.rotation.x = up_down * PI/5.0
 	get:
 		return up_down
 @export_range(-1,1) var left_right: float:

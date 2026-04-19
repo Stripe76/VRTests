@@ -250,6 +250,7 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone
 		container.name = "IKControllers"
 		skeleton.add_child(container)
 		container.owner = parent
+		container.visible = false
 	
 	var target_origin := Node3D.new()
 	target_origin.name = "LookAtOrigin"

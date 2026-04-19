@@ -1,9 +1,22 @@
 [gd_scene format=3 uid="uid://dkpvupck5lb4d"]
 
 [ext_resource type="Script" uid="uid://m3rl1cqv77dl" path="res://modules/VAMActor/scripts/vam_actor.gd" id="1_pcuk1"]
+[ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="2_0kabd"]
 
 [sub_resource type="Animation" id="Animation_b8mxy"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PersonController/Torso:tilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.02400000000000002]
+}
 
 [sub_resource type="Animation" id="Animation_fm15u"]
 resource_name = "jump"
@@ -558,7 +571,8 @@ _data = {
 &"jump": SubResource("Animation_fm15u"),
 &"new_animation": SubResource("Animation_0kabd"),
 &"walking": SubResource("Animation_gdd01"),
-&"walking_ik": SubResource("Animation_60kmb")
+&"walking_ik": SubResource("Animation_60kmb"),
+&"walking_ik 2": ExtResource("2_0kabd")
 }
 
 [sub_resource type="Animation" id="Animation_qwgur"]
@@ -617,6 +631,6 @@ root_node = NodePath("../VAMSkeleton")
 libraries/ = SubResource("AnimationLibrary_k8ylq")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2087755849]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.0033645295, -0.0074919164, 0.007217467)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.0033645295, -0.029810548, 0.007217467)
 mesh = SubResource("QuadMesh_60kmb")
 surface_material_override/0 = SubResource("StandardMaterial3D_60kmb")
