@@ -71,10 +71,10 @@ func generate_collision_shapes() -> void:
 		push_error("PhysicalBoneSimulator3D not found. Set physical_simulator_path.")
 		return
 	
-	generate_shapes(skeleton,simulator,mesh_instance)
+	generate_shapes(skeleton,simulator,mesh_instance,"")
 
 
-func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3D) -> void:
+func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3D,filter: String) -> void:
 	var meshes: Array = []
 	if mesh_instance is MeshInstance3D:
 		meshes.append(mesh_instance)
@@ -96,7 +96,7 @@ func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3
 		
 		var physical_bone_node: Node3D = simulator.find_child(bone_name)
 		if physical_bone_node is BoneAttachment3D:
-			physical_bone_node = physical_bone_node.find_child(bone_name)
+			physical_bone_node = physical_bone_node.find_child(filter)
 			
 		if not physical_bone_node:
 			continue
@@ -117,7 +117,7 @@ func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3
 			var local_v = inv_phys_xform * global_v
 			transformed_points.append(local_v)
 		
-		transformed_points = _unique_points(transformed_points, 0.001)		
+		transformed_points = _unique_points(transformed_points, 0.001)
 		
 		#var shape = generate_shape(transformed_points,use_capsules)
 		
@@ -167,7 +167,8 @@ func generate_shape(cs: CollisionShape3D,transformed_points : Array,capsules: bo
 			shape = ConvexPolygonShape3D.new()
 			var pva := PackedVector3Array()
 			for p in transformed_points:
-				pva.append(p *0.85)
+				#pva.append(p *0.85)
+				pva.append(p)
 			shape.points = pva
 		else:
 			var aabb := _points_aabb(transformed_points)
@@ -206,7 +207,7 @@ func generate_bones_vertices(skeleton: Skeleton3D,meshes: Array)-> Dictionary:
 			var bones_arr = arrays[ARRAY_BONES]
 			var weights_arr = arrays[ARRAY_WEIGHTS]
 			
-			if bones_arr.size() < verts.size() * 4 or weights_arr.size() < verts.size() * 4:
+			if bones_arr.size() < verts.size() * 8 or weights_arr.size() < verts.size() * 8:
 				continue
 			
 			#print("Surface: ", s, " Verts: ", verts.size(), " Bones_length: ", bones_arr.size(), " Weights_length: ", weights_arr.size())
@@ -218,7 +219,7 @@ func generate_bones_vertices(skeleton: Skeleton3D,meshes: Array)-> Dictionary:
 					var bidx := int(bones_arr[base_idx + j])
 					var w := float(weights_arr[base_idx + j])
 					if w >= weight_threshold and bidx >= 0 and bidx < bone_count:
-						bone_vertex_map[bidx].append(v)	
+						bone_vertex_map[bidx].append(v)
 	
 	return bone_vertex_map
 

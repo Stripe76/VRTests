@@ -16,6 +16,7 @@ class_name VAMActor extends Node3D
 @onready var right_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 
 var _mesh := VAMMesh.new()
+var _hair := VAMHair.new()
 var _skeleton := VAMSkeleton.new()
 
 var _mesh_thread : Thread
@@ -26,6 +27,7 @@ func _ready() -> void:
 	print("--- VAMActor._ready")
 
 	_mesh.name = "VAMMesh"
+	_hair.name = "VAMHair"
 	_skeleton.name = "VAMSkeleton"
 	_skeleton.skeleton_updated.connect( skeleton_updated )
 	
@@ -53,9 +55,13 @@ func _process(_delta: float) -> void:
 
 func generate_model():
 	var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-
-	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json")
-	load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
+	
+	load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Gina/Custom/Hair/Female/RenVR/RenVR/Jessica Alva (REN).vab")
+	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","ddaamm.hair_short5.4/Custom/Hair/Female/ddaamm/ddaamm/ddaamm short5 bang.vab")
+	
 	#load_scene(daz_model,null,"","","")
 
 
@@ -74,10 +80,10 @@ func _exit_tree():
 		#materials_thread.free()
 
 
-func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,materials : bool = true):
+func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
 	load_skeleton(daz_model)
 	
-	load_mesh(daz_model,genitals_model,scene_folder,scene_file)
+	load_mesh(daz_model,genitals_model,scene_folder,scene_file,library_folder+hair_file)
 	if materials:
 		load_materials_async(library_folder,scene_folder,scene_file)
 	
@@ -116,15 +122,15 @@ func load_skeleton(base_model: Daz3DMesh):
 	right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
 
 
-func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):
+func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String,hair_file: String):
 	if _mesh_thread:
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
-	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file))
+	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file,hair_file))
 
 
-func load_mesh_async_done():
+func load_mesh_async_done(hair_file: String):
 	_mesh.mesh = _mesh.full_body
 	
 	if _mesh.left_eye:
@@ -139,12 +145,27 @@ func load_mesh_async_done():
 		var person_controller : PersonController = find_child("PersonController")
 		if person_controller:
 			person_controller.create_collisions_shapes(_skeleton,_mesh)
+			
+			load_hair(hair_file,_mesh.head_tris)
 
 
-func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String):
+func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String,hair_file: String):
 	_mesh.load_mesh(daz_model,genitals_model,scene_folder,scene_file)
 	
-	call_deferred("load_mesh_async_done")
+	call_deferred("load_mesh_async_done",hair_file)
+
+
+func load_hair(hair_file: String,head_tris: Dictionary):
+	var parent : Node3D = _skeleton.find_child("head 25")
+	if not parent:
+		parent = self
+	
+	parent.add_child(_hair)
+	_hair.owner = self
+	
+	head_tris["Origin"] = parent.position
+	
+	_hair.generate_hair(hair_file,head_tris)
 
 
 func load_materials_async(library_folder: String,scene_folder: String,scene_file: String):

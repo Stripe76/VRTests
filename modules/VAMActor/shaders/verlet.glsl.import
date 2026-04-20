@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://c7vumaq8ivr4w"
+path="res://.godot/imported/verlet.glsl-b5104af96d76b401334063daa92e0d47.res"
+
+[deps]
+
+source_file="res://modules/VAMActor/shaders/verlet.glsl"
+dest_files=["res://.godot/imported/verlet.glsl-b5104af96d76b401334063daa92e0d47.res"]
+
+[params]
+

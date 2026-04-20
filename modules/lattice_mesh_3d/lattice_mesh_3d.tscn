@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://co6dh5fgxum3t"]
+
+[ext_resource type="Script" uid="uid://mfs0h8dxp0le" path="res://modules/lattice_mesh_3d/scripts/lattice_mesh_3d.gd" id="1_dbrkj"]
+
+[sub_resource type="TextMesh" id="TextMesh_0f8w8"]
+text = "Hello world!"
+
+[node name="LatticeMesh3D" type="MeshInstance3D" unique_id=2110114107]
+transform = Transform3D(0.9999686, 0, 0, 0, 0.999959, 0, 0, 0, 0.99999845, -0.30638146, 0.00406754, 0.741682)
+mesh = SubResource("TextMesh_0f8w8")
+script = ExtResource("1_dbrkj")
+_size = Vector3(1, 1.9999999, 1)
+_offset = Vector3(0, -5.9604645e-08, 0)
+_particles = Vector3i(4, 4, 1)

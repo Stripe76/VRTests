@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cdm6ank8n8pc6"
+path="res://.godot/imported/verlet.glsl-f494b7211431221257b1d39db1a39e45.res"
+
+[deps]
+
+source_file="res://modules/lattice_mesh_3d/shaders/verlet.glsl"
+dest_files=["res://.godot/imported/verlet.glsl-f494b7211431221257b1d39db1a39e45.res"]
+
+[params]
+

@@ -16,7 +16,7 @@ extends MeshInstance3D
 @export var hair_material := Material.new()
 
 @export_group("Surfaces")
-var mesh_surfaces : Array
+var head_tris : Dictionary
 
 enum {MESH_BODY = 0, MESH_LEFT_EYE = 1, MESH_RIGHT_EYE = 2}
 enum {MATERIAL_HEAD = 0, MATERIAL_BODY = 1, MATERIAL_LIMBS = 2, MATERIAL_GENITALS = 3, MATERIAL_LEFT_EYE = 4, MATERIAL_RIGHT_EYE = 5, MATERIAL_OTHER = -1}
@@ -153,8 +153,6 @@ func set_weights(model_weights: Array):
 
 
 func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array) -> Array:
-	#var full_mesh_normals := generate_normals(daz_model,model_vertices,model_indices,model_uvs,model_weights)
-	
 	var surfaces := []
 	for i in 6:
 		surfaces.push_back({ 
@@ -167,11 +165,14 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			"colors" : PackedColorArray(),
 			} )
 	
+	var head_vertices := []
+	var head_normalized := []
+	
 	var tris : int = 0
-	var actual_tris : int = 0
 	var bones_number := 8
 	for material in daz_model.materials:
 		var map : int = map_material(material)
+			
 		if map >= 0 and map < surfaces.size():
 			var surface = surfaces[map]
 			var mesh_vertices : PackedVector3Array = surface["vertices"]
@@ -185,42 +186,49 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 	
 			mesh_vertices.push_back(model_vertices[index])
 			mesh_uvs.push_back(model_uvs[index])
-			#mesh_normals.push_back(full_mesh_normals[actual_tris])
-			mesh_normals.push_back(model_normals[index])			
+			mesh_normals.push_back(model_normals[index])
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])			
 			mesh_colors.push_back(int_to_color(index))
+			
+			if material == 15 or material == 11:
+				head_vertices.push_back(model_vertices[index])
+				head_normalized.push_back(model_vertices[index].normalized())
 			tris += 1
-			actual_tris += 1
 		
 			index = model_indices[tris]
 			mesh_uvs.push_back(model_uvs[index])
 			mesh_vertices.push_back(model_vertices[index])
-			#mesh_normals.push_back(full_mesh_normals[actual_tris])
-			mesh_normals.push_back(model_normals[index])			
-			for c in bones_number:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			
-			mesh_colors.push_back(int_to_color(index))
-			tris += 1
-			actual_tris += 1
-		
-			index = model_indices[tris]
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_vertices.push_back(model_vertices[index])
-			#mesh_normals.push_back(full_mesh_normals[actual_tris])
 			mesh_normals.push_back(model_normals[index])
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
 				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
 			mesh_colors.push_back(int_to_color(index))
+			
+			if material == 15 or material == 11 or material == 18:
+				head_vertices.push_back(model_vertices[index])
+				head_normalized.push_back(model_vertices[index].normalized())
 			tris += 1
-			actual_tris += 1
+			
+			index = model_indices[tris]
+			mesh_uvs.push_back(model_uvs[index])
+			mesh_vertices.push_back(model_vertices[index])
+			mesh_normals.push_back(model_normals[index])
+			for c in bones_number:
+				mesh_bones.push_back(model_weights[index]["s"][c*2])
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+			mesh_colors.push_back(int_to_color(index))
+			
+			if material == 15 or material == 11:
+				head_vertices.push_back(model_vertices[index])
+				head_normalized.push_back(model_vertices[index].normalized())
+			tris += 1
 		else:
 			tris += 3
+	
+	head_tris["Vertices"] = head_vertices
+	head_tris["Normalized"] = head_normalized
 	
 	var arrays = []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -256,63 +264,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			else:
 				surface_tool.commit(array_mesh)
 	
-	mesh_surfaces = surfaces
-	
 	return [body_mesh,left_eye_mesh,right_eye_mesh]
-
-
-func generate_normals(base_model: Daz3DMesh,model_vertices: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array) -> PackedVector3Array:
-	var surfaces := {}
-	var tris : int = 0
-	for material in base_model.materials:
-		var map : int = map_material(material)
-		if map >= 0:
-			map = 0
-			
-			if not surfaces.has(map):
-				surfaces[map] = {}
-				surfaces[map]["vertexes"] = PackedVector3Array()
-				surfaces[map]["uvs"] = PackedVector2Array()
-			
-			var surface = surfaces[map]
-			var mesh_vertices : PackedVector3Array = surface["vertexes"]
-			var mesh_uvs : PackedVector2Array = surface["uvs"]
-			
-			var index = model_indices[tris]
-			
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_vertices.push_back(model_vertices[index])
-			tris += 1
-		
-			index = model_indices[tris]
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_vertices.push_back(model_vertices[index])
-			tris += 1
-		
-			index = model_indices[tris]
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_vertices.push_back(model_vertices[index])
-			tris += 1
-		else:
-			tris += 3
-	
-	var arrays = []
-	arrays.resize(Mesh.ARRAY_MAX)
-	
-	var surface_tool = SurfaceTool.new()
-	for key in surfaces.keys():
-		var surface = surfaces[key]
-		arrays[Mesh.ARRAY_VERTEX] = surface["vertexes"]
-		arrays[Mesh.ARRAY_TEX_UV] = surface["uvs"]
-		
-		surface_tool.create_from_arrays(arrays)
-	
-	surface_tool.generate_normals( )
-	surface_tool.generate_tangents( )
-	
-	var mesh_arrays := surface_tool.commit_to_arrays()
-	
-	return mesh_arrays[Mesh.ARRAY_NORMAL]
 
 
 func int_to_color(value: int) -> Color:
@@ -509,37 +461,37 @@ func load_textures(scene_data : Dictionary,library_path : String,scene_path : St
 	#"tongue"
 
 static var mappings = [
-					MATERIAL_LIMBS, #"Legs",
-					-1, #"EyeReflection",
-					MATERIAL_HEAD, #"Nostrils",
-					MATERIAL_HEAD, #"Lacrimals",
-					-1, #"Pupils",
-					MATERIAL_HEAD, #"Lips",
-					-1, #"Tear",
-					MATERIAL_HEAD, #"Gums",
-					-1, #"Irises",
-					MATERIAL_HEAD, #"Teeth",
-					-1, #"Cornea",
-					MATERIAL_HEAD, #"Face",
-					MATERIAL_LIMBS, #"Toenails",
-					-1, #"Sclera",
-					MATERIAL_LIMBS, #"Fingernails",
-					MATERIAL_HEAD, #"Head",
-					MATERIAL_LIMBS, #"Hands",
-					MATERIAL_LIMBS, #"Shoulders",
-					MATERIAL_BODY, #"Neck",
-					MATERIAL_BODY, #"Hips",
-					MATERIAL_BODY, #"Torso",
-					MATERIAL_BODY, #"Nipples",
-					MATERIAL_LIMBS, #"Forearms",
-					MATERIAL_LIMBS, #"Feet",
-					-1, #"Eyelashes",
-					MATERIAL_HEAD, #"Tongue",
-					MATERIAL_HEAD, #"InnerMouth",
-					MATERIAL_HEAD, #"Ears"
-					MATERIAL_LEFT_EYE, #"LeftSclera"
-					MATERIAL_RIGHT_EYE, #"RightSclera"
-					MATERIAL_GENITALS, #"Genitals"
+					MATERIAL_LIMBS, #"Legs" 0,
+					-1, #"EyeReflection" 1,
+					MATERIAL_HEAD, #"Nostrils" 2,
+					MATERIAL_HEAD, #"Lacrimals" 3,
+					-1, #"Pupils" 4,
+					MATERIAL_HEAD, #"Lips" 5,
+					-1, #"Tear" 6,
+					MATERIAL_HEAD, #"Gums" 7,
+					-1, #"Irises" 8,
+					MATERIAL_HEAD, #"Teeth" 9,
+					-1, #"Cornea" 10,
+					MATERIAL_HEAD, #"Face" 11,
+					MATERIAL_LIMBS, #"Toenails" 12,
+					-1, #"Sclera" 13,
+					MATERIAL_LIMBS, #"Fingernails" 14,
+					MATERIAL_HEAD, #"Head" 15,
+					MATERIAL_LIMBS, #"Hands" 16,
+					MATERIAL_LIMBS, #"Shoulders" 17,
+					MATERIAL_BODY, #"Neck" 18,
+					MATERIAL_BODY, #"Hips" 19,
+					MATERIAL_BODY, #"Torso" 20,
+					MATERIAL_BODY, #"Nipples" 21,
+					MATERIAL_LIMBS, #"Forearms" 21,
+					MATERIAL_LIMBS, #"Feet" 22,
+					-1, #"Eyelashes" 24,
+					MATERIAL_HEAD, #"Tongue" 25,
+					MATERIAL_HEAD, #"InnerMouth" 26,
+					MATERIAL_HEAD, #"Ears" 27
+					MATERIAL_LEFT_EYE, #"LeftSclera" 28
+					MATERIAL_RIGHT_EYE, #"RightSclera" 29
+					MATERIAL_GENITALS, #"Genitals" 30
 					]
 
 

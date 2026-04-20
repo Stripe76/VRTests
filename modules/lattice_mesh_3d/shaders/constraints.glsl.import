@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cuob7qgtmn05b"
+path="res://.godot/imported/constraints.glsl-40a18987f94823fda62d40c31cdef1a2.res"
+
+[deps]
+
+source_file="res://modules/lattice_mesh_3d/shaders/constraints.glsl"
+dest_files=["res://.godot/imported/constraints.glsl-40a18987f94823fda62d40c31cdef1a2.res"]
+
+[params]
+

@@ -1,6 +1,9 @@
 @tool
 class_name PersonController extends Node3D
 
+const MESH_MASK := 0b0000_0000_0000_0000_0000_0001_0000_0000
+const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
+
 @export_tool_button("Reset","Reload") var reset_action = reset_pose
 
 @export_group("Head")
@@ -238,6 +241,42 @@ func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
 	add_limb_ik("Right","Leg","Foot",skeleton,parent,_right_leg,Bones.HIP_RIGHT_BONE,Vector3(-0.1,1,1))
 
 
+func create_controllers( )-> void:
+	_head = PersonHead.new("Head",head,neck,self)
+	
+	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
+	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
+	
+	_torso = PersonTorso.new("Torso",hips,pelvis,abdomen_1,abdomen_2,chest,self)
+	
+	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
+	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)
+	
+	_left_leg.weight_on_changed.connect(weight_on_changed)
+	_right_leg.weight_on_changed.connect(weight_on_changed)
+
+
+func create_collisions(parent: Node3D,skeleton: Skeleton3D):
+	add_physical_bone(skeleton,Bones.HEAD_BONE,parent)
+	
+	add_physical_bone(skeleton,59,parent)
+	add_physical_bone(skeleton,38,parent)
+	
+	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
+	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
+	
+	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent,_left_leg)
+	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent,_right_leg)
+
+
+func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
+	var shapes := GenerateCollisionShape.new()
+	shapes.remove_existing_collision_shapes = true
+	shapes.generate_shapes(skeleton,skeleton,mesh,"Mesh")
+	shapes.use_capsules = true
+	shapes.generate_shapes(skeleton,skeleton,mesh,"Capsule")
+
+
 func add_head_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int):
 	var ik_node := LookAtModifier3D.new()
 	ik_node.name = "HeadIK"
@@ -347,21 +386,6 @@ func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) ->
 	mesh.visible = Engine.is_editor_hint()
 
 
-func create_controllers( )-> void:
-	_head = PersonHead.new("Head",head,neck,self)
-	
-	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
-	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
-	
-	_torso = PersonTorso.new("Torso",hips,pelvis,abdomen_1,abdomen_2,chest,self)
-	
-	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
-	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)
-	
-	_left_leg.weight_on_changed.connect(weight_on_changed)
-	_right_leg.weight_on_changed.connect(weight_on_changed)
-
-
 func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
 	var cog = CenterOfGravity.new(skeleton,)
 	cog.name = "CoG"
@@ -373,24 +397,6 @@ func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
 	
 	#if Engine.is_editor_hint():
 	#	cog.mesh = parent.find_child("CoG")
-
-
-func create_collisions(parent: Node3D,skeleton: Skeleton3D):
-	add_physical_bone(skeleton,59,parent)
-	add_physical_bone(skeleton,38,parent)
-	
-	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
-	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
-	
-	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent,_left_leg)
-	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent,_right_leg)
-
-
-func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
-	var shapes := GenerateCollisionShape.new()
-	shapes.use_capsules = true
-	shapes.remove_existing_collision_shapes = true
-	shapes.generate_shapes(skeleton,skeleton,mesh)
 
 
 func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
@@ -423,22 +429,28 @@ func add_physical_bone(skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : 
 	var bone = BoneAttachment3D.new()
 	bone.name = bone_name
 	bone.bone_idx = bone_idx
+
+	var mesh = Area3D.new()
+	mesh.name = "Mesh"
+	mesh.collision_layer = MESH_MASK
+	bone.add_child(mesh)
 	
-	var area = PersonHandle.new()
-	area.name = bone_name
-	area.collision_layer = XRToolsFunctionPickup.DEFAULT_GRAB_MASK
+	var capsule = PersonHandle.new()
+	capsule.name = "Capsule"
+	capsule.collision_layer = CAPSULE_MASK
 	#if bones_vertices.size() > 0:
 	#	bone.spring_pusher = add_spring_pusher(bone_name,skeleton.find_child(name),collision,parent)
-	bone.add_child(area)
+	bone.add_child(capsule)
 	
 	if limb:
-		area.limb = limb
+		capsule.limb = limb
 		limb.ik_bone = bone
 		limb.ik_bone_idx = bone_idx
 	
 	skeleton.add_child(bone)
 	bone.owner = parent
-	area.owner = parent
+	mesh.owner = parent
+	capsule.owner = parent
 
 
 func add_spring_pusher(pusher_name:String,bone: SpringBoneSimulator3D,shape: CollisionShape3D,parent: Node3D):

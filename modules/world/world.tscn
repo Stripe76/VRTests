@@ -630,14 +630,13 @@ surface_material_override/0 = SubResource("StandardMaterial3D_vsd7t")
 
 [node name="Lights" type="Node" parent="." unique_id=1400390997]
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Lights" unique_id=804032844]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.530759, 1.58773, 1)
+[node name="OmniLight3D" type="DirectionalLight3D" parent="Lights" unique_id=1093542120]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5444683, 1.818098, 0.3131745)
 light_energy = 0.354
-omni_range = 8.787
-omni_attenuation = 2.102
 
 [node name="OmniLight3D4" type="OmniLight3D" parent="Lights" unique_id=137661104]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, 1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34650087, 1.8618711, 2.0672631)
+visible = false
 light_energy = 2.0
 shadow_enabled = true
 omni_range = 8.787
@@ -645,7 +644,6 @@ omni_attenuation = 2.102
 
 [node name="OmniLight3D5" type="OmniLight3D" parent="Lights" unique_id=512499761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, -0.386623)
-visible = false
 shadow_enabled = true
 omni_range = 8.787
 omni_attenuation = 2.102
@@ -665,19 +663,17 @@ omni_range = 8.787
 omni_attenuation = 2.102
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="Lights" unique_id=1407702166]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.30543, 0.537257, 0.453503)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9376436, 1.6540178, 0.14426956)
 visible = false
 light_energy = 1.118
 shadow_enabled = true
 omni_range = 8.787
 omni_attenuation = 2.102
 
-[node name="OmniLight3D2" type="OmniLight3D" parent="Lights" unique_id=973228602]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.205346, 2.15334, 1.42753)
-visible = false
+[node name="OmniLight3D2" type="DirectionalLight3D" parent="Lights" unique_id=12316162]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.205346, 2.15334, 1.8342222)
 light_energy = 0.496
 light_indirect_energy = 0.748
-omni_range = 4.343
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=838419763]
 root_node = NodePath("../VAMActor")
@@ -686,3 +682,5 @@ autoplay = &"new_animation"
 speed_scale = 1.475
 
 [node name="VAMActor" parent="." unique_id=1805902460 instance=ExtResource("4_aqk2v")]
+
+[editable path="VAMActor"]
