@@ -616,7 +616,7 @@ update_scale = false
 
 [node name="Actor" type="AnimationPlayer" parent="." unique_id=87833383]
 libraries/ = SubResource("AnimationLibrary_gdd01")
-speed_scale = 1.377
+speed_scale = 1.692
 
 [node name="Skeleton" type="AnimationPlayer" parent="." unique_id=1325153257]
 root_node = NodePath("../VAMSkeleton")

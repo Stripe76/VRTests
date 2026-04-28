@@ -62,21 +62,21 @@ func load_mesh(base_model: Daz3DMesh,genitals_model: Mesh,vam_scene_folder: Stri
 	var model_linked : Dictionary = base_model.linked_vertices
 	
 	if vam_scene_file != "":
-		print("Scene loading",)
+		#print("Scene loading",)
 		var file := FileAccess.open(vam_scene_folder+vam_scene_file,FileAccess.READ)
 		if file:
 			var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
 			if scene_data:
-				print("Morphs application",)
+				#print("Morphs application",)
 				add_morphs(model_vertices,model_linked,scene_data,vam_scene_folder)
 	
-	print("Weights padding")
+	#print("Weights padding")
 	weights_padding(model_weights)
 	
-	print("Meshes creation")
+	#print("Meshes creation")
 	var meshes : Array = create_meshes(base_model,genitals_model,model_vertices,model_normals,model_indices,model_uvs,model_weights)
 	
-	print("Materials settings")
+	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
 	
 	full_body = meshes[MESH_BODY]
@@ -90,12 +90,12 @@ func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_fi
 		if file:
 			var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
 			if scene_data:
-				print("Textures loading")
+				#print("Textures loading")
 				var textures = load_textures(scene_data,library_folder,vam_scene_folder)
 	
 				textures["faceMicroDetailUrl"] = "/mnt/data/Projects/Godot/VRTests/modules/VAMActor/shaders/human_shaders/Resources/MicroDetail/skin_micro_nrm_ao.png"
 	
-				print("Material textures setting")
+				#print("Material textures setting")
 				set_materials_textures(self.mesh,textures)	
 
 
@@ -301,10 +301,11 @@ func add_morphs(vertices : PackedVector3Array,linked_vertices: Dictionary,scene_
 						var path = scene_folder + uid.substr(6)
 						var value : float =  m["value"].to_float( )
 						if path.contains("genitalia"):
-							print("Applying genitals deltas: ",path)
+							#print("Applying genitals deltas: ",path)
 							#apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value,24759)
+							continue
 						else:
-							print("Applying body deltas: ",path)
+							#print("Applying body deltas: ",path)
 							apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value)
 
 
@@ -312,8 +313,8 @@ func apply_deltas(vertices: PackedVector3Array, linked_vertices: Dictionary,delt
 	var mesh_count : int = vertices.size()
 	var deltas_count : int = deltas.size()
 	
-	print(" - Mesh vertices: ",mesh_count)
-	print(" - Delta vertices: ",deltas_count)
+	#print(" - Mesh vertices: ",mesh_count)
+	#print(" - Delta vertices: ",deltas_count)
 	
 	#deltas_count = 0
 	var minID : int = 65535
@@ -332,11 +333,11 @@ func apply_deltas(vertices: PackedVector3Array, linked_vertices: Dictionary,delt
 			if delta.id < minID: minID = delta.id
 			if delta.id > maxID: maxID = delta.id
 		else:
-			print("Delta ID too high: ",delta.id)
+			push_warning("Delta ID too high: ",delta.id)
 	
-	print(" - ID min: ",minID)
-	print(" - ID max: ",maxID)
-	print(" - Linked: ",linked)
+	#print(" - ID min: ",minID)
+	#print(" - ID max: ",maxID)
+	#print(" - Linked: ",linked)
 
 
 func set_materials_textures(array_mesh: ArrayMesh, textures : Dictionary):
@@ -502,8 +503,7 @@ func map_material(material : int) -> int:
 func read_binary_file(file_path: String):
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if file == null:
-		print("Failed to open file: ", file_path)
-		print("Error: ",error_string( FileAccess.get_open_error() ) )
+		push_error("Failed to open file: ", file_path, error_string( FileAccess.get_open_error() ))
 		return
 	
 	var data_points = []
