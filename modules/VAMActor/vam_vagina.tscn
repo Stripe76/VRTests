@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bia78lsy6h2wc"]
+
+[ext_resource type="Script" uid="uid://dqu4x67oslwy1" path="res://modules/VAMActor/scripts/vam_vagina.gd" id="1_tf6cw"]
+
+[node name="VAMVagina" type="MeshInstance3D" unique_id=949638534]
+script = ExtResource("1_tf6cw")
+set_stretch = 0.535
+_size = Vector3(0.421875, 0.421875, 0.421875)
+_offset = Vector3(-0.2890625, -0.2890625, -0.2890625)
+
+[node name="Top" type="Marker3D" parent="." unique_id=839082269]
+
+[node name="Bottom" type="Marker3D" parent="." unique_id=1475077625]
+
+[node name="Left" type="Marker3D" parent="." unique_id=477041690]
+
+[node name="Right" type="Marker3D" parent="." unique_id=1570113563]
+
+[node name="Center" type="Marker3D" parent="." unique_id=59137849]

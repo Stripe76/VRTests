@@ -9,6 +9,7 @@ class_name Daz3DMesh extends Resource
 @export var bones : Array
 @export var weights : Array
 @export var linked_vertices : Dictionary
+@export var vertex_groups : Dictionary
 
 
 func _init(p_detachment_leaders = []):
@@ -20,3 +21,4 @@ func _init(p_detachment_leaders = []):
 	bones = []
 	weights = []
 	linked_vertices = {}
+	vertex_groups = {}

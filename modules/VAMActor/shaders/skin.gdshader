@@ -24,12 +24,6 @@ uniform float skin_depth;
 uniform float blemish_value;
 uniform vec4 blemish_color : source_color = vec4(1.0);
 
-group_uniforms Standard_maps;
-uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
-uniform sampler2D texture_normal : hint_normal;
-uniform sampler2D standard_decal : source_color, filter_linear_mipmap, repeat_enable;
-group_uniforms;
-
 group_uniforms Shader_maps;
 uniform sampler2D diffuse_map;// : source_color, filter_linear_mipmap, repeat_enable;
 uniform sampler2D noise_img : source_color, filter_nearest_mipmap;
@@ -96,39 +90,4 @@ void vertex() {
 	VERTEX += (transformed * vec4(vec3(0), 0.0)).xyz;
 }
 
-void fragment() {
-	float noiseLight = texture(noise_img,UV*20.0*light_scale).g * light_value;
-	float noiseDark = texture(noise_img,UV*20.0*dark_scale).r * dark_value;
-	float noiseLarge = texture(noise_img,vertexPos.xy*(0.2*large_scale)).g * large_value;
-
-	vec3 color = mix(texture(diffuse_map,UV).rgb,base_skin.rgb,base_value);
-	//color = mix(color.rgb,large_noise.rgb,vec3(noiseLarge,noiseLarge,noiseLarge));
-	color = mix(color.rgb,light_noise.rgb,vec3(noiseLight,noiseLight,noiseLight));
-	color = mix(color.rgb,dark_noise.rgb,vec3(noiseDark,noiseDark,noiseDark));
-
-	if( texture(standard_decal,UV).a > 0.0 )
-		//ALBEDO = mix(color.rgb * texture(standard_diffuse,UV).rgb,texture(standard_decal,UV).rgb,texture(standard_decal,UV).a*1.5);
-		ALBEDO = mix(color.rgb * texture(texture_albedo,UV).rgb,texture(standard_decal,UV).rgb,texture(standard_decal,UV).a);
-	else
-		ALBEDO = color.rgb * texture(texture_albedo,UV).rgb;
-	//ALBEDO = vec3(0.5,0.5,0.5);
-	//vec3 nm = texture(normal_map,vec2(UV.x*20.0*skin_scale,UV.y*20.0*skin_scale)).rgb;
-	//nm.x = 1.0 - nm.x;
-	//float d = texture(blemish_map,UV).r;
-	//NORMAL_MAP_DEPTH = d * skin_depth;
-	//NORMAL_MAP_DEPTH = skin_depth;
-	NORMAL_MAP_DEPTH = 0.5;
-	NORMAL_MAP = texture(texture_normal,UV).rgb;
-	
-	float sss_strength_value = 0.2;
-	float smooth_depth = 1.0;
-	//SSS_STRENGTH = sss_strength_value * NORMAL_MAP.r * smooth_depth;
-
-	ROUGHNESS = .65;
-	//CLEARCOAT = texture(noise_img,vertexPos.xy).r;
-	//AO = 1.0;
-	METALLIC = .1;
-	//SSS_STRENGTH = .15;
-	//SSS_TRANSMITTANCE_COLOR = large_noise;
-	//SSS_TRANSMITTANCE_DEPTH = 1.5;
-}
+#include "includes/skin_fragment.gdshaderinc"

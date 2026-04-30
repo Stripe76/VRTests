@@ -42,19 +42,22 @@ func _get_import_options(path, preset_index):
 func _import(source_file, save_path, options, r_platform_variants, r_gen_files):
 	var file := FileAccess.open(source_file,FileAccess.READ)
 	var uv_file := FileAccess.open(source_file+".uv",FileAccess.READ)
+	var gen_file := FileAccess.open(source_file+".gen",FileAccess.READ)
 	var vam_file := FileAccess.open(source_file+".vam",FileAccess.READ)
-
+	
 	var data  = JSON.parse_string(file.get_as_text())
 	var uv_data  = JSON.parse_string(uv_file.get_as_text())
 	if not data or not uv_data:
 		return ERR_PARSE_ERROR
 	
+	var vertex_groups : Dictionary = {}
 	var vertices : PackedVector3Array = get_as_vertices_array(data,"geometry_library/vertices")
 	var normals : PackedVector3Array = PackedVector3Array()
 	var unused_indices : Dictionary
 	var vam_data : Dictionary
 	if vam_file:
 		vam_data = load_vam_data(vam_file,vertices.size())
+		vam_data = load_gen_data(vam_data,gen_file)
 		
 		var vam_vertices : PackedVector3Array = vam_data["vertices"]
 		var vam_normals : PackedVector3Array = vam_data["normals"]
@@ -64,7 +67,7 @@ func _import(source_file, save_path, options, r_platform_variants, r_gen_files):
 				normals.push_back(vam_normals[i])
 		unused_indices = vam_data["unused"]
 	
-	var uvs = get_as_uvs_array(uv_data,"uv_set_library")		
+	var uvs = get_as_uvs_array(uv_data,"uv_set_library")
 	var extra_uvs_values : PackedVector2Array
 	var extra_start := vertices.size()
 	while uvs.size() > vertices.size():
@@ -80,6 +83,7 @@ func _import(source_file, save_path, options, r_platform_variants, r_gen_files):
 	var materials := get_as_materials_array(data,"geometry_library/polylist")
 	if vam_data:
 		add_vam_data(vam_data,vertices,normals,indices,uvs,materials,linked_vertices)
+		vertex_groups = vam_data["vertex_groups"]
 	
 	var bones := get_as_bones_array(data,"node_library","modifier_library")
 	var weights : Array
@@ -111,9 +115,10 @@ func _import(source_file, save_path, options, r_platform_variants, r_gen_files):
 	daz3d_mesh.indeces = indices
 	daz3d_mesh.uvs = uvs
 	daz3d_mesh.materials = materials
-	daz3d_mesh.linked_vertices = linked_vertices
 	daz3d_mesh.bones = bones
 	daz3d_mesh.weights = weights
+	daz3d_mesh.linked_vertices = linked_vertices
+	daz3d_mesh.vertex_groups = vertex_groups
 	
 	return ResourceSaver.save(daz3d_mesh, "%s.%s" % [save_path, _get_save_extension()])
 
@@ -128,18 +133,30 @@ func add_vam_data(vam_data: Dictionary,vertices: PackedVector3Array,normals: Pac
 	var gen_uvs : PackedVector2Array = vam_data["gen_uvs"]
 	var gen_materials : PackedInt32Array = vam_data["gen_materials"]
 	
+	print("add_vam_data")
 	print("vertices: ",vertices.size())
 	print("normals: ",vam_normals.size())
 
 	print("gen vertices: ",gen_vertices.size())
+	print("gen normals: ",gen_normals.size())
+	print("gen uvs: ",gen_uvs.size())
 	print("gen indices: ",gen_indices.size())
 	
 	var tris := 0
 	var vertices_start := vertices.size()
+	var vertex_groups := {}
+	var gen_vertex_groups : Dictionary = vam_data["gen_vertex_group"]
 	for i in gen_vertices.size( ):
 		vertices.push_back(gen_vertices[i])
 		normals.push_back(gen_normals[i])
 		uvs.push_back(gen_uvs[i])
+		
+		for g in gen_vertex_groups:
+			if gen_vertex_groups[g].has(i):
+				if not vertex_groups.has(g):
+					vertex_groups[g] = []
+				vertex_groups[g].push_back(vertices.size()-1)
+	vam_data["vertex_groups"] = vertex_groups
 		
 	for m in gen_materials:
 		materials.push_back(m)
@@ -161,7 +178,6 @@ func add_vam_data(vam_data: Dictionary,vertices: PackedVector3Array,normals: Pac
 	var first := -1
 	for i in gen_vertices.size():
 		var v : Vector3 = gen_vertices[i]
-		
 		var found := false
 		for c in vertices_start:
 			if v.is_equal_approx(vertices[c]):
@@ -172,12 +188,26 @@ func add_vam_data(vam_data: Dictionary,vertices: PackedVector3Array,normals: Pac
 				if not linked_vertices.has(c):
 					linked_vertices[c] = []
 				linked_vertices[c].push_back(vertices_start+i)
+				normals[vertices_start+i] = normals[c]
 				break
 		if not found:
 			missing.push_back(i)
+	print("Missing vertices: ",missing.size())
+	print("linked_vertices: ",linked_vertices.size())
 	for i in missing:
-		#print("missing: ",i)
-		linked_vertices[first].push_back(vertices_start+i)
+		var v : Vector3 = gen_vertices[i]
+		var found := first
+		var min : float = 100_000
+		for c in vertices_start:
+			var l := (v - vertices[c]).length_squared()
+			if l < min:
+				min = l
+				found = c
+		if not linked_vertices.has(found):
+			linked_vertices[found] = []
+		linked_vertices[found].push_back(vertices_start+i)
+		normals[vertices_start+i] = normals[found]
+	print("After linked_vertices: ",linked_vertices.size())
 
 
 func load_vam_data(vam_file: FileAccess,max_vertices: int)-> Dictionary:
@@ -219,7 +249,7 @@ func load_vam_data(vam_file: FileAccess,max_vertices: int)-> Dictionary:
 			var values : PackedStringArray = line.substr(2).split(" ")
 			if values.size() > 3:
 				print("Out of size line: ",line)
-			if values.size() >= 3:				
+			if values.size() >= 3:
 				var v1 := int(values[2].get_slice("/",0))-1
 				var v2 := int(values[1].get_slice("/",0))-1
 				var v3 := int(values[0].get_slice("/",0))-1
@@ -251,6 +281,7 @@ func load_vam_data(vam_file: FileAccess,max_vertices: int)-> Dictionary:
 					
 					gen_materials.push_back(30)
 	
+	print("load_vam_data")
 	print("gen_vertices: ",gen_vertices.size())
 	print("gen_indices: ",gen_indices.size())
 	print("gen_materials: ",gen_materials.size())
@@ -264,8 +295,112 @@ func load_vam_data(vam_file: FileAccess,max_vertices: int)-> Dictionary:
 		"gen_normals" : gen_normals,
 		"gen_indices" : gen_indices,
 		"gen_uvs" : gen_uvs,
-		"gen_materials" : gen_materials,		
+		"gen_materials" : gen_materials,
 	}
+
+
+func load_gen_data(vam_data: Dictionary,gen_file: FileAccess)-> Dictionary:
+	var vertices : PackedVector3Array = vam_data["vertices"]
+	var normals : PackedVector3Array = vam_data["normals"]
+	var uvs : PackedVector2Array = vam_data["uvs"]
+	var unused_indexes : Dictionary = vam_data["unused"]
+	
+	var gen_vertices : PackedVector3Array = vam_data["gen_vertices"]
+	var gen_normals : PackedVector3Array = vam_data["gen_normals"]
+	var gen_indices : PackedInt32Array = vam_data["gen_indices"]
+	var gen_uvs : PackedVector2Array = vam_data["gen_uvs"]
+	var gen_materials : PackedInt32Array = vam_data["gen_materials"]
+	var gen_vertices_map := {}
+	var vertex_groups := {}
+	
+	var vertex_offset := vertices.size()
+	var normal_offset := normals.size()
+	var uv_offset := uvs.size()
+
+	var material := -1
+	var material_name : String
+	var current_group := "off"
+	while not gen_file.eof_reached():
+		var line : String = gen_file.get_line()
+		if line.begins_with("v "):
+			var floats : PackedFloat64Array = line.substr(2).split_floats(" ")
+			if floats.size() >= 3:
+				vertices.push_back(Vector3(floats[0],floats[1],floats[2]))
+		elif line.begins_with("vn "):
+			var floats : PackedFloat64Array = line.substr(3).split_floats(" ")
+			if floats.size() >= 3:
+				normals.push_back(Vector3(floats[0],floats[1],floats[2]).normalized())
+		elif line.begins_with("vt "):
+			var floats : PackedFloat64Array = line.substr(3).split_floats(" ")
+			if floats.size() >= 2:
+				uvs.push_back(Vector2(floats[0],1-floats[1]))
+		elif line.begins_with("usemtl "):
+			material += 1
+			material_name = line.substr(7)
+		elif line.begins_with("g "):
+			current_group = line.substr(2)
+		elif line.begins_with("f "):
+			var values : PackedStringArray = line.substr(2).split(" ")
+			if values.size() > 3:
+				print("Out of size line: ",line)
+			if values.size() >= 3:
+				var v1 := vertex_offset + int(values[2].get_slice("/",0))-1
+				var v2 := vertex_offset + int(values[1].get_slice("/",0))-1
+				var v3 := vertex_offset + int(values[0].get_slice("/",0))-1
+				
+				var n1 := normal_offset + int(values[2].get_slice("/",2))-1
+				var n2 := normal_offset + int(values[1].get_slice("/",2))-1
+				var n3 := normal_offset + int(values[0].get_slice("/",2))-1
+				
+				var u1 := uv_offset + int(values[2].get_slice("/",1))-1
+				var u2 := uv_offset + int(values[1].get_slice("/",1))-1
+				var u3 := uv_offset + int(values[0].get_slice("/",1))-1
+				
+				if unused_indexes.has(v1): unused_indexes.erase(v1)
+				if unused_indexes.has(v2): unused_indexes.erase(v2)
+				if unused_indexes.has(v3): unused_indexes.erase(v3)
+				
+				if material_name == "defaultMat":
+					if not gen_vertices_map.has(v1):
+						gen_vertices_map[v1] = gen_vertices.size()
+						gen_vertices.push_back(vertices[v1])
+						gen_normals.push_back(normals[n1])
+						gen_uvs.push_back(uvs[u1])
+					if not gen_vertices_map.has(v2):
+						gen_vertices_map[v2] = gen_vertices.size()
+						gen_vertices.push_back(vertices[v2])
+						gen_normals.push_back(normals[n2])
+						gen_uvs.push_back(uvs[u2])
+					if not gen_vertices_map.has(v3):
+						gen_vertices_map[v3] = gen_vertices.size()
+						gen_vertices.push_back(vertices[v3])
+						gen_normals.push_back(normals[n3])
+						gen_uvs.push_back(uvs[u3])
+					
+					gen_indices.push_back(gen_vertices_map[v1])
+					gen_indices.push_back(gen_vertices_map[v2])
+					gen_indices.push_back(gen_vertices_map[v3])
+					
+					gen_materials.push_back(30)
+				
+					if current_group != "off":
+						if not vertex_groups.has(current_group):
+							vertex_groups[current_group] = []
+						if !vertex_groups[current_group].has(gen_vertices_map[v1]):
+							vertex_groups[current_group].push_back(gen_vertices_map[v1])
+						if !vertex_groups[current_group].has(gen_vertices_map[v2]):
+							vertex_groups[current_group].push_back(gen_vertices_map[v2])
+						if !vertex_groups[current_group].has(gen_vertices_map[v3]):
+							vertex_groups[current_group].push_back(gen_vertices_map[v3])
+							
+	vam_data["gen_vertex_group"] = vertex_groups
+	
+	print("load_gen_data")	
+	print("gen_vertices: ",gen_vertices.size())
+	print("gen_indices: ",gen_indices.size())
+	print("gen_materials: ",gen_materials.size())
+	
+	return vam_data
 
 
 func replace_extra_uv_indices(vertices: PackedVector3Array,normals: PackedVector3Array,uvs: PackedVector2Array,linked_vertices: Dictionary,polylist: Array,extra_uvs: Array,extra_uvs_values: PackedVector2Array,extra_uvs_start: int):

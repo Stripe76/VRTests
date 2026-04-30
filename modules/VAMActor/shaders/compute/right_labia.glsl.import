@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://copjg0lmshcdv"
+path="res://.godot/imported/right_labia.glsl-5183ae4302952a72ede99ea5d0bde20d.res"
+
+[deps]
+
+source_file="res://modules/VAMActor/shaders/compute/right_labia.glsl"
+dest_files=["res://.godot/imported/right_labia.glsl-5183ae4302952a72ede99ea5d0bde20d.res"]
+
+[params]
+

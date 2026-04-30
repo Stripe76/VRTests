@@ -6,6 +6,7 @@ extends MeshInstance3D
 @export var full_body : Mesh
 @export var left_eye : Mesh
 @export var right_eye : Mesh
+@export var genitals : Mesh
 
 @export_group("Materials")
 @export var head_material := ShaderMaterial.new()
@@ -18,17 +19,18 @@ extends MeshInstance3D
 @export_group("Surfaces")
 var head_tris : Dictionary
 
-enum {MESH_BODY = 0, MESH_LEFT_EYE = 1, MESH_RIGHT_EYE = 2}
+enum {MESH_BODY = 0, MESH_LEFT_EYE = 1, MESH_RIGHT_EYE = 2, MESH_GENITALS = 3}
 enum {MATERIAL_HEAD = 0, MATERIAL_BODY = 1, MATERIAL_LIMBS = 2, MATERIAL_GENITALS = 3, MATERIAL_LEFT_EYE = 4, MATERIAL_RIGHT_EYE = 5, MATERIAL_OTHER = -1}
 
 
 func _ready() -> void:
 	var SKIN_SHADER = load("res://modules/VAMActor/shaders/skin.gdshader")
+	var BODY_SHADER = load("res://modules/VAMActor/shaders/body.gdshader")
 	#var SKIN_SHADER : Shader = load("res://modules/VAMActor/shaders/human_shaders/skin_shader.gdshader")	
 	#var EYES_SHADER = load("res://modules/VAMActor/shaders/digital_human/shaders/eye_colorized.gdshader")
 	
 	head_material.shader = SKIN_SHADER
-	body_material.shader = SKIN_SHADER
+	body_material.shader = BODY_SHADER
 	limbs_material.shader = SKIN_SHADER
 	genitals_material.shader = SKIN_SHADER
 	
@@ -38,9 +40,8 @@ func _ready() -> void:
 
 	if Engine.is_editor_hint() and false:
 		var base_model := load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-		var genitals_model := load("res://modules/VAMActor/resources/female_genitals.res")
 	
-		load_mesh(base_model,genitals_model,"/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
+		load_mesh(base_model,"/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
 		self.mesh = full_body
 		load_materials("/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
 
@@ -51,7 +52,7 @@ func _validate_property(property: Dictionary):
 		property["usage"] = PROPERTY_USAGE_EDITOR
 
 
-func load_mesh(base_model: Daz3DMesh,genitals_model: Mesh,vam_scene_folder: String,vam_scene_file: String):
+func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: String):
 	if not base_model:
 		return
 	var model_vertices : PackedVector3Array = base_model.vertices.duplicate()
@@ -60,6 +61,7 @@ func load_mesh(base_model: Daz3DMesh,genitals_model: Mesh,vam_scene_folder: Stri
 	var model_uvs : PackedVector2Array = base_model.uvs
 	var model_weights : Array = base_model.weights
 	var model_linked : Dictionary = base_model.linked_vertices
+	var model_vertex_groups : Dictionary = base_model.vertex_groups
 	
 	if vam_scene_file != "":
 		#print("Scene loading",)
@@ -74,7 +76,7 @@ func load_mesh(base_model: Daz3DMesh,genitals_model: Mesh,vam_scene_folder: Stri
 	weights_padding(model_weights)
 	
 	#print("Meshes creation")
-	var meshes : Array = create_meshes(base_model,genitals_model,model_vertices,model_normals,model_indices,model_uvs,model_weights)
+	var meshes : Array = create_meshes(base_model,model_vertices,model_normals,model_indices,model_uvs,model_weights,model_vertex_groups)
 	
 	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
@@ -82,6 +84,7 @@ func load_mesh(base_model: Daz3DMesh,genitals_model: Mesh,vam_scene_folder: Stri
 	full_body = meshes[MESH_BODY]
 	left_eye  = meshes[MESH_LEFT_EYE]
 	right_eye = meshes[MESH_RIGHT_EYE]
+	genitals = meshes[MESH_GENITALS]
 
 
 func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_file: String):
@@ -152,9 +155,9 @@ func set_weights(model_weights: Array):
 	#body_material.set_shader_parameter("x_weights",ImageTexture.create_from_image(weights))
 
 
-func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array) -> Array:
+func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array,model_vertex_groups: Dictionary) -> Array:
 	var surfaces := []
-	for i in 6:
+	for i in 8:
 		surfaces.push_back({ 
 			"vertices" : PackedVector3Array(),
 			"indices" : PackedInt32Array(),
@@ -162,6 +165,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			"uvs" : PackedVector2Array(),
 			"bones" : PackedInt32Array(),
 			"weights" : PackedFloat32Array(),
+			#"customs0" : PackedFloat32Array(),
 			"colors" : PackedColorArray(),
 			} )
 	
@@ -180,6 +184,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			var mesh_uvs : PackedVector2Array = surface["uvs"]
 			var mesh_bones : PackedInt32Array = surface["bones"]
 			var mesh_weights : PackedFloat32Array = surface["weights"]
+			#var mesh_customs0 : PackedFloat32Array = surface["customs0"]
 			var mesh_colors : PackedColorArray = surface["colors"]
 			
 			var index = model_indices[tris]
@@ -189,8 +194,8 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			mesh_normals.push_back(model_normals[index])
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])			
-			mesh_colors.push_back(int_to_color(index))
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
 			
 			if material == 15 or material == 11:
 				head_vertices.push_back(model_vertices[index])
@@ -204,7 +209,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
 				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(int_to_color(index))
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
 			
 			if material == 15 or material == 11 or material == 18:
 				head_vertices.push_back(model_vertices[index])
@@ -218,7 +223,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
 				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(int_to_color(index))
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
 			
 			if material == 15 or material == 11:
 				head_vertices.push_back(model_vertices[index])
@@ -237,6 +242,7 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 	var body_mesh := ProceduralMesh.new()
 	var left_eye_mesh := ProceduralMesh.new()
 	var right_eye_mesh := ProceduralMesh.new()
+	var genitals_mesh := ProceduralMesh.new()
 	
 	for i in surfaces.size():
 		var surface = surfaces[i]
@@ -247,13 +253,17 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			arrays[Mesh.ARRAY_TEX_UV] = surface["uvs"]
 			arrays[Mesh.ARRAY_BONES] = surface["bones"]
 			arrays[Mesh.ARRAY_WEIGHTS] = surface["weights"]
-			#arrays[Mesh.ARRAY_COLOR] = surface["colors"]
+			#if surface["customs0"].size() > 0:
+			#	arrays[Mesh.ARRAY_CUSTOM0] = surface["customs0"]
+			arrays[Mesh.ARRAY_COLOR] = surface["colors"]
 			
 			var array_mesh := body_mesh
 			if i == MATERIAL_LEFT_EYE:
 				array_mesh = left_eye_mesh
 			elif i == MATERIAL_RIGHT_EYE:
 				array_mesh = right_eye_mesh
+			#elif i == MATERIAL_GENITALS:
+				#array_mesh = genitals_mesh
 			
 			surface_tool.create_from_arrays(arrays)
 			surface_tool.generate_tangents( )
@@ -264,8 +274,22 @@ func create_meshes(daz_model: Daz3DMesh,genitals_model: Mesh,model_vertices: Pac
 			else:
 				surface_tool.commit(array_mesh)
 	
-	return [body_mesh,left_eye_mesh,right_eye_mesh]
+	return [body_mesh,left_eye_mesh,right_eye_mesh,genitals_mesh]
 
+
+func get_vertex_color(vertex_groups: Dictionary,map: int,index: int) -> Color:
+	var color := Color(1,1,1,1)
+	if map == MATERIAL_GENITALS:
+		if vertex_groups["InnerVulva"].has(index):
+			color.r = 0
+			color.g = 0
+		elif vertex_groups["RightInnerLabia"].has(index) or \
+		 	vertex_groups["RightSide"].has(index):
+			color.r = 0
+		elif vertex_groups["LeftInnerLabia"].has(index) or \
+		 	vertex_groups["LeftSide"].has(index):
+			color.g = 0
+	return color
 
 func int_to_color(value: int) -> Color:
 	var color := Color();

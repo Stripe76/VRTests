@@ -14,6 +14,7 @@ class_name VAMActor extends Node3D
 
 @onready var left_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 @onready var right_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
+#@onready var _genitals := $VAMVagina
 
 var _mesh := VAMMesh.new()
 var _hair := VAMHair.new()
@@ -28,6 +29,7 @@ func _ready() -> void:
 
 	_mesh.name = "VAMMesh"
 	_hair.name = "VAMHair"
+	#_genitals.name = "VAMGenitals"
 	_skeleton.name = "VAMSkeleton"
 	_skeleton.skeleton_updated.connect( skeleton_updated )
 	
@@ -55,12 +57,11 @@ func _process(_delta: float) -> void:
 
 func generate_model():
 	var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-	
-	load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Gina/Custom/Hair/Female/RenVR/RenVR/Jessica Alva (REN).vab")
-	#load_scene(daz_model,null,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","ddaamm.hair_short5.4/Custom/Hair/Female/ddaamm/ddaamm/ddaamm short5 bang.vab")
+	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Rubyrose/","Saves/scene/Rubyrose.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","ddaamm.hair_short5.4/Custom/Hair/Female/ddaamm/ddaamm/ddaamm short5 bang.vab")
 	
 	#load_scene(daz_model,null,"","","")
 
@@ -80,10 +81,10 @@ func _exit_tree():
 		#materials_thread.free()
 
 
-func load_scene(daz_model: Daz3DMesh,genitals_model: Mesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
+func load_scene(daz_model: Daz3DMesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
 	load_skeleton(daz_model)
 	
-	load_mesh(daz_model,genitals_model,scene_folder,scene_file,library_folder+hair_file)
+	load_mesh(daz_model,scene_folder,scene_file,library_folder+hair_file)
 	if materials:
 		load_materials_async(library_folder,scene_folder,scene_file)
 	
@@ -105,33 +106,47 @@ func add_person_controller( )-> void:
 
 func load_skeleton(base_model: Daz3DMesh):
 	_skeleton.load_skeleton(base_model)
-
+	
 	self.add_child(_skeleton)
 	_skeleton.owner = self
-
+		
 	if _skeleton.get_child_count() == 0:
 		_skeleton.add_child(_mesh)
 		_mesh.owner = self
-
+		
+		#_skeleton.add_child(_genitals)
+		#_genitals.owner = self
+		
 		_skeleton.add_child(left_eye)
 		left_eye.owner = self
 		_skeleton.add_child(right_eye)
 		right_eye.owner = self
-
+		
+	
 	left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
 	right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
 
 
-func load_mesh_async(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String,hair_file: String):
+func load_mesh_async(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String):
 	if _mesh_thread:
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
-	_mesh_thread.start(load_mesh.bind(daz_model,genitals_model,scene_folder,scene_file,hair_file))
+	_mesh_thread.start(load_mesh.bind(daz_model,scene_folder,scene_file,hair_file))
 
 
 func load_mesh_async_done(hair_file: String):
 	_mesh.mesh = _mesh.full_body
+	#_genitals.set_genital_mesh(_mesh.genitals)
+	#_genitals.skeleton = $VAMSkeleton.get_path()
+	#
+	#_mesh.body_material.set_shader_parameter("lattice_size_A",_genitals.left_size)
+	#_mesh.body_material.set_shader_parameter("lattice_offset_A",_genitals.left_offset)
+	#_mesh.body_material.set_shader_parameter("lattice_A",_genitals._mesh_material.get_shader_parameter("lattice_A"))
+	#
+	#_mesh.body_material.set_shader_parameter("lattice_size_B",_genitals.right_size)
+	#_mesh.body_material.set_shader_parameter("lattice_offset_B",_genitals.right_offset)
+	#_mesh.body_material.set_shader_parameter("lattice_B",_genitals._mesh_material.get_shader_parameter("lattice_B"))
 	
 	if _mesh.left_eye:
 		set_eye_position(left_eye,_mesh.left_eye)
@@ -146,11 +161,12 @@ func load_mesh_async_done(hair_file: String):
 		if person_controller:
 			person_controller.create_collisions_shapes(_skeleton,_mesh)
 			
-			load_hair(hair_file,_mesh.head_tris)
+			if not Engine.is_editor_hint():
+				load_hair(hair_file,_mesh.head_tris)
 
 
-func load_mesh(daz_model: Daz3DMesh,genitals_model: Mesh,scene_folder: String,scene_file: String,hair_file: String):
-	_mesh.load_mesh(daz_model,genitals_model,scene_folder,scene_file)
+func load_mesh(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String):
+	_mesh.load_mesh(daz_model,scene_folder,scene_file)
 	
 	call_deferred("load_mesh_async_done",hair_file)
 
@@ -178,6 +194,11 @@ func load_materials_async(library_folder: String,scene_folder: String,scene_file
 
 func load_materials(library_folder: String,scene_folder: String,scene_file: String):
 	_mesh.load_materials(library_folder,scene_folder,scene_file)
+	
+	#if _genitals and _genitals._mesh_material:
+		#_genitals._mesh_material.set_shader_parameter("texture_albedo",_mesh.genitals_material.get_shader_parameter("texture_albedo"))
+		#_genitals._mesh_material.set_shader_parameter("texture_normal",_mesh.genitals_material.get_shader_parameter("texture_normal"))
+		#_genitals._mesh_material.set_shader_parameter("standard_decal",_mesh.genitals_material.get_shader_parameter("standard_decal"))
 
 
 func set_eye_position(eye_node: VAMEye,eye_mesh: Mesh):

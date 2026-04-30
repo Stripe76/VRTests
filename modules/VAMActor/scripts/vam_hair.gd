@@ -536,7 +536,7 @@ func _initialize_compute_code(texture_size: Vector2i,buffer_data: PackedByteArra
 	
 	# Create our shader.
 	if not _process_shader: 
-		var dt := load_shader("res://modules/VAMActor/shaders/verlet.glsl")
+		var dt := load_shader("res://modules/VAMActor/shaders/compute/verlet.glsl")
 		_process_shader = dt["Shader"]
 		_process_pipeline = dt["Pipeline"]
 	

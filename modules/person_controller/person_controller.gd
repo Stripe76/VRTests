@@ -103,9 +103,9 @@ func update_weight_on(apply : bool = true) -> Vector3:
 		var delta : Vector3 = current_weight_on.wo_position - _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).origin
 		
 		if apply:
-			delta.x = 0
-			delta.y = 0
-			delta.z = 0
+			#delta.x = 0
+			#delta.y = 0
+			#delta.z = 0
 			_skeleton.position = _skeleton_offset + delta
 		return delta
 	return Vector3()
