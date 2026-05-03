@@ -4,10 +4,8 @@
 [ext_resource type="ArrayMesh" uid="uid://vlm0ytivaf46" path="res://modules/VAMActor/resources/vam_eye.tres" id="2_ry3fp"]
 [ext_resource type="Material" uid="uid://6aiw850gvwbf" path="res://modules/VAMActor/shaders/digital_human/materials/eye_colorized.tres" id="3_ry3fp"]
 
-[node name="VAMEye" type="Node3D" unique_id=1867560165]
-script = ExtResource("1_7lw1u")
-eye_color = 0.907
-
-[node name="Eye" type="MeshInstance3D" parent="." unique_id=2090751949]
+[node name="VAMEye" type="MeshInstance3D" unique_id=1333405238]
 mesh = ExtResource("2_ry3fp")
 surface_material_override/0 = ExtResource("3_ry3fp")
+script = ExtResource("1_7lw1u")
+eye_color = 0.907

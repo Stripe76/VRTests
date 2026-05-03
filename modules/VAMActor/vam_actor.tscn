@@ -76,7 +76,7 @@ _data = {
 
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
 script = ExtResource("1_pcuk1")
-eyes_color = 0.907
+eyes_color = 2.903
 metadata/_custom_type_script = "uid://m3rl1cqv77dl"
 
 [node name="Actor" type="AnimationPlayer" parent="." unique_id=87833383]

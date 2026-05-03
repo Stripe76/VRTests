@@ -19,7 +19,7 @@ void fragment() {
 	//float smooth_depth = 1.0;
 	//SSS_STRENGTH = sss_strength_value * NORMAL_MAP.r * smooth_depth;
 
-	ROUGHNESS = .65;
+	ROUGHNESS = .68;
 	//CLEARCOAT = texture(noise_img,vertexPos.xy).r;
 	//AO = 1.0;
 	METALLIC = .25;
