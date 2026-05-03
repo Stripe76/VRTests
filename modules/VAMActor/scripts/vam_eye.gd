@@ -1,6 +1,6 @@
 @tool
 class_name VAMEye
-extends Node3D
+extends MeshInstance3D
 
 @export_range(0.0,5.0) var eye_color : float:
 	set(value): 
@@ -19,19 +19,10 @@ const COLORS : Array = [
 ]
 
 
-func _ready() -> void:
-	$Eye.transform = $Eye.transform.scaled(Vector3(0.035,0.035,0.035))
-
-func set_offset(offset: Vector3):
-	$Eye.position = offset
-	
-	#set_eye_color(0)
-
-
 func set_eye_color(value: float):
 	var base : int = floor(value)
-	if $Eye and base >= 0 and base+1 < COLORS.size():
-		var material : ShaderMaterial = $Eye.get_surface_override_material(0)
+	if base >= 0 and base+1 < COLORS.size():
+		var material : ShaderMaterial = get_surface_override_material(0)
 		if material:
 			value -= base
 			

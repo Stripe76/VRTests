@@ -6,8 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://dkpvupck5lb4d" path="res://modules/VAMActor/vam_actor.tscn" id="4_aqk2v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_aqk2v"]
+sky_top_color = Color(0.073016815, 0.08518631, 0.10546875, 1)
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+sky_energy_multiplier = 4.1
+ground_bottom_color = Color(0.0859375, 0.073660694, 0.057291653, 1)
 ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+energy_multiplier = 0.45
 
 [sub_resource type="Sky" id="Sky_036b0"]
 sky_material = SubResource("ProceduralSkyMaterial_aqk2v")
@@ -25,7 +29,7 @@ fog_light_energy = 0.55
 volumetric_fog_density = 0.038
 adjustment_enabled = true
 adjustment_brightness = 0.9
-adjustment_contrast = 1.25
+adjustment_contrast = 1.35
 adjustment_saturation = 0.4
 
 [sub_resource type="QuadMesh" id="QuadMesh_vsd7t"]
@@ -615,7 +619,6 @@ environment = SubResource("Environment_dwbse")
 
 [node name="Sun" type="DirectionalLight3D" parent="Environment" unique_id=926251120]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-visible = false
 light_energy = 0.285
 shadow_enabled = true
 
@@ -684,3 +687,4 @@ speed_scale = 1.475
 [node name="VAMActor" parent="." unique_id=1805902460 instance=ExtResource("4_aqk2v")]
 
 [editable path="VAMActor"]
+[editable path="VAMActor/VAMVagina"]

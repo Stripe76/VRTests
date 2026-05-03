@@ -4,8 +4,6 @@ extends MeshInstance3D
 
 @export_group("Meshes")
 @export var full_body : Mesh
-@export var left_eye : Mesh
-@export var right_eye : Mesh
 @export var genitals : Mesh
 
 @export_group("Materials")
@@ -16,10 +14,10 @@ extends MeshInstance3D
 @export var genitals_material := ShaderMaterial.new()
 @export var hair_material := Material.new()
 
-@export_group("Surfaces")
 var head_tris : Dictionary
+var eye_template : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 
-enum {MESH_BODY = 0, MESH_LEFT_EYE = 1, MESH_RIGHT_EYE = 2, MESH_GENITALS = 3}
+enum {MESH_BODY = 0, MESH_GENITALS = 1}
 enum {MATERIAL_HEAD = 0, MATERIAL_BODY = 1, MATERIAL_LIMBS = 2, MATERIAL_GENITALS = 3, MATERIAL_LEFT_EYE = 4, MATERIAL_RIGHT_EYE = 5, MATERIAL_OTHER = -1}
 
 
@@ -82,8 +80,6 @@ func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: St
 	set_materials(meshes[MESH_BODY])
 	
 	full_body = meshes[MESH_BODY]
-	left_eye  = meshes[MESH_LEFT_EYE]
-	right_eye = meshes[MESH_RIGHT_EYE]
 	genitals = meshes[MESH_GENITALS]
 
 
@@ -160,26 +156,27 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 	for i in 8:
 		surfaces.push_back({ 
 			"vertices" : PackedVector3Array(),
-			"indices" : PackedInt32Array(),
+			#"indices" : PackedInt32Array(),
 			"normals" : PackedVector3Array(),
 			"uvs" : PackedVector2Array(),
 			"bones" : PackedInt32Array(),
 			"weights" : PackedFloat32Array(),
-			#"customs0" : PackedFloat32Array(),
 			"colors" : PackedColorArray(),
+			#"customs0" : PackedFloat32Array(),
 			} )
 	
 	var head_vertices := []
 	var head_normalized := []
 	
 	var tris : int = 0
-	var bones_number := 8
+	const bones_number := 8
 	for material in daz_model.materials:
 		var map : int = map_material(material)
 			
 		if map >= 0 and map < surfaces.size():
 			var surface = surfaces[map]
 			var mesh_vertices : PackedVector3Array = surface["vertices"]
+			#var mesh_indices : PackedInt32Array = surface["indices"]
 			var mesh_normals : PackedVector3Array = surface["normals"]
 			var mesh_uvs : PackedVector2Array = surface["uvs"]
 			var mesh_bones : PackedInt32Array = surface["bones"]
@@ -189,6 +186,7 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			
 			var index = model_indices[tris]
 	
+			#mesh_indices.push_back(mesh_vertices.size())
 			mesh_vertices.push_back(model_vertices[index])
 			mesh_uvs.push_back(model_uvs[index])
 			mesh_normals.push_back(model_normals[index])
@@ -203,8 +201,9 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			tris += 1
 		
 			index = model_indices[tris]
-			mesh_uvs.push_back(model_uvs[index])
+			#mesh_indices.push_back(mesh_vertices.size())
 			mesh_vertices.push_back(model_vertices[index])
+			mesh_uvs.push_back(model_uvs[index])
 			mesh_normals.push_back(model_normals[index])
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
@@ -217,8 +216,9 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			tris += 1
 			
 			index = model_indices[tris]
-			mesh_uvs.push_back(model_uvs[index])
+			#mesh_indices.push_back(mesh_vertices.size())
 			mesh_vertices.push_back(model_vertices[index])
+			mesh_uvs.push_back(model_uvs[index])
 			mesh_normals.push_back(model_normals[index])
 			for c in bones_number:
 				mesh_bones.push_back(model_weights[index]["s"][c*2])
@@ -239,10 +239,10 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 	arrays.resize(Mesh.ARRAY_MAX)
 	
 	var surface_tool = SurfaceTool.new()
-	var body_mesh := ProceduralMesh.new()
-	var left_eye_mesh := ProceduralMesh.new()
-	var right_eye_mesh := ProceduralMesh.new()
-	var genitals_mesh := ProceduralMesh.new()
+	var body_mesh := ArrayMesh.new()
+	var left_eye_mesh := ArrayMesh.new()
+	var right_eye_mesh := ArrayMesh.new()
+	var genitals_mesh := ArrayMesh.new()
 	
 	for i in surfaces.size():
 		var surface = surfaces[i]
@@ -253,9 +253,9 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			arrays[Mesh.ARRAY_TEX_UV] = surface["uvs"]
 			arrays[Mesh.ARRAY_BONES] = surface["bones"]
 			arrays[Mesh.ARRAY_WEIGHTS] = surface["weights"]
+			arrays[Mesh.ARRAY_COLOR] = surface["colors"]
 			#if surface["customs0"].size() > 0:
 			#	arrays[Mesh.ARRAY_CUSTOM0] = surface["customs0"]
-			arrays[Mesh.ARRAY_COLOR] = surface["colors"]
 			
 			var array_mesh := body_mesh
 			if i == MATERIAL_LEFT_EYE:
@@ -274,7 +274,40 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			else:
 				surface_tool.commit(array_mesh)
 	
-	return [body_mesh,left_eye_mesh,right_eye_mesh,genitals_mesh]
+	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_LEFT_EYE],left_eye_mesh.get_aabb().get_center()+Vector3(0,0,-0.005))
+	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_RIGHT_EYE],right_eye_mesh.get_aabb().get_center()+Vector3(0,0,-0.005))
+	
+	return [body_mesh,genitals_mesh]
+
+
+func add_eye(surface_tool: SurfaceTool,body_mesh: ArrayMesh,eye: Dictionary,offset: Vector3,scaling : float = 0.035):
+	var surface_index := body_mesh.get_surface_count()
+
+	surface_tool.create_from(eye_template.mesh,0)
+	var arrays := surface_tool.commit_to_arrays()
+	
+	print(offset)
+	var eye_bones : PackedInt32Array = eye["bones"]
+	var eye_weights : PackedFloat32Array = eye["weights"]
+	
+	var bones := PackedInt32Array()
+	var weights := PackedFloat32Array()
+	for v in arrays[Mesh.ARRAY_VERTEX].size():
+		arrays[Mesh.ARRAY_VERTEX][v] = offset + arrays[Mesh.ARRAY_VERTEX][v] * scaling
+		for b in 8:
+			bones.push_back(eye_bones[b])
+			weights.push_back(eye_weights[b])
+	
+	arrays[Mesh.ARRAY_BONES] = bones
+	arrays[Mesh.ARRAY_WEIGHTS] = weights
+	
+	surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_TRIANGLES)
+	surface_tool.generate_tangents()
+
+	surface_tool.set_skin_weight_count(SurfaceTool.SKIN_8_WEIGHTS)
+	surface_tool.commit(body_mesh,Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS)
+
+	body_mesh.surface_set_material(surface_index,eye_template.get_surface_override_material(0))
 
 
 func get_vertex_color(vertex_groups: Dictionary,map: int,index: int) -> Color:
@@ -290,6 +323,7 @@ func get_vertex_color(vertex_groups: Dictionary,map: int,index: int) -> Color:
 		 	vertex_groups["LeftSide"].has(index):
 			color.g = 0
 	return color
+
 
 func int_to_color(value: int) -> Color:
 	var color := Color();
@@ -484,6 +518,7 @@ func load_textures(scene_data : Dictionary,library_path : String,scene_path : St
 	#"lPectoral",
 	#"rPectoral",
 	#"tongue"
+
 
 static var mappings = [
 					MATERIAL_LIMBS, #"Legs" 0,

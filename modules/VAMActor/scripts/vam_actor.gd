@@ -3,17 +3,12 @@ class_name VAMActor extends Node3D
 
 @export_tool_button("Generate","Add") var generate_action = generate_model
 
-@export var look_at_target: Node3D
 @export_range(0,5) var eyes_color : float = 0:
 	set(value):
-		if left_eye:
-			left_eye.eye_color = value
-		if right_eye:
-			right_eye.eye_color = value
-	get: return left_eye.eye_color
-
-@onready var left_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
-@onready var right_eye : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
+		eyes_color = value
+		_mesh.eye_template.set_eye_color(eyes_color)
+	get:
+		return eyes_color
 #@onready var _genitals := $VAMVagina
 
 var _mesh := VAMMesh.new()
@@ -31,45 +26,20 @@ func _ready() -> void:
 	_hair.name = "VAMHair"
 	#_genitals.name = "VAMGenitals"
 	_skeleton.name = "VAMSkeleton"
-	_skeleton.skeleton_updated.connect( skeleton_updated )
-	
-	left_eye.name = "LeftEye"
-	right_eye.name = "RightEye"
-	
-	if Engine.is_editor_hint() and false:
-		left_eye.transform = left_eye.transform.scaled_local(Vector3(0.035,0.035,0.035))
-		right_eye.transform = left_eye.transform.scaled_local(Vector3(0.035,0.035,0.035))
 	
 	if Engine.is_editor_hint() and not get_parent() is Node3D:
 		generate_model()
 
 
-func _process(_delta: float) -> void:
-	if look_at_target:
-		left_eye.look_at(look_at_target.global_position,Vector3(0,1,0),true)
-		right_eye.look_at(look_at_target.global_position,Vector3(0,1,0),true)
-		#right_eye.rotation = left_eye.rotation
-
-	#if skeleton.get_bone_count() > 0:
-	#	left_eye.position = skeleton.get_bone_global_pose(Bones.EYE_LEFT_BONE).origin
-	#	right_eye.position = skeleton.get_bone_global_pose(Bones.EYE_RIGHT_BONE).origin
-
-
 func generate_model():
 	var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
 	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
 	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Rubyrose/","Saves/scene/Rubyrose.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
+	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Rubyrose/","Saves/scene/Rubyrose.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
 	#load_scene(daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","ddaamm.hair_short5.4/Custom/Hair/Female/ddaamm/ddaamm/ddaamm short5 bang.vab")
 	
 	#load_scene(daz_model,null,"","","")
-
-
-func skeleton_updated() -> void:
-	if _skeleton.get_bone_count() > 0:
-		left_eye.position = _skeleton.get_bone_global_pose(Bones.EYE_LEFT_BONE).origin
-		right_eye.position = _skeleton.get_bone_global_pose(Bones.EYE_RIGHT_BONE).origin
 
 
 func _exit_tree():
@@ -116,15 +86,6 @@ func load_skeleton(base_model: Daz3DMesh):
 		
 		#_skeleton.add_child(_genitals)
 		#_genitals.owner = self
-		
-		_skeleton.add_child(left_eye)
-		left_eye.owner = self
-		_skeleton.add_child(right_eye)
-		right_eye.owner = self
-		
-	
-	left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
-	right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
 
 
 func load_mesh_async(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String):
@@ -148,15 +109,7 @@ func load_mesh_async_done(hair_file: String):
 	#_mesh.body_material.set_shader_parameter("lattice_offset_B",_genitals.right_offset)
 	#_mesh.body_material.set_shader_parameter("lattice_B",_genitals._mesh_material.get_shader_parameter("lattice_B"))
 	
-	if _mesh.left_eye:
-		set_eye_position(left_eye,_mesh.left_eye)
-	if _mesh.right_eye:
-		set_eye_position(right_eye,_mesh.right_eye)
-	
 	if _skeleton.get_bone_count() > 0:
-		left_eye.set_offset(left_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin)
-		right_eye.set_offset(right_eye.position - _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin)
-		
 		var person_controller : PersonController = find_child("PersonController")
 		if person_controller:
 			person_controller.create_collisions_shapes(_skeleton,_mesh)
