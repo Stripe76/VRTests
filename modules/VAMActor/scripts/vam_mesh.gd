@@ -15,6 +15,10 @@ extends MeshInstance3D
 @export var hair_material := Material.new()
 
 var head_tris : Dictionary
+var left_eye_bone : Vector3
+var right_eye_bone : Vector3
+var left_eye_aabb : AABB
+var right_eye_aabb : AABB
 var eye_template : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 
 enum {MESH_BODY = 0, MESH_GENITALS = 1}
@@ -274,8 +278,11 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			else:
 				surface_tool.commit(array_mesh)
 	
-	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_LEFT_EYE],left_eye_mesh.get_aabb().get_center()+Vector3(0,0,-0.005))
-	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_RIGHT_EYE],right_eye_mesh.get_aabb().get_center()+Vector3(0,0,-0.005))
+	left_eye_aabb = left_eye_mesh.get_aabb()
+	right_eye_aabb = right_eye_mesh.get_aabb()
+	
+	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_LEFT_EYE],left_eye_bone)
+	add_eye(surface_tool,body_mesh,surfaces[MATERIAL_RIGHT_EYE],right_eye_bone)
 	
 	return [body_mesh,genitals_mesh]
 
@@ -286,7 +293,6 @@ func add_eye(surface_tool: SurfaceTool,body_mesh: ArrayMesh,eye: Dictionary,offs
 	surface_tool.create_from(eye_template.mesh,0)
 	var arrays := surface_tool.commit_to_arrays()
 	
-	print(offset)
 	var eye_bones : PackedInt32Array = eye["bones"]
 	var eye_weights : PackedFloat32Array = eye["weights"]
 	
@@ -296,6 +302,7 @@ func add_eye(surface_tool: SurfaceTool,body_mesh: ArrayMesh,eye: Dictionary,offs
 		arrays[Mesh.ARRAY_VERTEX][v] = offset + arrays[Mesh.ARRAY_VERTEX][v] * scaling
 		for b in 8:
 			bones.push_back(eye_bones[b])
+			#bones.push_back(0)
 			weights.push_back(eye_weights[b])
 	
 	arrays[Mesh.ARRAY_BONES] = bones
