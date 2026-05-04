@@ -195,7 +195,7 @@ func set_eye_bones(skeleton: Skeleton3D):
 	var origin = _left_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
 	skeleton.set_bone_rest(Bones.EYE_LEFT_BONE,Transform3D(Basis( ),origin))
 	skeleton.set_bone_pose_position(Bones.EYE_LEFT_BONE,origin)
-
+	
 	origin = _right_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
 	skeleton.set_bone_rest(Bones.EYE_RIGHT_BONE,Transform3D(Basis( ),origin))
 	skeleton.set_bone_pose(Bones.EYE_RIGHT_BONE,Transform3D(Basis( ),origin))
@@ -307,11 +307,12 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controll
 	var ik_head := LookAtModifier3D.new()
 	ik_head.name = "HeadIK"
 	ik_head.bone = head_bone
-	ik_head.active = false	
+	ik_head.active = false
+	
 	var ik_left_eye := LookAtModifier3D.new()
 	ik_left_eye.name = "LeftEyeIK"
 	ik_left_eye.bone = left_eye_bone
-	ik_left_eye.active = false
+	ik_left_eye.active = true
 	ik_left_eye.use_angle_limitation = true
 	ik_left_eye.symmetry_limitation = true
 	ik_left_eye.primary_limit_angle = deg_to_rad(55)
@@ -320,7 +321,7 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controll
 	var ik_right_eye := LookAtModifier3D.new()
 	ik_right_eye.name = "RightEyeIK"
 	ik_right_eye.bone = right_eye_bone
-	ik_right_eye.active = false
+	ik_right_eye.active = true
 	ik_right_eye.use_angle_limitation = true
 	ik_right_eye.symmetry_limitation = true
 	ik_right_eye.primary_limit_angle = deg_to_rad(55)

@@ -15,6 +15,9 @@ var _mesh := VAMMesh.new()
 var _hair := VAMHair.new()
 var _skeleton := VAMSkeleton.new()
 
+var _left_eye_bone_origin : Vector3
+var _right_eye_bone_origin : Vector3
+
 var _mesh_thread : Thread
 var _materials_thread : Thread
 
@@ -79,6 +82,9 @@ func add_person_controller( )-> void:
 func load_skeleton(base_model: Daz3DMesh):
 	_skeleton.load_skeleton(base_model)
 	
+	_left_eye_bone_origin = _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin
+	_right_eye_bone_origin = _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin
+	
 	self.add_child(_skeleton)
 	_skeleton.owner = self
 		
@@ -114,6 +120,10 @@ func load_mesh_async_done(hair_file: String):
 	if _skeleton.get_bone_count() > 0:
 		var person_controller : PersonController = find_child("PersonController")
 		if person_controller:
+			person_controller._left_eye_aabb = _mesh.left_eye_aabb
+			person_controller._right_eye_aabb = _mesh.right_eye_aabb
+			
+			person_controller.set_eye_bones(_skeleton)
 			person_controller.create_collisions_shapes(_skeleton,_mesh)
 			
 			if not Engine.is_editor_hint():
@@ -121,8 +131,9 @@ func load_mesh_async_done(hair_file: String):
 
 
 func load_mesh(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String):
-	_mesh.left_eye_bone = _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin + Vector3(0,0,-0.005)
-	_mesh.right_eye_bone = _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin + Vector3(0,0,-0.005)
+	_mesh.left_eye_bone = _left_eye_bone_origin + Vector3(0,0,-0.006)
+	_mesh.right_eye_bone = _right_eye_bone_origin + Vector3(0,0,-0.006)
+	
 	_mesh.load_mesh(daz_model,scene_folder,scene_file)
 	
 	call_deferred("load_mesh_async_done",hair_file)

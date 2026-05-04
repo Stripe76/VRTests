@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://6aiw850gvwbf"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://6aiw850gvwbf"]
 
 [ext_resource type="Shader" uid="uid://7cuk1vaxhnt6" path="res://modules/VAMActor/shaders/digital_human/shaders/eye_colorized.gdshader" id="1_6vlfl"]
 [ext_resource type="Texture2D" uid="uid://d0uiijjg8q1lc" path="res://modules/VAMActor/shaders/digital_human/resources/iris_depth.webp" id="2_6xnog"]
