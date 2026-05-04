@@ -9,6 +9,8 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Head")
 @export var head : JointController
 @export var neck : JointController
+@export var left_eye : JointController
+@export var right_eye : JointController
 
 @export_group("Left arm")
 @export var left_collar : JointController
@@ -60,6 +62,19 @@ var _right_arm: PersonArm
 var _left_leg: PersonLeg
 var _right_leg: PersonLeg
 
+var _left_eye_aabb: AABB
+var _right_eye_aabb: AABB
+
+
+var _editor_owner
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			_editor_owner = owner
+			owner = null
+		NOTIFICATION_EDITOR_POST_SAVE:
+			owner = _editor_owner
+
 
 func _init(skeleton: Skeleton3D) -> void:
 	print("--- PersonController._init")
@@ -72,19 +87,6 @@ func _init(skeleton: Skeleton3D) -> void:
 		#_skeleton_springs = duplicate_skeleton(parent,skeleton,"SkeletonSprings")
 		
 		_skeleton.skeleton_updated.connect(_on_skeleton_updated)
-		
-		create_joints(_skeleton)
-		create_springs(_skeleton)
-
-
-var _editor_owner
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_EDITOR_PRE_SAVE:
-			_editor_owner = owner
-			owner = null
-		NOTIFICATION_EDITOR_POST_SAVE:
-			owner = _editor_owner
 
 
 func _physics_process(_delta: float) -> void:
@@ -168,6 +170,10 @@ func reset_pose():
 
 
 func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
+	set_eye_bones(_skeleton)
+	create_joints(_skeleton)
+	create_springs(_skeleton)
+	
 	create_controllers( )
 	create_collisions(parent,skeleton)
 	create_center_of_gravity(_skeleton,parent)
@@ -185,10 +191,22 @@ func weight_on_changed(limb: PersonLimb,weight_on: bool):
 		current_weight_on = null
 
 
+func set_eye_bones(skeleton: Skeleton3D):
+	var origin = _left_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
+	skeleton.set_bone_rest(Bones.EYE_LEFT_BONE,Transform3D(Basis( ),origin))
+	skeleton.set_bone_pose_position(Bones.EYE_LEFT_BONE,origin)
+
+	origin = _right_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
+	skeleton.set_bone_rest(Bones.EYE_RIGHT_BONE,Transform3D(Basis( ),origin))
+	skeleton.set_bone_pose(Bones.EYE_RIGHT_BONE,Transform3D(Basis( ),origin))
+
+
 func create_joints(skeleton: Skeleton3D) -> void:
 		head = JointController.new(skeleton,Bones.HEAD_BONE,{"x_min":0.18,"x_max":0.05,"y_min":0.15,"y_max":0.15,"z_min":0.05,"z_max":0.05})
 		neck = JointController.new(skeleton,Bones.NECK_BONE,{"x_min":0.15,"x_max":0.20,"y_min":0.20,"y_max":0.20,"z_min":0.05,"z_max":0.05})
-			
+		left_eye = JointController.new(skeleton,Bones.EYE_LEFT_BONE,{"x_min":0.15,"x_max":0.15,"y_min":0.15,"y_max":0.15})
+		right_eye = JointController.new(skeleton,Bones.EYE_RIGHT_BONE,{"x_min":0.15,"x_max":0.15,"y_min":0.15,"y_max":0.15})
+		
 		left_collar = JointController.new(skeleton,Bones.COLLAR_LEFT_BONE,{"x_min":0.1,"x_max":0.05,"y_min":0.15,"y_max":0.05,"z_min":0.053,"z_max":0.11})
 		right_collar = JointController.new(skeleton,Bones.COLLAR_RIGHT_BONE,{"x_min":0.05,"x_max":0.1,"y_min":0.05,"y_max":0.15,"z_min":0.11,"z_max":0.053})
 		left_shoulder = JointController.new(skeleton,Bones.SHOULDER_LEFT_BONE,{"x_min":0.3,"x_max":0.2,"y_min":0.5,"y_max":0.15,"z_min":0.47,"z_max":0.135})
@@ -232,17 +250,25 @@ func create_springs(skeleton: Skeleton3D) -> void:
 
 
 func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
-	add_head_ik(skeleton,parent,_head,Bones.HEAD_BONE)
+	var container : Node3D = skeleton.find_child("IKControllers")
+	if not container:
+		container = Node3D.new()
+		container.name = "IKControllers"
+		skeleton.add_child(container)
+		container.owner = parent
+		container.visible = false
+
+	add_head_ik(skeleton,parent,container,_head,Bones.HEAD_BONE,Bones.EYE_LEFT_BONE,Bones.EYE_RIGHT_BONE)
 	
-	add_limb_ik("Left","Arm","Hand",skeleton,parent,_left_arm,Bones.SHOULDER_LEFT_BONE,Vector3(0.2,1,-0.5))
-	add_limb_ik("Right","Arm","Hand",skeleton,parent,_right_arm,Bones.SHOULDER_RIGHT_BONE,Vector3(-0.2,1,-0.5))
+	add_limb_ik(skeleton,parent,container,"Left","Arm","Hand",_left_arm,Bones.SHOULDER_LEFT_BONE,Vector3(0.2,1,-0.5))
+	add_limb_ik(skeleton,parent,container,"Right","Arm","Hand",_right_arm,Bones.SHOULDER_RIGHT_BONE,Vector3(-0.2,1,-0.5))
 	
-	add_limb_ik("Left","Leg","Foot",skeleton,parent,_left_leg,Bones.HIP_LEFT_BONE,Vector3(0.1,1,1))
-	add_limb_ik("Right","Leg","Foot",skeleton,parent,_right_leg,Bones.HIP_RIGHT_BONE,Vector3(-0.1,1,1))
+	add_limb_ik(skeleton,parent,container,"Left","Leg","Foot",_left_leg,Bones.HIP_LEFT_BONE,Vector3(0.1,1,1))
+	add_limb_ik(skeleton,parent,container,"Right","Leg","Foot",_right_leg,Bones.HIP_RIGHT_BONE,Vector3(-0.1,1,1))
 
 
 func create_controllers( )-> void:
-	_head = PersonHead.new("Head",head,neck,self)
+	_head = PersonHead.new("Head",head,neck,left_eye,right_eye,self)
 	
 	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
 	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
@@ -277,19 +303,28 @@ func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
 	shapes.generate_shapes(skeleton,skeleton,mesh,"Capsule")
 
 
-func add_head_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int):
-	var ik_node := LookAtModifier3D.new()
-	ik_node.name = "HeadIK"
-	ik_node.bone = start_bone
-	ik_node.active = false
+func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controller: Node,head_bone: int,left_eye_bone: int,right_eye_bone: int):
+	var ik_head := LookAtModifier3D.new()
+	ik_head.name = "HeadIK"
+	ik_head.bone = head_bone
+	ik_head.active = false	
+	var ik_left_eye := LookAtModifier3D.new()
+	ik_left_eye.name = "LeftEyeIK"
+	ik_left_eye.bone = left_eye_bone
+	ik_left_eye.active = false
+	ik_left_eye.use_angle_limitation = true
+	ik_left_eye.symmetry_limitation = true
+	ik_left_eye.primary_limit_angle = deg_to_rad(55)
+	ik_left_eye.secondary_limit_angle = deg_to_rad(25)
 	
-	var container : Node3D = skeleton.find_child("IKControllers")
-	if not container:
-		container = Node3D.new()
-		container.name = "IKControllers"
-		skeleton.add_child(container)
-		container.owner = parent
-		container.visible = false
+	var ik_right_eye := LookAtModifier3D.new()
+	ik_right_eye.name = "RightEyeIK"
+	ik_right_eye.bone = right_eye_bone
+	ik_right_eye.active = false
+	ik_right_eye.use_angle_limitation = true
+	ik_right_eye.symmetry_limitation = true
+	ik_right_eye.primary_limit_angle = deg_to_rad(55)
+	ik_right_eye.secondary_limit_angle = deg_to_rad(25)
 	
 	var target_origin := Node3D.new()
 	target_origin.name = "LookAtOrigin"
@@ -297,24 +332,51 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone
 	container.add_child(target_origin)
 	target_origin.owner = parent
 	
-	var target_node := MeshInstance3D.new()
-	target_node.name = "LookAtTarget"
-	target_node.position = Vector3(0,0,1)
-	add_placeholder(target_node,Color(0,0,1),0.025)
+	var target_head := MeshInstance3D.new()
+	target_head.name = "LookAtHead"
+	target_head.position = Vector3(0,0,1)
+	add_placeholder(target_head,Color(0,0,1),0.025)
 	
-	target_origin.add_child(target_node)
-	target_node.owner = parent
+	var target_eyes := MeshInstance3D.new()
+	target_eyes.name = "LookAtEyes"
+	target_eyes.position = Vector3(0,1.65,1)
+	add_placeholder(target_eyes,Color(0,0,1),0.025)
+	var target_left_eye := Node3D.new()
+	target_left_eye.name = "LeftEye"
+	target_left_eye.position = Vector3(0.025,0,0)
+	var target_right_eye := Node3D.new()
+	target_right_eye.name = "RightEye"
+	target_right_eye.position = Vector3(-0.025,0,0)
 	
-	ik_node.set_target_node(target_node.get_path())
+	target_origin.add_child(target_head)
+	target_head.owner = parent
 	
-	skeleton.add_child(ik_node)
-	ik_node.owner = parent
+	container.add_child(target_eyes)
+	target_eyes.owner = parent
+	target_eyes.add_child(target_left_eye)
+	target_eyes.add_child(target_right_eye)
+	target_left_eye.owner = parent
+	target_right_eye.owner = parent
 	
-	controller.ik = ik_node
-	controller.ik_target = target_origin
+	ik_head.set_target_node(target_head.get_path())
+	ik_left_eye.set_target_node(target_left_eye.get_path())
+	ik_right_eye.set_target_node(target_right_eye.get_path())
+	
+	skeleton.add_child(ik_head)
+	skeleton.add_child(ik_left_eye)
+	skeleton.add_child(ik_right_eye)
+	ik_head.owner = parent
+	ik_left_eye.owner = parent
+	ik_right_eye.owner = parent
+	
+	controller.ik_head = ik_head
+	controller.ik_left_eye = ik_left_eye
+	controller.ik_right_eye = ik_right_eye
+	controller.ik_target_head = target_origin
+	controller.ik_target_eyes = target_eyes
 
 
-func add_limb_ik(side: String,limb: String,handle: String,skeleton: Skeleton3D,parent: Node3D,controller: Node,start_bone: int,pole_position: Vector3):
+func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,side: String,limb: String,handle: String,controller: Node,start_bone: int,pole_position: Vector3):
 	var ik_node := TwoBoneIK3D.new()
 	ik_node.name = side+limb+"IK"
 	ik_node.set_setting_count(1)
@@ -322,13 +384,6 @@ func add_limb_ik(side: String,limb: String,handle: String,skeleton: Skeleton3D,p
 	ik_node.set_middle_bone(0,start_bone+1)
 	ik_node.set_end_bone(0,start_bone+3)
 	ik_node.active = false
-	
-	var container : Node3D = skeleton.find_child("IKControllers")
-	if not container:
-		container = Node3D.new()
-		container.name = "IKControllers"
-		skeleton.add_child(container)
-		container.owner = parent
 	
 	var target_node := MeshInstance3D.new()
 	target_node.name = side+handle

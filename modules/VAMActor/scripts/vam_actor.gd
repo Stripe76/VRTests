@@ -64,6 +64,8 @@ func load_scene(daz_model: Daz3DMesh,library_folder: String,scene_folder: String
 func add_person_controller( )-> void:
 	var person_controller = PersonController.new(_skeleton)
 	person_controller.name = "PersonController"
+	person_controller._left_eye_aabb = _mesh.left_eye_aabb
+	person_controller._right_eye_aabb = _mesh.right_eye_aabb
 	
 	self.add_child(person_controller)
 	self.move_child(person_controller,self.get_child_count()-2)
@@ -119,6 +121,8 @@ func load_mesh_async_done(hair_file: String):
 
 
 func load_mesh(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String):
+	_mesh.left_eye_bone = _skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin + Vector3(0,0,-0.005)
+	_mesh.right_eye_bone = _skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin + Vector3(0,0,-0.005)
 	_mesh.load_mesh(daz_model,scene_folder,scene_file)
 	
 	call_deferred("load_mesh_async_done",hair_file)
