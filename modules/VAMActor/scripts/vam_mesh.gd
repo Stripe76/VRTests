@@ -355,7 +355,7 @@ func get_storables(scene_data : Dictionary):
 	return null
 
 
-func add_morphs(vertices : PackedVector3Array,linked_vertices: Dictionary,scene_data: Dictionary,scene_folder: String):
+func add_morphs(vertices: PackedVector3Array,linked_vertices: Dictionary,scene_data: Dictionary,scene_folder: String):
 	var storables = get_storables(scene_data)
 	if storables:
 		for s : Dictionary in storables:
@@ -371,7 +371,7 @@ func add_morphs(vertices : PackedVector3Array,linked_vertices: Dictionary,scene_
 							#apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value,24759)
 							continue
 						else:
-							#print("Applying body deltas: ",path)
+							print("Applying body deltas: ",path)
 							apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value)
 
 

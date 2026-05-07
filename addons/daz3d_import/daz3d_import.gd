@@ -480,8 +480,8 @@ func get_as_bones_array(data,bones_name : String,weights_name : String) -> Array
 
 				bone["origin"] = get_vector_from_data(b,"center_point")
 				bone["end"] = get_vector_from_data(b,"end_point")
-				bone["orientation"] = get_vector_from_data(b,"orientation")
-				bone["rotation"] = get_vector_from_data(b,"rotation")
+				bone["orientation"] = get_rotation_from_data(b,"orientation")
+				bone["rotation"] = get_rotation_from_data(b,"rotation")
 				bone["translation"] = get_vector_from_data(b,"translation")
 				bone["weights"] = get_bone_weights(bone["name"],weights)
 
@@ -520,12 +520,26 @@ func get_vector_from_data(data : Dictionary,name : String) -> Vector3:
 	var value : Vector3
 	var vector_data = data[name]
 	for v in vector_data:
+		if convert:
+			if v["id"] == "x":
+				value.x = v["value"] * 0.01
+			elif v["id"] == "y":
+				value.y = v["value"] * 0.01
+			elif v["id"] == "z":
+				value.z = v["value"] * 0.01
+	return value
+
+
+func get_rotation_from_data(data : Dictionary,name : String) -> Vector3:
+	var value : Vector3
+	var vector_data = data[name]
+	for v in vector_data:
 		if v["id"] == "x":
-			value.x = v["value"] / 100.0
+			value.x = deg_to_rad(float(v["value"]))
 		elif v["id"] == "y":
-			value.y = v["value"] / 100.0
+			value.y = deg_to_rad(float(v["value"]))
 		elif v["id"] == "z":
-			value.z = v["value"] / 100.0
+			value.z = deg_to_rad(float(v["value"]))
 	return value
 
 

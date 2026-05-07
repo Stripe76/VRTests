@@ -48,10 +48,9 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Hands")
 @export var left_index : JointController
 
-@export_group("Skeletons")
-@export var _skeleton : Skeleton3D
-
 var current_weight_on : PersonLimb
+
+var _skeleton : Skeleton3D
 
 var _head: PersonHead
 var _torso: PersonTorso

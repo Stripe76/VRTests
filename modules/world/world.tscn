@@ -30,7 +30,7 @@ volumetric_fog_density = 0.038
 adjustment_enabled = true
 adjustment_brightness = 0.9
 adjustment_contrast = 1.35
-adjustment_saturation = 0.4
+adjustment_saturation = 0.35
 
 [sub_resource type="QuadMesh" id="QuadMesh_vsd7t"]
 
@@ -623,6 +623,7 @@ light_energy = 0.285
 shadow_enabled = true
 
 [node name="Room" parent="Environment" unique_id=594042800 instance=ExtResource("2_tlwt5")]
+visible = false
 metadata/_edit_lock_ = true
 
 [node name="Censoring" type="MeshInstance3D" parent="Environment" unique_id=285099471]

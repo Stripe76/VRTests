@@ -1,54 +1,57 @@
 @tool
 extends Node3D
 
+@export_tool_button("Next mesh","ArrowRight") var next = _on_next_mesh
+
+@onready var _vam_actor : VAMActor = $VAMActor
+
 var pages : Dictionary
 
 var daz_model : Daz3DMesh
 var library_folder := "/mnt/data/Projects/Godot/library/"
 #var library_folder := "d:/Projects/Godot/library/"
 
-var current_mesh = 2
-var current_material = 2
+var current_mesh = 0
+var current_material = 0
+
 
 const MESHES := [
-	"Keiko/Saves/scene/JUN/KEIKO/Keiko.json",
-	"Anya2/Saves/scene/Anya.json",
 	"Barbie/Saves/scene/Barbie.json",
-	"Viola/Saves/scene/Viola.json",
-	"Anya/Saves/scene/Anya.json",
+	"Keiko/Saves/scene/JUN/KEIKO/Keiko.json",
 	"Anita/Saves/scene/Anita.json",
+	"Viola/Saves/scene/Viola.json",
+	"Rubyrose/Saves/scene/Rubyrose.json",
+	"Anya2/Saves/scene/Anya.json",
+	"Anita2/Saves/scene/LOOK/creati/Anita.json",
+	"Anya/Saves/scene/Anya.json",
 	"Merc/Saves/scene/Merc.json",
 	"Angel/Saves/scene/Angel.json",
-	"Rubyrose/Saves/scene/Rubyrose.json",
 	"Aimee/Saves/scene/Aimee.json",
 	"Alba/Saves/scene/ICannotDie/Jenny/Jenny.json",
 	"Alina/Saves/scene/Alina.json",
-	"Anita2/Saves/scene/LOOK/creati/Anita.json",
 	"Gina/Saves/scene/Gina.json"
 	]
 
+
 func _ready() -> void:
-	daz_model = preload("res://modules/VAMActor/resources/Genesis2Female.dsf")
+	daz_model = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 	
 	var scene_folder = get_scene_folder(MESHES[current_mesh])
 	var scene_file = get_relative_scene_file(MESHES[current_mesh])
 	var hair_file = "Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
 	
-	$VAMActor.load_scene(daz_model,library_folder,scene_folder,scene_file,hair_file)
-	#$VAMActor.load_skeleton(daz_model)
-	#$VAMActor.load_mesh(daz_model,genitals_model,scene_folder,scene_file)	
-	#$VAMActor.look_at = $Player
-	#$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)
+	#_vam_actor = load("res://modules/VAMActor/vam_actor.tscn").instantiate()
+	#_vam_actor.name = "VAMActor"
+	#add_child(_vam_actor)
+	#_vam_actor.owner = self
+	
+	_vam_actor.load_scene(daz_model,library_folder,scene_folder,scene_file,hair_file)
 	
 	if not Engine.is_editor_hint() and true:
 		$AnimationPlayer.play("walking_ik")
 
 
-func set_target(target: Node3D):
-	$VAMActor.look_at = target
-
-
-func _on_next_mesh(align_material: bool = true) -> void:
+func _on_next_mesh() -> void:
 	current_mesh += 1
 	if current_mesh >= MESHES.size():
 		current_mesh = 0
@@ -56,15 +59,16 @@ func _on_next_mesh(align_material: bool = true) -> void:
 	var scene_file := get_relative_scene_file(MESHES[current_mesh])
 	var scene_folder := get_scene_folder(MESHES[current_mesh])
 	var hair_file = "Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+	
+	#_vam_actor.queue_free()
+	#
+	#_vam_actor = load("res://modules/VAMActor/vam_actor.tscn").instantiate()
+	#_vam_actor.name = "VAMActor"
+	#add_child(_vam_actor)
+	#_vam_actor.owner = self
 
-	$VAMActor.load_mesh_async(daz_model,scene_folder,scene_file,hair_file)
-	
-	if align_material:
-		current_material = current_mesh
-	
-		scene_file = get_relative_scene_file(MESHES[current_material])
-		scene_folder = get_scene_folder(MESHES[current_material])
-		$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)
+	#_vam_actor.load_scene(daz_model,library_folder,scene_folder,scene_file,hair_file)
+	_vam_actor.load_scene_async(daz_model,library_folder,scene_folder,scene_file,hair_file)
 
 
 func _on_next_materials() -> void:
@@ -74,7 +78,8 @@ func _on_next_materials() -> void:
 	
 	var scene_file := get_relative_scene_file(MESHES[current_material])
 	var scene_folder := get_scene_folder(MESHES[current_material])
-	$VAMActor.load_materials_async(library_folder,scene_folder,scene_file)
+	
+	_vam_actor.load_materials_async(library_folder,scene_folder,scene_file)
 
 
 func get_scene_folder(scene_file: String) -> String:
