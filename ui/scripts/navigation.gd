@@ -1,7 +1,7 @@
 extends Control
 
-@export var Menu: Node
+@export var menu: Node
 
 func _ready() -> void:
-	if Menu:
-		$MainButtons/Buttons.set_buttons(Menu)
+	if menu:
+		$MainButtons/Buttons.set_buttons(menu)

@@ -93,7 +93,7 @@ func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_fi
 		if file:
 			var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
 			if scene_data:
-				#print("Textures loading")
+				print("Textures loading")
 				var textures = load_textures(scene_data,library_folder,vam_scene_folder)
 	
 				textures["faceMicroDetailUrl"] = "/mnt/data/Projects/Godot/VRTests/modules/VAMActor/shaders/human_shaders/Resources/MicroDetail/skin_micro_nrm_ao.png"
@@ -342,12 +342,16 @@ func int_to_color(value: int) -> Color:
 	return color
 
 
-func get_storables(scene_data : Dictionary):
+func get_storables(scene_data : Dictionary,check_textures: bool = false):
 	if scene_data and scene_data.has("atoms"):
 		var atoms = scene_data["atoms"]
 		for a : Dictionary in atoms:
-			if a["id"] == "Person" or a["type"] == "Person" and a.has("storables"):
-				return a["storables"]
+			if (a["id"] == "Person" or a["type"] == "Person") and a.has("storables"):
+				if not check_textures:
+					return a["storables"]
+				for s : Dictionary in a["storables"]:
+					if s["id"] == "textures":
+						return a["storables"]
 	
 	if scene_data and scene_data.has("storables"):
 		return scene_data["storables"]
@@ -451,7 +455,7 @@ func load_material_texture(material: Material,textures : Dictionary,field: Strin
 
 
 func load_textures(scene_data : Dictionary,library_path : String,scene_path : String) -> Dictionary:
-	var storables = get_storables(scene_data)	
+	var storables = get_storables(scene_data,true)
 	if storables:
 		var textures := {}
 		for s : Dictionary in storables:
@@ -462,6 +466,7 @@ func load_textures(scene_data : Dictionary,library_path : String,scene_path : St
 						textures[t] = scene_path + value.substr(6)
 					else:
 						textures[t] = library_path + value.replace(".latest:",".1")
+						#print(textures[t])
 				#textures["white"] = "modules/VAMActor/resources/white.png"
 				return textures
 	return {}

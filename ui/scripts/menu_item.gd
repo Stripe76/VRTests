@@ -1,13 +1,20 @@
+@tool
 extends Node
 
 class_name MenuItem
 
-@export var Title : String
-@export var Command : String
-@export var Parameter : String
+@export var title : String:
+	set(value):
+		title = value
+		name = title
+	get:
+		return title
+	
+@export var command : String
+@export var parameter : String
 
 static func create(title: String, command: String) -> MenuItem:
 	var instance = MenuItem.new()
-	instance.Title = title
-	instance.Command = command
+	instance.title = title
+	instance.command = command
 	return instance

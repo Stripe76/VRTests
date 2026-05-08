@@ -8,7 +8,7 @@ void fragment() {
 	vec3 color = vec3(1.0,1.0,1.0);
 	if( texture(standard_decal,UV).a > 0.0 )
 		//ALBEDO = mix(color.rgb * texture(standard_diffuse,UV).rgb,texture(standard_decal,UV).rgb,texture(standard_decal,UV).a*1.5);
-		ALBEDO = mix(color.rgb * texture(texture_albedo,UV).rgb,texture(standard_decal,UV).rgb,texture(standard_decal,UV).a*1.4);
+		ALBEDO = mix(color.rgb * texture(texture_albedo,UV).rgb,texture(standard_decal,UV).rgb,texture(standard_decal,UV).a);
 	else
 		ALBEDO = texture(texture_albedo,UV).rgb;
 	

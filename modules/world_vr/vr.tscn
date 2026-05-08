@@ -5,6 +5,33 @@
 [ext_resource type="PackedScene" uid="uid://df0a0if1po4qn" path="res://modules/player_vr/player_vr.tscn" id="3_swt12"]
 [ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="4_l8mqy"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l8mqy"]
+sky_top_color = Color(0.073016815, 0.08518631, 0.10546875, 1)
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+sky_energy_multiplier = 4.1
+ground_bottom_color = Color(0.0859375, 0.073660694, 0.057291653, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+energy_multiplier = 0.45
+
+[sub_resource type="Sky" id="Sky_036b0"]
+sky_material = SubResource("ProceduralSkyMaterial_l8mqy")
+
+[sub_resource type="Environment" id="Environment_e8w3s"]
+sky = SubResource("Sky_036b0")
+ambient_light_source = 3
+ambient_light_color = Color(0.47788, 0.47788, 0.47788, 1)
+ambient_light_sky_contribution = 0.02
+ambient_light_energy = 1.33
+ssao_enabled = true
+sdfgi_read_sky_light = false
+glow_enabled = true
+fog_light_energy = 0.55
+volumetric_fog_density = 0.038
+adjustment_enabled = true
+adjustment_brightness = 0.9
+adjustment_contrast = 1.35
+adjustment_saturation = 0.35
+
 [node name="VR" type="Node3D" unique_id=294629443]
 script = ExtResource("1_l6ae3")
 
@@ -14,3 +41,6 @@ script = ExtResource("1_l6ae3")
 transform = Transform3D(0.9367027, 0, 0.35012564, 0, 1, 0, -0.35012564, 0, 0.9367027, 0.13225678, 1.8425163, 0.69423133)
 
 [node name="World" parent="." unique_id=1079324566 instance=ExtResource("4_l8mqy")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=136302920]
+environment = SubResource("Environment_e8w3s")

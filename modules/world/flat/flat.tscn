@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://caa6h8u2ngdu4"]
+
+[ext_resource type="Script" uid="uid://di76cnhy8ttbk" path="res://modules/world/flat/scripts/flat.gd" id="1_0shs7"]
+[ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="1_02e27"]
+[ext_resource type="PackedScene" uid="uid://bt32yf15w0a6n" path="res://modules/world/flat/player.tscn" id="2_d76gn"]
+[ext_resource type="PackedScene" uid="uid://b4tucqjwbd08" path="res://ui/panels/navigation.tscn" id="4_8qcfw"]
+[ext_resource type="PackedScene" uid="uid://cnj21dhnh64wb" path="res://ui/menus/navigation.tscn" id="5_kvpox"]
+
+[node name="Flat" type="Node3D" unique_id=571182130]
+script = ExtResource("1_0shs7")
+
+[node name="Environment" type="Node3D" parent="." unique_id=496089564]
+visible = false
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" unique_id=773602504]
+transform = Transform3D(0.9895258, 0.06260145, -0.1300762, 0, 0.90107703, 0.4336591, 0.14435636, -0.42911687, 0.891639, 0, 0, 0)
+light_energy = 0.45
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=156210479]
+
+[node name="World" parent="." unique_id=2127073411 instance=ExtResource("1_02e27")]
+
+[node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 2)
+
+[node name="UI" type="Control" parent="." unique_id=1836542862]
+layout_mode = 3
+anchor_right = 0.29870838
+anchor_bottom = 1.0037037
+offset_right = -363.52008
+offset_bottom = -5.0
+size_flags_vertical = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Navigation" parent="UI" unique_id=407688831 node_paths=PackedStringArray("menu") instance=ExtResource("4_8qcfw")]
+layout_mode = 1
+menu = NodePath("../../Menus/Navigation")
+
+[node name="Menus" type="Node" parent="." unique_id=1137039642]
+
+[node name="Navigation" parent="Menus" unique_id=830496824 instance=ExtResource("5_kvpox")]
+
+[editable path="Menus/Navigation"]

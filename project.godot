@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="VRTests"
-run/main_scene="uid://cey8kihrt5xnv"
+run/main_scene="uid://caa6h8u2ngdu4"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/stretch_mode=0

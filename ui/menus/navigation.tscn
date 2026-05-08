@@ -1,46 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://cnj21dhnh64wb"]
+[gd_scene format=3 uid="uid://cnj21dhnh64wb"]
 
 [ext_resource type="Script" uid="uid://bhacmcxoek4dp" path="res://ui/scripts/menu_item.gd" id="1_2w5am"]
 
-[node name="Navigation" type="Node"]
+[node name="Navigation" type="Node" unique_id=558454716]
 script = ExtResource("1_2w5am")
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="Shaders" type="Node" parent="."]
+[node name="Person" type="Node" parent="." unique_id=836879005]
 script = ExtResource("1_2w5am")
-Title = "Shaders"
+title = "Person"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="Head" type="Node" parent="Shaders"]
+[node name="Looks" type="Node" parent="Person" unique_id=367339628]
 script = ExtResource("1_2w5am")
-Title = "Head"
-Command = "set_main_panel"
-Parameter = "shader_head"
+title = "Looks"
+command = "set_main_panel"
+parameter = "person_looks"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="Body" type="Node" parent="Shaders"]
+[node name="Body" type="Node" parent="Person" unique_id=302359747]
 script = ExtResource("1_2w5am")
-Title = "Body"
-Command = "set_main_panel"
-Parameter = "shader_body"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AB" type="Node" parent="."]
+[node name="AB" type="Node" parent="." unique_id=190541481]
 script = ExtResource("1_2w5am")
-Title = "aas"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AE" type="Node" parent="AB"]
+[node name="AE" type="Node" parent="AB" unique_id=362010978]
 script = ExtResource("1_2w5am")
-Title = "sdgsdg"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AD" type="Node" parent="AB"]
+[node name="AD" type="Node" parent="AB" unique_id=8607497]
 script = ExtResource("1_2w5am")
-Title = "gsdg"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AC" type="Node" parent="."]
+[node name="AC" type="Node" parent="." unique_id=1662162564]
 script = ExtResource("1_2w5am")
-Title = "dfgds"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"

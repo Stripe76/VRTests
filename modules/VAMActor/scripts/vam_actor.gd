@@ -53,22 +53,30 @@ func load_scene(daz_model: Daz3DMesh,library_folder: String,scene_folder: String
 	load_scene_done(library_folder,scene_folder,scene_file,true)
 
 
+var _mutex = Mutex.new()
+var _loading_scene := false
+var _loading_material := false
 func load_scene_async(daz_model: Daz3DMesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
-	load_scene_pre()
+	_mutex.lock()
+	if _loading_scene or _loading_material:
+		return
+	_loading_scene = true
+	_mutex.unlock()
 	
 	if _mesh_thread:
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
+	
+	load_scene_pre()
+	
 	_mesh_thread.start(load_scene_sync.bind(daz_model,library_folder,scene_folder,scene_file,hair_file,true))
 
 
 func load_scene_pre():
 	if _skeleton:
-		remove_child(_skeleton)
 		_skeleton.queue_free()
 	if _person_controller:
-		remove_child(_person_controller)
 		_person_controller.queue_free()
 
 
@@ -94,6 +102,10 @@ func load_scene_done(library_folder: String,scene_folder: String,scene_file: Str
 		load_materials_async(library_folder,scene_folder,scene_file)
 	else:
 		load_materials(library_folder,scene_folder,scene_file)
+	
+	#_mutex.lock()
+	_loading_scene = false
+	#_mutex.unlock()
 
 
 func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonController:
@@ -155,9 +167,19 @@ func load_materials(library_folder: String,scene_folder: String,scene_file: Stri
 		#_genitals._mesh_material.set_shader_parameter("texture_albedo",_mesh.genitals_material.get_shader_parameter("texture_albedo"))
 		#_genitals._mesh_material.set_shader_parameter("texture_normal",_mesh.genitals_material.get_shader_parameter("texture_normal"))
 		#_genitals._mesh_material.set_shader_parameter("standard_decal",_mesh.genitals_material.get_shader_parameter("standard_decal"))
+	
+	#_mutex.lock()
+	_loading_material = false
+	#_mutex.unlock()
 
 
 func load_materials_async(library_folder: String,scene_folder: String,scene_file: String):
+	_mutex.lock()
+	if _loading_material:
+		return
+	_loading_material = true
+	_mutex.unlock()
+	
 	if _materials_thread:
 		_materials_thread.wait_to_finish()
 	else:
