@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://caa6h8u2ngdu4"]
+
+[ext_resource type="Script" uid="uid://di76cnhy8ttbk" path="res://modules/world/flat/scripts/flat.gd" id="1_0shs7"]
+[ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="1_02e27"]
+[ext_resource type="PackedScene" uid="uid://bt32yf15w0a6n" path="res://modules/world/flat/player.tscn" id="2_d76gn"]
+[ext_resource type="Script" uid="uid://dmmxop4f31vrv" path="res://ui/scripts/ui.gd" id="4_kvpox"]
+[ext_resource type="PackedScene" uid="uid://do8qf5s44oagg" path="res://ui/menus/main.tscn" id="5_kvpox"]
+
+[node name="Flat" type="Node3D" unique_id=571182130]
+script = ExtResource("1_0shs7")
+
+[node name="Environment" type="Node3D" parent="." unique_id=496089564]
+visible = false
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" unique_id=773602504]
+transform = Transform3D(0.9895258, 0.06260145, -0.1300762, 0, 0.90107703, 0.4336591, 0.14435636, -0.42911687, 0.891639, 0, 0, 0)
+light_energy = 0.45
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=156210479]
+
+[node name="World" parent="." unique_id=2127073411 groups=["Scene"] instance=ExtResource("1_02e27")]
+
+[node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 2)
+
+[node name="UIContainer" type="HBoxContainer" parent="." unique_id=2011401312]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UI" type="Control" parent="UIContainer" unique_id=1836542862 groups=["UI"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("4_kvpox")
+
+[node name="Main" type="HBoxContainer" parent="UIContainer/UI" unique_id=1065891151]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" parent="UIContainer/UI/Main" unique_id=1990414711 instance=ExtResource("5_kvpox")]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="MainPanel" type="Control" parent="UIContainer/UI/Main" unique_id=1409399728]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WorldView" type="SubViewportContainer" parent="UIContainer" unique_id=1811776497]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+mouse_target = true
+
+[node name="SubViewport" type="SubViewport" parent="UIContainer/WorldView" unique_id=2100921644]
+handle_input_locally = false
+size = Vector2i(958, 1080)
+render_target_update_mode = 4

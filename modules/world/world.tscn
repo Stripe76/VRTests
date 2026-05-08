@@ -5,33 +5,6 @@
 [ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="3_rmlpf"]
 [ext_resource type="PackedScene" uid="uid://dkpvupck5lb4d" path="res://modules/VAMActor/vam_actor.tscn" id="4_aqk2v"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_aqk2v"]
-sky_top_color = Color(0.073016815, 0.08518631, 0.10546875, 1)
-sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-sky_energy_multiplier = 4.1
-ground_bottom_color = Color(0.0859375, 0.073660694, 0.057291653, 1)
-ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-energy_multiplier = 0.45
-
-[sub_resource type="Sky" id="Sky_036b0"]
-sky_material = SubResource("ProceduralSkyMaterial_aqk2v")
-
-[sub_resource type="Environment" id="Environment_dwbse"]
-sky = SubResource("Sky_036b0")
-ambient_light_source = 3
-ambient_light_color = Color(0.47788, 0.47788, 0.47788, 1)
-ambient_light_sky_contribution = 0.02
-ambient_light_energy = 1.33
-ssao_enabled = true
-sdfgi_read_sky_light = false
-glow_enabled = true
-fog_light_energy = 0.55
-volumetric_fog_density = 0.038
-adjustment_enabled = true
-adjustment_brightness = 0.9
-adjustment_contrast = 1.35
-adjustment_saturation = 0.35
-
 [sub_resource type="QuadMesh" id="QuadMesh_vsd7t"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vsd7t"]
@@ -614,14 +587,6 @@ metadata/_edit_lock_ = true
 
 [node name="Environment" type="Node3D" parent="." unique_id=1135302155]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=1547119376]
-environment = SubResource("Environment_dwbse")
-
-[node name="Sun" type="DirectionalLight3D" parent="Environment" unique_id=926251120]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-light_energy = 0.285
-shadow_enabled = true
-
 [node name="Room" parent="Environment" unique_id=594042800 instance=ExtResource("2_tlwt5")]
 visible = false
 metadata/_edit_lock_ = true
@@ -634,10 +599,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_vsd7t")
 
 [node name="Lights" type="Node" parent="." unique_id=1400390997]
 
-[node name="OmniLight3D" type="DirectionalLight3D" parent="Lights" unique_id=1093542120]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5444683, 1.818098, 0.3131745)
-light_energy = 0.354
-
 [node name="OmniLight3D4" type="OmniLight3D" parent="Lights" unique_id=137661104]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34650087, 1.8618711, 2.0672631)
 visible = false
@@ -648,6 +609,7 @@ omni_attenuation = 2.102
 
 [node name="OmniLight3D5" type="OmniLight3D" parent="Lights" unique_id=512499761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, -0.386623)
+visible = false
 shadow_enabled = true
 omni_range = 8.787
 omni_attenuation = 2.102
@@ -662,6 +624,7 @@ omni_attenuation = 2.102
 
 [node name="OmniLight3D7" type="OmniLight3D" parent="Lights" unique_id=2077514856]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, 2.17032)
+visible = false
 shadow_enabled = true
 omni_range = 8.787
 omni_attenuation = 2.102
@@ -674,10 +637,20 @@ shadow_enabled = true
 omni_range = 8.787
 omni_attenuation = 2.102
 
-[node name="OmniLight3D2" type="DirectionalLight3D" parent="Lights" unique_id=12316162]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.205346, 2.15334, 1.8342222)
-light_energy = 0.496
-light_indirect_energy = 0.748
+[node name="Back" type="SpotLight3D" parent="Lights" unique_id=99075947]
+transform = Transform3D(-0.7334805, -0.22988188, 0.6396567, -0.16290998, 0.9730985, 0.16290992, -0.65989894, 0.015284801, -0.7511989, 2.7291784, 0.5949441, -2.4081173)
+light_energy = 3.078
+spot_range = 20.173
+
+[node name="Left" type="SpotLight3D" parent="Lights" unique_id=1991484075]
+transform = Transform3D(0.6270908, -0.02535355, 0.77853346, -0.16290998, 0.97309864, 0.16290994, -0.7617202, -0.22899015, 0.6060907, 0.8997319, 1.7785915, 1)
+light_energy = 1.519
+light_size = 0.104
+
+[node name="Right" type="SpotLight3D" parent="Lights" unique_id=740677624]
+transform = Transform3D(-0.12901556, 0.51641506, -0.84656394, -0.08097415, 0.8453614, 0.528022, 0.988331, 0.13667282, -0.06724852, -1.8513807, 1.9075825, 1)
+light_energy = 2.766
+light_size = 0.091
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=838419763]
 root_node = NodePath("../VAMActor")

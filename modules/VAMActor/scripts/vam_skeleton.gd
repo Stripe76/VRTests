@@ -60,6 +60,32 @@ func load_morphs(scene_data: Dictionary,scene_folder: String) -> Dictionary:
 	return bones_morphs
 
 
+func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
+	if base_model:
+		var skeleton : Skeleton3D = self
+		
+		var morphs := {}
+		if looksID >=  0:
+			morphs = load_morphs_new(library,looksID)
+		
+		create_skeleton(skeleton,base_model.bones,morphs)
+		
+		left_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin
+		right_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin
+
+
+func load_morphs_new(library: LibraryManager,looksID: int) -> Dictionary:
+	var bones_morphs := {}
+	var morphs : Array = library.Looks_GetMorphs(looksID)
+	for morph in morphs:
+		if morph["type"] != "genitalia":
+			for bone_name in morph["bonesData"]:
+				if not bones_morphs.has(bone_name):
+					bones_morphs[bone_name] = []
+				bones_morphs[bone_name].append_array(morph["bonesData"][bone_name])
+	return bones_morphs
+
+
 func create_skeleton(skeleton: Skeleton3D,bones: Array,morphs: Dictionary) -> Skeleton3D:
 	skeleton.clear_bones()
 	

@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://do8qf5s44oagg"]
+
+[ext_resource type="Script" uid="uid://6sidj8vvncpf" path="res://ui/menus/scripts/main.gd" id="1_wt3dt"]
+[ext_resource type="Script" uid="uid://mlm2qu0ahgy" path="res://ui/scripts/buttons_menu.gd" id="2_taq5d"]
+[ext_resource type="PackedScene" uid="uid://v1qisajyx4yd" path="res://ui/nodes/menu_item.tscn" id="3_k44pi"]
+[ext_resource type="Script" uid="uid://bhacmcxoek4dp" path="res://ui/scripts/menu_item.gd" id="4_qmvml"]
+
+[node name="Main" type="Control" unique_id=1990414711]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wt3dt")
+
+[node name="MainButtons" type="ScrollContainer" parent="." unique_id=612786669]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.001
+anchor_right = 0.5
+anchor_bottom = 0.9998329
+offset_top = 0.08000004
+offset_right = 0.87042236
+offset_bottom = 0.0249939
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Buttons" type="VBoxContainer" parent="MainButtons" unique_id=1823885100 node_paths=PackedStringArray("sub_menu")]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_taq5d")
+sub_menu = NodePath("../../SubButtons/Buttons")
+
+[node name="SubButtons" type="ScrollContainer" parent="." unique_id=809677291]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -0.320007
+offset_bottom = 0.0249939
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Buttons" type="VBoxContainer" parent="SubButtons" unique_id=1850966042]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_taq5d")
+
+[node name="Menu" parent="." unique_id=809672406 instance=ExtResource("3_k44pi")]
+
+[node name="Person" type="Node" parent="Menu" unique_id=1814442686]
+script = ExtResource("4_qmvml")
+title = "Person"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Looks" type="Node" parent="Menu/Person" unique_id=891386259]
+script = ExtResource("4_qmvml")
+title = "Looks"
+command = "set_main_panel"
+parameter = "person_looks"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Body" type="Node" parent="Menu/Person" unique_id=1595303149]
+script = ExtResource("4_qmvml")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AB" type="Node" parent="Menu" unique_id=884066021]
+script = ExtResource("4_qmvml")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AE" type="Node" parent="Menu/AB" unique_id=1183026014]
+script = ExtResource("4_qmvml")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AD" type="Node" parent="Menu/AB" unique_id=389441516]
+script = ExtResource("4_qmvml")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="AC" type="Node" parent="Menu" unique_id=1591394219]
+script = ExtResource("4_qmvml")
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
