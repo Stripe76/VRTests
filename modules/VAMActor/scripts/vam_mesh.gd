@@ -87,6 +87,34 @@ func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: St
 	genitals = meshes[MESH_GENITALS]
 
 
+func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
+	if not base_model:
+		return
+	
+	var model_vertices : PackedVector3Array = base_model.vertices.duplicate()
+	var model_normals : PackedVector3Array = base_model.normals
+	var model_indices : Array = base_model.indeces
+	var model_uvs : PackedVector2Array = base_model.uvs
+	var model_weights : Array = base_model.weights
+	var model_linked : Dictionary = base_model.linked_vertices
+	var model_vertex_groups : Dictionary = base_model.vertex_groups
+	
+	if looksID >= 0:
+		add_morphs_new(model_vertices,model_linked,library,looksID)
+	
+	#print("Weights padding")
+	weights_padding(model_weights)
+	
+	#print("Meshes creation")
+	var meshes : Array = create_meshes(base_model,model_vertices,model_normals,model_indices,model_uvs,model_weights,model_vertex_groups)
+	
+	#print("Materials settings")
+	set_materials(meshes[MESH_BODY])
+	
+	full_body = meshes[MESH_BODY]
+	genitals = meshes[MESH_GENITALS]
+
+
 func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_file: String):
 	if self.mesh and vam_scene_file != "" || true:
 		var file := FileAccess.open(vam_scene_folder+vam_scene_file,FileAccess.READ)
@@ -99,7 +127,13 @@ func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_fi
 				textures["faceMicroDetailUrl"] = "/mnt/data/Projects/Godot/VRTests/modules/VAMActor/shaders/human_shaders/Resources/MicroDetail/skin_micro_nrm_ao.png"
 	
 				#print("Material textures setting")
-				set_materials_textures(self.mesh,textures)	
+				set_materials_textures(self.mesh,textures)
+
+
+func load_materials_new(library: LibraryManager,looksID: int):
+	var textures = library.Looks_GetTextures(looksID)
+	
+	set_materials_textures_new(library,looksID,mesh,textures)
 
 
 func set_materials(mesh: ArrayMesh)-> void:
@@ -379,6 +413,15 @@ func add_morphs(vertices: PackedVector3Array,linked_vertices: Dictionary,scene_d
 							apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value)
 
 
+func add_morphs_new(vertices: PackedVector3Array,linked_vertices: Dictionary,library: LibraryManager,looksID: int):
+	var morphs : Array = library.Looks_GetMorphs(looksID)
+	for morph in morphs:
+		if morph["type"] != "genitalia":
+			print("Applying body deltas: ",morph["meshFile"])
+			var value : float =  morph["value"]
+			apply_deltas_new(vertices,linked_vertices,morph["meshData"],value)
+
+
 func apply_deltas(vertices: PackedVector3Array, linked_vertices: Dictionary,deltas: Array,value: float,offset: int = 0):
 	var mesh_count : int = vertices.size()
 	var deltas_count : int = deltas.size()
@@ -403,11 +446,25 @@ func apply_deltas(vertices: PackedVector3Array, linked_vertices: Dictionary,delt
 			if delta.id < minID: minID = delta.id
 			if delta.id > maxID: maxID = delta.id
 		else:
-			push_warning("Delta ID too high: ",delta.id)
+			#push_warning("Delta ID too high: ",delta.id)
+			continue
 	
 	#print(" - ID min: ",minID)
 	#print(" - ID max: ",maxID)
 	#print(" - Linked: ",linked)
+
+
+func apply_deltas_new(vertices: PackedVector3Array, linked_vertices: Dictionary,deltas: Array,value: float,offset: int = 0):
+	for d in deltas:
+		var deltaID = d["id"]
+		if deltaID < vertices.size( ):
+			vertices[offset+deltaID] += d["delta"] * value
+			if linked_vertices.has(deltaID):
+				for c in linked_vertices[deltaID]:
+					vertices[c] += d["delta"] * value
+		else:
+			#push_warning("Delta ID too high: ",delta.id)
+			continue
 
 
 func set_materials_textures(array_mesh: ArrayMesh, textures : Dictionary):
@@ -446,11 +503,55 @@ func set_materials_textures(array_mesh: ArrayMesh, textures : Dictionary):
 	load_material_texture(genitals_material,textures,"genitalsDiffuseUrl",decal)
 
 
+func set_materials_textures_new(library: LibraryManager,looksID: int,array_mesh: ArrayMesh, textures : Dictionary):
+	var enable_decal := true
+	#var diffuse := "standard_diffuse"
+	#var normal := "standard_normal"
+	var decal := "standard_decal"
+	var diffuse := "texture_albedo"
+	var normal := "texture_normal"
+	
+	load_material_texture_new(library,looksID,head_material,textures,"faceDiffuseUrl",diffuse)
+	load_material_texture_new(library,looksID,head_material,textures,"faceNormalUrl",normal)
+	if textures.has("faceDecalUrl") && enable_decal:
+		load_material_texture_new(library,looksID,head_material,textures,"faceDecalUrl",decal)
+	else:
+		load_material_texture_new(library,looksID,head_material,textures,"white",decal)
+	if textures.has("faceMicroDetailUrl"):
+		load_material_texture_new(library,looksID,head_material,textures,"faceMicroDetailUrl","texture_micro_detail")
+	
+	load_material_texture_new(library,looksID,body_material,textures,"torsoDiffuseUrl",diffuse)
+	load_material_texture_new(library,looksID,body_material,textures,"torsoNormalUrl",normal)
+	if textures.has("torsoDecalUrl") && enable_decal:
+		load_material_texture_new(library,looksID,body_material,textures,"torsoDecalUrl",decal)
+	else:
+		load_material_texture_new(library,looksID,body_material,textures,"white",decal)
+	
+	load_material_texture_new(library,looksID,limbs_material,textures,"limbsDiffuseUrl",diffuse)
+	load_material_texture_new(library,looksID,limbs_material,textures,"limbsNormalUrl",normal)
+	if textures.has("limbsDecalUrl") && enable_decal:
+		load_material_texture_new(library,looksID,limbs_material,textures,"limbsDecalUrl",decal)
+	else:
+		load_material_texture_new(library,looksID,limbs_material,textures,"white",decal)
+	
+	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",diffuse)
+	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsNormalUrl",normal)
+	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",decal)
+
+
 func load_material_texture(material: Material,textures : Dictionary,field: String,param_name: String):
 	if field == "white":
 		material.set_shader_parameter(param_name,ResourceLoader.load("res://modules/VAMActor/resources/white.png"))
 	elif textures.has(field):
 		var image = Image.load_from_file(textures.get(field))
+		material.set_shader_parameter(param_name,ImageTexture.create_from_image(image))
+
+
+func load_material_texture_new(library: LibraryManager,looksID: int,material: Material,textures : Dictionary,field: String,param_name: String):
+	if field == "white":
+		material.set_shader_parameter(param_name,ResourceLoader.load("res://modules/VAMActor/resources/white.png"))
+	elif textures.has(field):
+		var image = library.Looks_GetTextureImage(looksID,textures.get(field))
 		material.set_shader_parameter(param_name,ImageTexture.create_from_image(image))
 
 

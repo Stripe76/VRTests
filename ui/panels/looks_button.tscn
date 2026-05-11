@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ch87v2qd3sykd"]
+
+[ext_resource type="Script" uid="uid://dhhy21nlkpeaq" path="res://ui/panels/scripts/looks_button.gd" id="1_ysddc"]
+
+[node name="LooksButton" type="Button" unique_id=391191348]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "scene name"
+clip_text = true
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("1_ysddc")
+
+[node name="Notifier" type="VisibleOnScreenNotifier2D" parent="." unique_id=1670528088]
+rect = Rect2(-10, -10, 110, 110)

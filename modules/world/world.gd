@@ -5,8 +5,6 @@ extends Node3D
 
 @onready var _vam_actor : VAMActor = $VAMActor
 
-var pages : Dictionary
-
 var daz_model : Daz3DMesh
 var library_folder := "/mnt/data/Projects/Godot/library/"
 #var library_folder := "d:/Projects/Godot/library/"
@@ -14,6 +12,7 @@ var library_folder := "/mnt/data/Projects/Godot/library/"
 var current_mesh = 0
 var current_material = 0
 
+var _library : LibraryManager
 
 const MESHES := [
 	"Gemma/Saves/scene/Gemma Redhead V1.json",
@@ -63,6 +62,18 @@ func _ready() -> void:
 
 #func set_target(target: Node3D):
 	#_vam_actor.look_at = target
+
+
+func set_library(library: LibraryManager):
+	_library = library
+
+var animation_was_playing := false
+func select_looks(id: int):
+	if _library and _vam_actor:
+		animation_was_playing = $AnimationPlayer.is_playing()
+		$AnimationPlayer.pause()
+		
+		_vam_actor.load_looks_async(_library,id,func(): if animation_was_playing: $AnimationPlayer.play())
 
 
 func _on_next_mesh(align_material: bool = true) -> void:

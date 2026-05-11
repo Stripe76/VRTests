@@ -2,8 +2,13 @@
 
 [ext_resource type="Script" uid="uid://chgen3aojikw7" path="res://modules/world/flat/scripts/player.gd" id="1_mexil"]
 
+[sub_resource type="Curve" id="Curve_mexil"]
+_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [node name="Player" type="Node3D" unique_id=829102050]
 script = ExtResource("1_mexil")
+delta_curve = SubResource("Curve_mexil")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1884994013]
 transform = Transform3D(1, 0, 0, 0, 0.92718387, 0.3746066, 0, -0.3746066, 0.92718387, 0, 0, 0)

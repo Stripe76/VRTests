@@ -1,9 +1,11 @@
 class_name PlayerFlat
 extends Node3D
 
+@export var delta_curve := Curve.new()
+
 @onready var camera = $Camera3D
 
-var move_speed := Vector3(1,.5,1)
+var move_speed := Vector3(1,1,1)
 var mouse_sensitivity = 0.0025
 
 
@@ -13,6 +15,8 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
+var delta_move := 0.0
+var last_move := Vector3()
 func _process(delta: float) -> void:
 	var move = Vector3()
 	if Input.is_action_pressed("Forward"):
@@ -31,8 +35,16 @@ func _process(delta: float) -> void:
 	if Input.is_action_pressed("Slow"):
 		move *= 0.25
 	
+	if move.is_zero_approx() and delta_move > 0.0:
+		delta_move -= delta * 1.5
+		move = last_move
+	else:
+		if delta_move < 1.0:
+			delta_move += delta
+		last_move = move
+	
 	move = global_transform.basis * move
-	position += move * delta
+	position += move * delta * delta_curve.sample(delta_move)
 
 
 func _unhandled_input(event):

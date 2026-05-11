@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://tochaktk6kd8"]
+
+[ext_resource type="Script" uid="uid://dxaew5hjkj132" path="res://ui/panels/scripts/looks_selection.gd" id="1_hncbf"]
+
+[node name="LooksSelection" type="Control" unique_id=1914759772]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hncbf")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=1338440764]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Items" type="HFlowContainer" parent="ScrollContainer" unique_id=1944787768]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
