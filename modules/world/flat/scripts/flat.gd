@@ -6,6 +6,7 @@ extends Node3D
 
 @onready var world  = $World
 @onready var player := $Player
+@onready var scene_manager : SceneManager = $SceneManager
 
 @onready var animation := $World/AnimationPlayer
 
@@ -17,7 +18,10 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	world.set_library(ui.get_library( ))
+	scene_manager.set_world(world)
+	scene_manager.set_library(ui.get_library( ))
+	
+	ui.set_scene_manager(scene_manager)
 	
 	switch_ui()
 
@@ -26,10 +30,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("SwitchMode"):
 		switch_ui()
 	elif event.is_action_released("StartAnimation"):
-		if animation.is_playing():
-			animation.pause()
-		else:
-			animation.play()
+		scene_manager.toggle_animation("walking_ik 2")
 
 
 func _unhandled_input(event):

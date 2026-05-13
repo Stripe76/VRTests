@@ -6,7 +6,7 @@ public class Looks
 {
     public int ID { get; init; }
     public string Archive  { get; init; }
-    public string Person  { get; init; }
+    public string PersonJSON  { get; init; }
     
     public string Title  { get; init; }
     public string SceneFile  { get; init; }

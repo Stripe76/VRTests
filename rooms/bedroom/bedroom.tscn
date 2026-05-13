@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dpr62j65fdvyj"]
+
+[ext_resource type="VoxelGIData" uid="uid://dwmxvvwcfqlf7" path="res://rooms/bedroom/resources/bedroom.VoxelGI_data.res" id="1_25nom"]
+[ext_resource type="PackedScene" uid="uid://ckjafh8yd6njs" path="res://rooms/bedroom/resources/Bedroom.glb" id="1_r7qss"]
+[ext_resource type="Script" uid="uid://jytjsd8ijdon" path="res://rooms/bedroom/fan.gd" id="3_efd8u"]
+
+[node name="Bedroom" type="Node3D" unique_id=1618092453]
+
+[node name="VoxelGI" type="VoxelGI" parent="." unique_id=37733083]
+data = ExtResource("1_25nom")
+
+[node name="Bedroom" parent="." unique_id=1829110619 instance=ExtResource("1_r7qss")]
+
+[node name="Cube" parent="Bedroom" index="0" unique_id=1080762737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1992581, 0)
+
+[node name="Cube_001" parent="Bedroom" index="1" unique_id=1418695425]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2023826, 0)
+
+[node name="Cube_014" parent="Bedroom" index="9" unique_id=1462953036]
+visible = false
+
+[node name="Cylinder_008" parent="Bedroom/Cylinder_003" parent_id_path=PackedInt32Array(1829110619, 989797075) index="0" unique_id=1059991326]
+script = ExtResource("3_efd8u")
+
+[node name="Ligths" type="Node3D" parent="." unique_id=609121650]
+visible = false
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Ligths" unique_id=1373235356]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00020498037, 2.308484, 0)
+
+[editable path="Bedroom"]

@@ -17,7 +17,7 @@ signal weight_on_changed
 			side = 0
 			height = 0
 			
-			ik_position = ik_bone.global_position
+			ik_position = ik_bone.position
 			ik_target.global_position = ik_position
 		if ik:
 			ik.active = value;

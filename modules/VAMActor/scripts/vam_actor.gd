@@ -14,6 +14,9 @@ class_name VAMActor extends Node3D
 
 @onready var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 
+var _looks_id : int = -1
+var _library : LibraryManager
+
 var _mesh : VAMMesh
 var _hair : VAMHair
 var _skeleton : VAMSkeleton
@@ -28,17 +31,6 @@ func _ready() -> void:
 		generate_model()
 
 
-func generate_model():
-	#load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Barbie/","Saves/scene/Barbie.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Keiko/","Saves/scene/JUN/KEIKO/Keiko.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Rubyrose/","Saves/scene/Rubyrose.json","Barbie/Custom/Hair/Female/RenVR/Barbie.vab")
-	#load_scene(_daz_model,"/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Viola/","Saves/scene/Viola.json","ddaamm.hair_short5.4/Custom/Hair/Female/ddaamm/ddaamm/ddaamm short5 bang.vab")
-	
-	#load_scene(_daz_model,null,"","","")
-
-
 func _exit_tree():
 	if _mesh_thread:
 		_mesh_thread.wait_to_finish()
@@ -46,48 +38,77 @@ func _exit_tree():
 		_materials_thread.wait_to_finish()
 
 
-func load_looks(library: LibraryManager,looksID: int):
+func get_looks_id( ) -> int:
+	return _looks_id
+
+
+func reset():
+	if _person_controller:
+		_person_controller.reset_pose()
+
+func generate_model():
+	if not _library:
+		_library = LibraryManager.new()
+		_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	if _library:
+		load_looks(_library,2,Vector3()) # Barbie
+
+
+func load_looks(library: LibraryManager,looksID: int,spawn_position: Vector3):
+	_looks_id = looksID
+	
 	load_looks_pre()
-	load_looks_sync(library,looksID)
+	load_looks_sync(library,looksID,spawn_position)
 
 
-func load_looks_async(library: LibraryManager,looksID: int,signal_done: Callable = Callable()):
+var _mutex = Mutex.new()
+var _loading_scene := false
+var _loading_material := false
+func load_looks_async(library: LibraryManager,looksID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
 	_mutex.lock()
 	if _loading_scene or _loading_material:
 		return
 	_loading_scene = true
 	_mutex.unlock()
 	
+	_looks_id = looksID
+	
 	if _mesh_thread:
 		_mesh_thread.wait_to_finish()
 	else:
 		_mesh_thread = Thread.new()
 	
-	load_scene_pre()
+	load_looks_pre()
 	
-	_mesh_thread.start(load_looks_sync.bind(library,looksID,signal_done))
+	_mesh_thread.start(load_looks_sync.bind(library,looksID,spawn_position,signal_done))
 
 
 func load_looks_pre():
+	if _mesh:
+		_skeleton.remove_child(_mesh)
+		_mesh.queue_free()
+		_mesh = null
 	if _skeleton:
 		remove_child(_skeleton)
 		_skeleton.queue_free()
+		_skeleton = null
 	if _person_controller:
 		remove_child(_person_controller)
 		_person_controller.queue_free()
+		_person_controller = null
 
 
-func load_looks_sync(library: LibraryManager,looksID: int,signal_done: Callable = Callable()):
+func load_looks_sync(library: LibraryManager,looksID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
 	_skeleton = load_skeleton_new(_daz_model,library,looksID)
 	_mesh = load_mesh_new(_daz_model,library,looksID,_skeleton.left_eye_bone_origin,_skeleton.right_eye_bone_origin)
 	
-	call_deferred("load_looks_done",library,looksID,true)
+	call_deferred("load_looks_done",library,looksID,spawn_position,true)
 	
 	if signal_done:
 		signal_done.call()
 
 
-func load_looks_done(library: LibraryManager,looksID: int,async: bool):
+func load_looks_done(library: LibraryManager,looksID: int,spawn_position: Vector3,async: bool):
 	add_child(_skeleton)
 	_skeleton.add_child(_mesh)
 	
@@ -97,17 +118,23 @@ func load_looks_done(library: LibraryManager,looksID: int,async: bool):
 	_mesh.owner = self
 	_person_controller.owner = self
 	
+	#_hair = VAMHair.new()
+	#var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+	#load_hair(hair_file,_mesh.head_tris)
+	
+	position = spawn_position
+	
 	if async:
-		load_materials_async_new(library,looksID)
+		load_materials_async(library,looksID)
 	else:
-		load_materials_new(library,looksID)
+		load_materials(library,looksID)
 	
 	#_mutex.lock()
 	_loading_scene = false
 	#_mutex.unlock()
 
 
-func load_materials_new(library: LibraryManager,looksID: int):
+func load_materials(library: LibraryManager,looksID: int):
 	_mesh.load_materials_new(library,looksID)
 	
 	#if _genitals and _genitals._mesh_material:
@@ -120,7 +147,7 @@ func load_materials_new(library: LibraryManager,looksID: int):
 	#_mutex.unlock()
 
 
-func load_materials_async_new(library: LibraryManager,looksID: int):
+func load_materials_async(library: LibraryManager,looksID: int):
 	_mutex.lock()
 	if _loading_material:
 		return
@@ -131,70 +158,7 @@ func load_materials_async_new(library: LibraryManager,looksID: int):
 		_materials_thread.wait_to_finish()
 	else:
 		_materials_thread = Thread.new()
-	_materials_thread.start(load_materials_new.bind(library,looksID))
-
-
-func load_scene(daz_model: Daz3DMesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
-	load_scene_pre()
-	load_scene_sync(daz_model,library_folder,scene_folder,scene_file,hair_file,false)
-	load_scene_done(library_folder,scene_folder,scene_file,true)
-
-
-var _mutex = Mutex.new()
-var _loading_scene := false
-var _loading_material := false
-func load_scene_async(daz_model: Daz3DMesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,materials : bool = true):
-	_mutex.lock()
-	if _loading_scene or _loading_material:
-		return
-	_loading_scene = true
-	_mutex.unlock()
-	
-	if _mesh_thread:
-		_mesh_thread.wait_to_finish()
-	else:
-		_mesh_thread = Thread.new()
-	
-	load_scene_pre()
-	
-	_mesh_thread.start(load_scene_sync.bind(daz_model,library_folder,scene_folder,scene_file,hair_file,true))
-
-
-func load_scene_pre():
-	if _mesh:
-		_skeleton.remove_child(_mesh)
-		_mesh.queue_free()
-	if _skeleton:
-		_skeleton.queue_free()
-	if _person_controller:
-		_person_controller.queue_free()
-
-
-func load_scene_sync(daz_model: Daz3DMesh,library_folder: String,scene_folder: String,scene_file: String,hair_file: String,call_done: bool):
-	_skeleton = load_skeleton(daz_model,library_folder,scene_folder,scene_file)
-	_mesh = load_mesh(daz_model,scene_folder,scene_file,library_folder+hair_file,_skeleton.left_eye_bone_origin,_skeleton.right_eye_bone_origin)
-	
-	if call_done:
-		call_deferred("load_scene_done",library_folder,scene_folder,scene_file,true)
-
-
-func load_scene_done(library_folder: String,scene_folder: String,scene_file: String,async: bool):
-	add_child(_skeleton)
-	_skeleton.add_child(_mesh)
-	
-	_person_controller = add_person_controller(_skeleton,_mesh)
-	
-	_skeleton.owner = self
-	_mesh.owner = self
-	
-	if async:
-		load_materials_async(library_folder,scene_folder,scene_file)
-	else:
-		load_materials(library_folder,scene_folder,scene_file)
-	
-	#_mutex.lock()
-	_loading_scene = false
-	#_mutex.unlock()
+	_materials_thread.start(load_materials.bind(library,looksID))
 
 
 func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonController:
@@ -214,15 +178,6 @@ func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonControl
 	return person_controller
 
 
-func load_skeleton(base_model: Daz3DMesh,_library_folder: String,scene_folder: String,scene_file: String) -> VAMSkeleton:
-	var skeleton := VAMSkeleton.new()
-	skeleton.name = "VAMSkeleton"
-	
-	skeleton.load_skeleton(base_model,scene_folder,scene_file)
-	
-	return skeleton
-
-
 func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int) -> VAMSkeleton:
 	var skeleton := VAMSkeleton.new()
 	skeleton.name = "VAMSkeleton"
@@ -230,19 +185,6 @@ func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,looksID: in
 	skeleton.load_skeleton_new(base_model,library,looksID)
 	
 	return skeleton
-
-
-func load_mesh(daz_model: Daz3DMesh,scene_folder: String,scene_file: String,hair_file: String,left_eye_bone_origin: Vector3,right_eye_bone_origin: Vector3) -> VAMMesh:
-	var vam_mesh = VAMMesh.new()
-	vam_mesh.name = "VAMMEsh"
-	
-	vam_mesh.left_eye_bone = left_eye_bone_origin + Vector3(0,0,-0.005)
-	vam_mesh.right_eye_bone = right_eye_bone_origin+ Vector3(0,0,-0.005)
-	
-	vam_mesh.load_mesh(daz_model,scene_folder,scene_file)
-	vam_mesh.mesh = vam_mesh.full_body
-	
-	return vam_mesh
 
 
 func load_mesh_new(daz_model: Daz3DMesh,library: LibraryManager,looksID: int,left_eye_bone_origin: Vector3,right_eye_bone_origin: Vector3) -> VAMMesh:
@@ -259,7 +201,7 @@ func load_mesh_new(daz_model: Daz3DMesh,library: LibraryManager,looksID: int,lef
 
 
 func load_hair(hair_file: String,head_tris: Dictionary):
-	var parent : Node3D = _skeleton.find_child("head 25")
+	var parent : Node3D = _skeleton.find_child("head")
 	if not parent:
 		parent = self
 	
@@ -269,30 +211,3 @@ func load_hair(hair_file: String,head_tris: Dictionary):
 	head_tris["Origin"] = parent.position
 	
 	_hair.generate_hair(hair_file,head_tris)
-
-
-func load_materials(library_folder: String,scene_folder: String,scene_file: String):
-	_mesh.load_materials(library_folder,scene_folder,scene_file)
-	
-	#if _genitals and _genitals._mesh_material:
-		#_genitals._mesh_material.set_shader_parameter("texture_albedo",_mesh.genitals_material.get_shader_parameter("texture_albedo"))
-		#_genitals._mesh_material.set_shader_parameter("texture_normal",_mesh.genitals_material.get_shader_parameter("texture_normal"))
-		#_genitals._mesh_material.set_shader_parameter("standard_decal",_mesh.genitals_material.get_shader_parameter("standard_decal"))
-	
-	#_mutex.lock()
-	_loading_material = false
-	#_mutex.unlock()
-
-
-func load_materials_async(library_folder: String,scene_folder: String,scene_file: String):
-	_mutex.lock()
-	if _loading_material:
-		return
-	_loading_material = true
-	_mutex.unlock()
-	
-	if _materials_thread:
-		_materials_thread.wait_to_finish()
-	else:
-		_materials_thread = Thread.new()
-	_materials_thread.start(load_materials.bind(library_folder,scene_folder,scene_file))

@@ -18,16 +18,17 @@ func _ready() -> void:
 var delta_move := 0.0
 var last_move := Vector3()
 func _process(delta: float) -> void:
+	## Position
 	var move = Vector3()
 	if Input.is_action_pressed("Forward"):
 		move.z = -move_speed.z
 	elif Input.is_action_pressed("Backward"):
 		move.z = move_speed.z
-	elif Input.is_action_pressed("Up"):
+	if Input.is_action_pressed("Up"):
 		move.y = -move_speed.y
 	elif Input.is_action_pressed("Down"):
 		move.y = move_speed.y
-	elif Input.is_action_pressed("Left"):
+	if Input.is_action_pressed("Left"):
 		move.x = -move_speed.x
 	elif Input.is_action_pressed("Right"):
 		move.x = move_speed.x
@@ -36,7 +37,7 @@ func _process(delta: float) -> void:
 		move *= 0.25
 	
 	if move.is_zero_approx() and delta_move > 0.0:
-		delta_move -= delta * 1.5
+		delta_move -= delta * 2.0
 		move = last_move
 	else:
 		if delta_move < 1.0:
@@ -51,7 +52,6 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		camera.rotate_x(-event.relative.y * mouse_sensitivity)
-		#rotation.z = clamp(camera.rotation.z, deg_to_rad(-90), deg_to_rad(90))
 
 
 #func _unhandled_key_input(event: InputEvent) -> void:

@@ -37,7 +37,6 @@ class_name PersonLeg extends PersonLimb
 	get:
 		return twist
 @export_range(-1,1) var ankle_side : float = 0:
-	
 	set(value):
 		ankle_side = value
 		update_pose()

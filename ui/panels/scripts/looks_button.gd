@@ -14,13 +14,13 @@ func with_data(library : LibraryManager,id: int) -> LooksButton:
 
 
 func _init() -> void:
-	custom_minimum_size = Vector2(100,100)
+	custom_minimum_size = Vector2(260,260)
 
 
 func _ready() -> void:
 	_notifier.screen_entered.connect(screen_entered)
 	
-	text = _library.Looks_GetTitle(_looksID)
+	#text = _library.Looks_GetTitle(_looksID)
 	
 	pressed.connect(func (): get_tree().call_group("Scene","select_looks",_looksID))
 

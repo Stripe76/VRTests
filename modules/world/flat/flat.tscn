@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bt32yf15w0a6n" path="res://modules/world/flat/player.tscn" id="2_d76gn"]
 [ext_resource type="Script" uid="uid://dmmxop4f31vrv" path="res://ui/scripts/ui.gd" id="4_kvpox"]
 [ext_resource type="PackedScene" uid="uid://do8qf5s44oagg" path="res://ui/menus/main.tscn" id="5_kvpox"]
+[ext_resource type="PackedScene" uid="uid://eyie3gn8t3ll" path="res://modules/scene_manager/scene_manager.tscn" id="6_hw5o8"]
 
 [node name="Flat" type="Node3D" unique_id=571182130]
 script = ExtResource("1_0shs7")
@@ -19,7 +20,7 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=156210479]
 
-[node name="World" parent="." unique_id=2127073411 groups=["Scene"] instance=ExtResource("1_02e27")]
+[node name="World" parent="." unique_id=2127073411 instance=ExtResource("1_02e27")]
 
 [node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 2)
@@ -49,10 +50,19 @@ grow_vertical = 2
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 
-[node name="MainPanel" type="Control" parent="UIContainer/UI/Main" unique_id=1409399728]
+[node name="Panels" type="VBoxContainer" parent="UIContainer/UI/Main" unique_id=1088734319]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Selection" type="Control" parent="UIContainer/UI/Main/Panels" unique_id=618002716]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="MainPanel" type="Control" parent="UIContainer/UI/Main/Panels" unique_id=1409399728]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="WorldView" type="SubViewportContainer" parent="UIContainer" unique_id=1811776497]
 layout_mode = 2
@@ -64,3 +74,5 @@ mouse_target = true
 handle_input_locally = false
 size = Vector2i(958, 1080)
 render_target_update_mode = 4
+
+[node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("6_hw5o8")]

@@ -1,4 +1,4 @@
-extends Node3D
+class_name PlayerVR extends Node3D
 
 @export var target : Node3D
 @export var collision : Vector3

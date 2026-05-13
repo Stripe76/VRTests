@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 		_right_labia._render_process.call_deferred(delta,set_stretch,1)
 	
 	# To update the editor view
-	global_transform = global_transform
+	#global_transform = global_transform
 
 
 func _exit_tree() -> void:

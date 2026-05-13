@@ -23,7 +23,7 @@ void fragment() {
 	//CLEARCOAT = texture(noise_img,vertexPos.xy).r;
 	//AO = 1.0;
 	METALLIC = .25;
-	//SSS_STRENGTH = .15;
+	SSS_STRENGTH = .05;
 	//SSS_TRANSMITTANCE_COLOR = large_noise;
-	//SSS_TRANSMITTANCE_DEPTH = 1.5;
+	SSS_TRANSMITTANCE_DEPTH = 0.5;
 }
