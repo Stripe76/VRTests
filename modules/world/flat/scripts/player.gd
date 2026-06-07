@@ -4,6 +4,7 @@ extends Node3D
 @export var delta_curve := Curve.new()
 
 @onready var camera = $Camera3D
+@onready var ray_cast = $Camera3D/RayCast
 
 var move_speed := Vector3(1,1,1)
 var mouse_sensitivity = 0.0025
@@ -48,11 +49,25 @@ func _process(delta: float) -> void:
 	position += move * delta * delta_curve.sample(delta_move)
 
 
+const RAY_LENGTH = 10
+
+func _physics_process(delta: float) -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var origin = camera.global_position
+		var end = origin + camera.project_ray_normal(get_viewport().get_visible_rect().size * 0.5) * RAY_LENGTH
+		#print(origin," - ",end)
+		var query = PhysicsRayQueryParameters3D.create(origin,end)
+		var space_state = get_world_3d().direct_space_state
+		var result := space_state.intersect_ray(query)
+		if result:
+			get_tree().call_group("Scene","set_person_position",origin,result.position)
+
+
+
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		camera.rotate_x(-event.relative.y * mouse_sensitivity)
-
 
 #func _unhandled_key_input(event: InputEvent) -> void:
 	#if event.is_action_pressed("Up"):

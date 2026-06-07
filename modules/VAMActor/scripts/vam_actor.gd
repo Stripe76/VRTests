@@ -42,9 +42,13 @@ func get_looks_id( ) -> int:
 	return _looks_id
 
 
+func get_animation_player() -> AnimationPlayer:
+	return $Actor
+
 func reset():
 	if _person_controller:
 		_person_controller.reset_pose()
+
 
 func generate_model():
 	if not _library:

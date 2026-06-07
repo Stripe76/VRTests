@@ -138,9 +138,9 @@ func update_position(new_weight_on: int)-> int:
 func reset_pose():
 	current_weight_on = null
 	
-	if _skeleton:
-		_skeleton.position = Vector3()
-		_skeleton.get_parent().position = Vector3()
+	#if _skeleton:
+		#_skeleton.position = Vector3()
+		#_skeleton.get_parent().position = Vector3()
 	
 	head.reset_pose()
 	neck.reset_pose()

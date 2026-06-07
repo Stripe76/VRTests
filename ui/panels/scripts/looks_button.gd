@@ -14,7 +14,7 @@ func with_data(library : LibraryManager,id: int) -> LooksButton:
 
 
 func _init() -> void:
-	custom_minimum_size = Vector2(260,260)
+	custom_minimum_size = Vector2(230,230)
 
 
 func _ready() -> void:

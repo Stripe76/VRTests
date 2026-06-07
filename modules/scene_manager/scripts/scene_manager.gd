@@ -53,9 +53,17 @@ func select_looks(id: int):
 	if _library and _current_person:
 		#animation_was_playing = $AnimationPlayer.is_playing()
 		#$AnimationPlayer.pause()
-		_current_person.load_looks_async(_library,id,Vector3(_current_person_index * .50,0,_current_person_index * .50),looks_loaded)
+		#_current_person.load_looks_async(_library,id,Vector3(_current_person_index * .50,0,_current_person_index * .50),looks_loaded)
+		_current_person.load_looks_async(_library,id,_current_person.position,looks_loaded)
 	
 	persons_list_changed.emit(self,_persons)
+
+
+func set_person_position(origin: Vector3,position: Vector3):
+	if _current_person:
+		_current_person.global_position = position
+		origin = Vector3(origin.x,position.y,origin.z)
+		_current_person.look_at(origin,Vector3.UP,true)
 
 
 func looks_loaded():
@@ -64,20 +72,22 @@ func looks_loaded():
 
 func toggle_animation(animation: String):
 	if _current_person:
-		var player : AnimationPlayer = _current_person.get_node("Actor")
+		var player : AnimationPlayer = _current_person.get_animation_player()
 		if player:
 			if player.is_playing():
-				player.pause()
+				player.stop()
+				
+				_current_person.reset()
+				
+				player.play("RESET")
 			else:
-				player.speed_scale = 1.0 + randf( )
-				player.play(animation)
+				player.play(animation,-1,0.5+randf( ))
 
 
 func start_animation(animation: String):
 	if _current_person:
-		var player : AnimationPlayer = _current_person.get_node("Actor")
+		var player : AnimationPlayer = _current_person.get_animation_player()
 		if player:
 			_current_person.reset()
 			
-			player.speed_scale = 1.0 + randf( )
-			player.play(animation)
+			player.play(animation,-1,0.5+randf( ))

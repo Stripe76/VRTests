@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://cr6n3xcm7j7p0" path="res://rooms/common/scripts/lights_helper.gd" id="3_61vwq"]
 [ext_resource type="Script" uid="uid://jytjsd8ijdon" path="res://rooms/bedroom/fan.gd" id="3_efd8u"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_61vwq"]
+size = Vector3(10, 0.25, 10)
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_61vwq"]
 sky_top_color = Color(0.09544516, 0.11350236, 0.13671875, 1)
 sky_horizon_color = Color(0.18494457, 0.18675455, 0.1894036, 1)
@@ -127,6 +130,14 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5,
 shadow_enabled = true
 spot_attenuation = 2.0
 spot_angle = 75.0
+
+[node name="Physics" type="Node3D" parent="." unique_id=472458590]
+
+[node name="Floor" type="StaticBody3D" parent="Physics" unique_id=1498790167]
+
+[node name="Shape" type="CollisionShape3D" parent="Physics/Floor" unique_id=1120602790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14310122, 0)
+shape = SubResource("BoxShape3D_61vwq")
 
 [node name="VoxelGI" type="VoxelGI" parent="." unique_id=37733083]
 data = ExtResource("1_25nom")
