@@ -1,6 +1,6 @@
 group_uniforms Standard_maps;
 uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
-uniform sampler2D texture_normal : hint_normal;
+uniform sampler2D texture_normal : hint_normal, filter_linear_mipmap;
 uniform sampler2D standard_decal : source_color, filter_linear_mipmap, repeat_enable;
 group_uniforms;
 
@@ -12,7 +12,7 @@ void fragment() {
 	else
 		ALBEDO = texture(texture_albedo,UV).rgb;
 	
-	NORMAL_MAP_DEPTH = 0.15;
+	NORMAL_MAP_DEPTH = 0.55;
 	NORMAL_MAP = texture(texture_normal,UV).rgb;
 	
 	//float sss_strength_value = 0.2;

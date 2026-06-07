@@ -8,8 +8,6 @@ extends Node3D
 @onready var player := $Player
 @onready var scene_manager : SceneManager = $SceneManager
 
-@onready var animation := $World/AnimationPlayer
-
 var ui_active := false
 
 
@@ -37,8 +35,6 @@ func _unhandled_input(event):
 	if not ui_active:
 		if event.is_action_released("NextMesh"):
 			world._on_next_mesh()
-			#$World/AnimationPlayer.stop()
-			animation.pause()
 		elif event.is_action_released("NextMaterial"):
 			world._on_next_materials()
 

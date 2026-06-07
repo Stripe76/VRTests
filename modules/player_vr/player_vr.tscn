@@ -162,7 +162,6 @@ script = ExtResource("7_h57j3")
 
 [node name="Laser" type="SpotLight3D" parent="XRPlayer/RightHand" unique_id=1781681719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0562638, 0.0780774)
-visible = false
 light_energy = 0.485
 shadow_enabled = true
 spot_angle = 26.0503

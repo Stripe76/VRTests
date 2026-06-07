@@ -10,7 +10,7 @@ var _library := LibraryManager.new()
 
 func _ready() -> void:
 	if not Engine.is_editor_hint():
-		xrInterface = XRServer.find_interface("OpenXR")	
+		xrInterface = XRServer.find_interface("OpenXR")
 		
 		if xrInterface and xrInterface.is_initialized():
 			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
@@ -22,10 +22,6 @@ func _ready() -> void:
 			
 			XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT,true)
 			
-	#$World.set_target($PlayerVR.target)
-	
-#	$PlayerVR.next_mesh.connect($World._on_next_mesh)
-#	$PlayerVR.next_materials.connect($World._on_next_materials)
 	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
 	
 	player.next_mesh.connect(next_mesh)
@@ -33,11 +29,12 @@ func _ready() -> void:
 	
 	scene_manager.set_world($World)
 	scene_manager.set_library(_library)
-	scene_manager.select_looks(39)
+	#scene_manager.select_looks(39)
 
 
 func _on_openxr_pose_recentered():
 	XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT, true)
+
 
 var n = 0
 func next_mesh():
@@ -46,4 +43,4 @@ func next_mesh():
 
 
 func next_materials():
-	scene_manager.start_animation("walking_ik 2")
+	scene_manager.toggle_animation("walking_ik 2")

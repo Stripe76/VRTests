@@ -2,20 +2,49 @@
 
 [ext_resource type="VoxelGIData" uid="uid://dwmxvvwcfqlf7" path="res://rooms/bedroom/resources/bedroom.VoxelGI_data.res" id="1_25nom"]
 [ext_resource type="PackedScene" uid="uid://ckjafh8yd6njs" path="res://rooms/bedroom/resources/Bedroom.glb" id="1_r7qss"]
+[ext_resource type="Script" uid="uid://cr6n3xcm7j7p0" path="res://rooms/common/scripts/lights_helper.gd" id="3_61vwq"]
 [ext_resource type="Script" uid="uid://jytjsd8ijdon" path="res://rooms/bedroom/fan.gd" id="3_efd8u"]
 
-[node name="Bedroom" type="Node3D" unique_id=1618092453]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_61vwq"]
+sky_top_color = Color(0.09544516, 0.11350236, 0.13671875, 1)
+sky_horizon_color = Color(0.18494457, 0.18675455, 0.1894036, 1)
+ground_bottom_color = Color(0.0703125, 0.059495207, 0.046875007, 1)
+ground_horizon_color = Color(0.18494457, 0.18675455, 0.1894036, 1)
+energy_multiplier = 0.0
 
-[node name="VoxelGI" type="VoxelGI" parent="." unique_id=37733083]
-data = ExtResource("1_25nom")
+[sub_resource type="Sky" id="Sky_ebwqr"]
+sky_material = SubResource("ProceduralSkyMaterial_61vwq")
+
+[sub_resource type="Environment" id="Environment_8gn0h"]
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_ebwqr")
+ambient_light_source = 1
+reflected_light_source = 1
+tonemap_mode = 4
+tonemap_exposure = 1.4
+tonemap_agx_contrast = 1.5
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_brightness = 0.95
+adjustment_contrast = 1.05
+adjustment_saturation = 0.75
+
+[node name="Bedroom" type="Node3D" unique_id=1618092453]
 
 [node name="Bedroom" parent="." unique_id=1829110619 instance=ExtResource("1_r7qss")]
 
 [node name="Cube" parent="Bedroom" index="0" unique_id=1080762737]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1992581, 0)
+cast_shadow = 0
 
 [node name="Cube_001" parent="Bedroom" index="1" unique_id=1418695425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2023826, 0)
+
+[node name="Cube_003" parent="Bedroom" index="4" unique_id=243904090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8509479, 0.34830484, -3.0730531)
 
 [node name="Cube_014" parent="Bedroom" index="9" unique_id=1462953036]
 visible = false
@@ -23,10 +52,93 @@ visible = false
 [node name="Cylinder_008" parent="Bedroom/Cylinder_003" parent_id_path=PackedInt32Array(1829110619, 989797075) index="0" unique_id=1059991326]
 script = ExtResource("3_efd8u")
 
-[node name="Ligths" type="Node3D" parent="." unique_id=609121650]
-visible = false
+[node name="Space of security book" parent="Bedroom" index="17" unique_id=2082058129]
+transform = Transform3D(0.4944413, 0, 1.0294894, 0, 1.1420684, 0, -1.0294894, 0, 0.4944413, 2.850948, 0.57756156, -3.060754)
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Ligths" unique_id=1373235356]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00020498037, 2.308484, 0)
+[node name="Leaves" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="0" unique_id=335183723]
+transform = Transform3D(2.0422666, -0.26021725, 4.656199, 0.16506548, 5.0839634, 0.21172358, -4.6605425, 0.06603393, 2.0478618, 0.3982067, 1.4071822, -0.32268524)
+
+[node name="Leaves2" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="1" unique_id=1487603869]
+transform = Transform3D(2.1095574, 0, 4.633414, 0, 5.0910463, 0, -4.633414, 0, 2.1095574, -0.3308468, 1.4014826, -0.47786713)
+
+[node name="Leaves3" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="2" unique_id=1355282233]
+transform = Transform3D(1.9654299, -0.52144605, 4.667326, 0.32843235, 5.0624413, 0.42728513, -4.6848664, 0.13614136, 1.9880259, 0.022878647, 1.4425635, 0.4935665)
+
+[node name="plastic pot" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="3" unique_id=2095541176]
+transform = Transform3D(5.0910463, 0, 0, 0, 5.0910463, 0, 0, 0, 5.0910463, -5.722046e-06, 0.28143978, 0)
+
+[node name="Pot_003" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="4" unique_id=799661438]
+transform = Transform3D(5.0910463, 0, 0, 0, 5.0910463, 0, 0, 0, 5.0910463, 0, 0.060652256, 0)
+
+[node name="Soil_003" parent="Bedroom/Small Monstera plant" parent_id_path=PackedInt32Array(1829110619, 707891295) index="5" unique_id=1357256421]
+transform = Transform3D(0.32276022, 0, 0, 0, 0.7271851, 0, 0, 0, 0.32276022, 0.0011672974, 0.38166094, 0.0011444092)
+
+[node name="Ligths" type="Node3D" parent="." unique_id=609121650]
+
+[node name="Ceiling" type="Node3D" parent="Ligths" unique_id=1451864471]
+script = ExtResource("3_61vwq")
+angle = 75.0
+energy = 1.0
+
+[node name="Spot1" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1434143716]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, 0)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot2" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=412961796]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, 0)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot7" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=643390958]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, -1)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot8" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1476824486]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, -1)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot3" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=498211039]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, -2.5)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot4" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1695658685]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, -2.5)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot5" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=243950945]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, 2.5)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot6" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=817040888]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, 2.5)
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="VoxelGI" type="VoxelGI" parent="." unique_id=37733083]
+data = ExtResource("1_25nom")
+
+[node name="Environment" type="WorldEnvironment" parent="." unique_id=489149239]
+environment = SubResource("Environment_8gn0h")
+
+[node name="ReflectionProbe" type="ReflectionProbe" parent="." unique_id=1823748886]
+intensity = 0.0
+interior = true
+ambient_mode = 2
+ambient_color = Color(0.4765625, 0.4765625, 0.4765625, 1)
+ambient_color_energy = 0.2
 
 [editable path="Bedroom"]
