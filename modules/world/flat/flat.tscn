@@ -18,12 +18,9 @@ transform = Transform3D(0.9895258, 0.06260145, -0.1300762, 0, 0.90107703, 0.4336
 light_energy = 0.45
 shadow_enabled = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=156210479]
-
-[node name="World" parent="." unique_id=2127073411 instance=ExtResource("1_02e27")]
+[node name="World" parent="." unique_id=2127073411 groups=["WallsVisibility"] instance=ExtResource("1_02e27")]
 
 [node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 2)
 
 [node name="UIContainer" type="HBoxContainer" parent="." unique_id=2011401312]
 anchors_preset = 15

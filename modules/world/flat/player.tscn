@@ -1,15 +1,36 @@
 [gd_scene format=3 uid="uid://bt32yf15w0a6n"]
 
 [ext_resource type="Script" uid="uid://chgen3aojikw7" path="res://modules/world/flat/scripts/player.gd" id="1_mexil"]
+[ext_resource type="Script" uid="uid://motedb30etf2" path="res://modules/world/flat/scripts/free_camera.gd" id="2_20j0k"]
+[ext_resource type="Script" uid="uid://t83u5wbquq42" path="res://modules/world/flat/scripts/iso_camera.gd" id="2_p14d7"]
 
-[sub_resource type="Curve" id="Curve_mexil"]
-_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_p14d7"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_20j0k"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
 point_count = 2
 
 [node name="Player" type="Node3D" unique_id=829102050]
 script = ExtResource("1_mexil")
-delta_curve = SubResource("Curve_mexil")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1884994013]
+[node name="IsoCamera" type="Node3D" parent="." unique_id=60670623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+script = ExtResource("2_p14d7")
+delta_curve = SubResource("Curve_p14d7")
+
+[node name="Camera3D" type="Camera3D" parent="IsoCamera" unique_id=483568025]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+current = true
+fov = 50.0
+
+[node name="FreeCamera" type="Node3D" parent="." unique_id=231351705]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.88, 0)
+script = ExtResource("2_20j0k")
+delta_curve = SubResource("Curve_20j0k")
+
+[node name="Camera3D" type="Camera3D" parent="FreeCamera" unique_id=1884994013]
 physics_interpolation_mode = 1
 fov = 32.0

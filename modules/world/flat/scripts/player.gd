@@ -1,86 +1,32 @@
-class_name PlayerFlat
-extends Node3D
+class_name PlayerFlat extends Node3D
 
-@export var delta_curve := Curve.new()
+@onready var iso_camera := $IsoCamera
+@onready var free_camera := $FreeCamera
 
-@onready var camera = $Camera3D
-@onready var ray_cast = $Camera3D/RayCast
-
-var move_speed := Vector3(1,1,1)
-var mouse_sensitivity = 0.0025
-
+var current_camera := 0 
 
 func _ready() -> void:
 	generate_action_map()
 	
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	iso_camera.visible = true
+	free_camera.visible = false
 
 
-var delta_move := 0.0
-var last_move := Vector3()
-func _process(delta: float) -> void:
-	## Position
-	var move = Vector3()
-	if Input.is_action_pressed("Forward"):
-		move.z = -move_speed.z
-	elif Input.is_action_pressed("Backward"):
-		move.z = move_speed.z
-	if Input.is_action_pressed("Up"):
-		move.y = -move_speed.y
-	elif Input.is_action_pressed("Down"):
-		move.y = move_speed.y
-	if Input.is_action_pressed("Left"):
-		move.x = -move_speed.x
-	elif Input.is_action_pressed("Right"):
-		move.x = move_speed.x
-	
-	if Input.is_action_pressed("Slow"):
-		move *= 0.25
-	
-	if move.is_zero_approx() and delta_move > 0.0:
-		delta_move -= delta * 2.0
-		move = last_move
-	else:
-		if delta_move < 1.0:
-			delta_move += delta
-		last_move = move
-	
-	move = global_transform.basis * move
-	position += move * delta * delta_curve.sample(delta_move)
-
-
-const RAY_LENGTH = 10
-
-func _physics_process(delta: float) -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		var origin = camera.global_position
-		var end = origin + camera.project_ray_normal(get_viewport().get_visible_rect().size * 0.5) * RAY_LENGTH
-		#print(origin," - ",end)
-		var query = PhysicsRayQueryParameters3D.create(origin,end)
-		var space_state = get_world_3d().direct_space_state
-		var result := space_state.intersect_ray(query)
-		if result:
-			get_tree().call_group("Scene","set_person_position",origin,result.position)
-
-
-
-func _unhandled_input(event):
-	if event is InputEventMouseMotion:
-		rotate_y(-event.relative.x * mouse_sensitivity)
-		camera.rotate_x(-event.relative.y * mouse_sensitivity)
-
-#func _unhandled_key_input(event: InputEvent) -> void:
-	#if event.is_action_pressed("Up"):
-		#move.y = move_speed.y
-	#elif event.is_action("Down"):
-		#move.y = -move_speed.y
-	#elif event.is_action("Left"):
-		#move.x = -move_speed.x
-	#elif event.is_action("Right"):
-		#move.x = move_speed.x
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("CycleCamera"):
+		current_camera += 1
+		
+		if current_camera % 2 == 0:
+			iso_camera.visible = true
+			free_camera.visible = false
+		else:
+			iso_camera.visible = false
+			free_camera.visible = true
 
 
 func generate_action_map():
+	add_action( "CycleCamera",[Key.KEY_F1] )
+	
 	add_action( "Forward",[Key.KEY_W] )
 	add_action( "Backward",[Key.KEY_S] )
 	add_action( "Up",[Key.KEY_Q] )
@@ -90,11 +36,11 @@ func generate_action_map():
 	add_action( "Slow",[Key.KEY_SHIFT] )
 
 
-func add_action(name: String,events: Array):
-	InputMap.add_action(name)
+func add_action(action_name: String,events: Array):
+	InputMap.add_action(action_name)
 	
 	for e in events:
 		if e is Key:
 			var k := InputEventKey.new( ) 
 			k.keycode = e
-			InputMap.action_add_event( name,k )
+			InputMap.action_add_event( action_name,k )

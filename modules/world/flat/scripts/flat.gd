@@ -43,11 +43,9 @@ func switch_ui():
 	if ui_active:
 		ui_active = false
 		player.process_mode = Node.PROCESS_MODE_ALWAYS
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		ui_active = true
 		player.process_mode = Node.PROCESS_MODE_DISABLED
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	ui_container.visible = ui_active
 	if ui_active:

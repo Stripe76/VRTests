@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://d3k8tbuot2c6g"]
+
+[ext_resource type="PackedScene" uid="uid://dbn42uurxvgx3" path="res://rooms/bedrooms/minimalist/resources/minimalist.glb" id="1_kfhau"]
+[ext_resource type="Script" uid="uid://cr6n3xcm7j7p0" path="res://rooms/common/scripts/lights_helper.gd" id="2_jm4tx"]
+[ext_resource type="Script" uid="uid://dp5gocervytus" path="res://rooms/bedrooms/minimalist/minimalist.gd" id="2_vitkp"]
+[ext_resource type="Script" uid="uid://jytjsd8ijdon" path="res://rooms/bedrooms/minimalist/fan.gd" id="3_76j7g"]
+[ext_resource type="VoxelGIData" uid="uid://m21si2jvoywl" path="res://rooms/bedrooms/minimalist/VoxelGI.res" id="3_lxy0n"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lxy0n"]
+size = Vector3(10, 0.25, 10)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vitkp"]
+sky_top_color = Color(0.09544516, 0.11350236, 0.13671875, 1)
+sky_horizon_color = Color(0.18494457, 0.18675455, 0.1894036, 1)
+ground_bottom_color = Color(0.0703125, 0.059495207, 0.046875007, 1)
+ground_horizon_color = Color(0.18494457, 0.18675455, 0.1894036, 1)
+energy_multiplier = 0.0
+
+[sub_resource type="Sky" id="Sky_rs148"]
+sky_material = SubResource("ProceduralSkyMaterial_vitkp")
+
+[sub_resource type="Environment" id="Environment_76j7g"]
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_rs148")
+ambient_light_source = 1
+reflected_light_source = 1
+tonemap_mode = 4
+tonemap_exposure = 1.4
+tonemap_agx_contrast = 1.5
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+glow_enabled = true
+glow_strength = 0.5
+adjustment_enabled = true
+adjustment_brightness = 0.95
+adjustment_contrast = 1.05
+adjustment_saturation = 0.75
+
+[node name="Minimalist" unique_id=814273015 instance=ExtResource("1_kfhau")]
+script = ExtResource("2_vitkp")
+
+[node name="Cylinder_003" parent="Scene Collection/Furnitures/Ceiling Fan" parent_id_path=PackedInt32Array(386798877) index="0" unique_id=1181314137]
+script = ExtResource("3_76j7g")
+
+[node name="Ligths" type="Node3D" parent="." index="1" unique_id=673321347]
+
+[node name="Ceiling" type="Node3D" parent="Ligths" index="0" unique_id=2114142217]
+script = ExtResource("2_jm4tx")
+angle = 75.0
+energy = 1.0
+
+[node name="Spot1" type="SpotLight3D" parent="Ligths/Ceiling" index="0" unique_id=138727842]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, 0)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot2" type="SpotLight3D" parent="Ligths/Ceiling" index="1" unique_id=2096003000]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, 0)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot7" type="SpotLight3D" parent="Ligths/Ceiling" index="2" unique_id=219479807]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, -1)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot8" type="SpotLight3D" parent="Ligths/Ceiling" index="3" unique_id=165729460]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, -1)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot3" type="SpotLight3D" parent="Ligths/Ceiling" index="4" unique_id=1382708465]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, -2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot4" type="SpotLight3D" parent="Ligths/Ceiling" index="5" unique_id=1177523902]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, -2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot5" type="SpotLight3D" parent="Ligths/Ceiling" index="6" unique_id=906031901]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, 2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot6" type="SpotLight3D" parent="Ligths/Ceiling" index="7" unique_id=538943703]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, 2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Lamps" type="Node3D" parent="Ligths" index="1" unique_id=261258372]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Ligths/Lamps" index="0" unique_id=423147006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5351157, 1.3169969, -2.9871855)
+light_energy = 0.195
+light_bake_mode = 1
+shadow_enabled = true
+shadow_blur = 10.0
+omni_attenuation = 0.25
+
+[node name="Physics" type="Node3D" parent="." index="2" unique_id=2007222106]
+
+[node name="Floor" type="StaticBody3D" parent="Physics" index="0" unique_id=827667415]
+
+[node name="Shape" type="CollisionShape3D" parent="Physics/Floor" index="0" unique_id=1057717530]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14310122, 0)
+shape = SubResource("BoxShape3D_lxy0n")
+
+[node name="VoxelGI" type="VoxelGI" parent="." index="3" unique_id=786415126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07836914, 1.2322998, 0.0690918)
+size = Vector3(7.427246, 3.369873, 7.362793)
+data = ExtResource("3_lxy0n")
+
+[node name="Environment" type="WorldEnvironment" parent="." index="4" unique_id=241671090]
+environment = SubResource("Environment_76j7g")
