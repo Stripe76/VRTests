@@ -1,8 +1,8 @@
 @tool
-class_name StepValue
+class_name ValueBool
 extends Node
 
-@export_range(0,1) var end : float:
+@export var end : bool:
 	set(value):
 		end = value
 		var parent = get_parent()
@@ -12,4 +12,4 @@ extends Node
 		return end
 
 @export_group("Debug")
-@export_range(0,1) var start : float
+@export var start : bool

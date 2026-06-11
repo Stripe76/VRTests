@@ -5,6 +5,7 @@ signal weight_on_changed
 @export var weight_on: bool = false:
 	set(value):
 		weight_on = value
+		#prints("weight_on",weight_on)
 		if weight_on:
 			wo_position = ik_bone.global_position
 		weight_on_changed.emit(self,weight_on)
@@ -60,3 +61,4 @@ signal weight_on_changed
 var ik_bone_idx : int
 var ik_position : Vector3
 var wo_position : Vector3
+var wo_rotation : Vector3

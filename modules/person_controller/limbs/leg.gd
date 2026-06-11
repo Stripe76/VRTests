@@ -12,18 +12,18 @@ class_name PersonLeg extends PersonLimb
 		update_pose()
 	get:
 		return hips_horizontal
+@export_range(-1,1) var bend : float = 0:
+	set(value):
+		bend = value
+		update_pose()
+	get:
+		return bend
 @export_range(-1,1) var frontal : float = 0:
 	set(value):
 		frontal = value
 		update_pose()
 	get:
 		return frontal
-@export_range(-1,1) var straight : float = 0:
-	set(value):
-		straight = value
-		update_pose()
-	get:
-		return straight
 @export_range(-1,1) var lateral : float = 0:
 	set(value):
 		lateral = value
@@ -87,18 +87,18 @@ class_name PersonLeg extends PersonLimb
 		update_pose()
 	get:
 		return frontal_max
-@export_range(0,1) var straight_min : float = 1:
+@export_range(0,1) var bend_min : float = 1:
 	set(value):
-		straight_min = value
+		bend_min = value
 		update_pose()
 	get:
-		return straight_min
-@export_range(0,1) var straight_max : float = 1:
+		return bend_min
+@export_range(0,1) var bend_max : float = 1:
 	set(value):
-		straight_max = value
+		bend_max = value
 		update_pose()
 	get:
-		return straight_max
+		return bend_max
 @export_range(0,1) var lateral_min : float = 1:
 	set(value):
 		lateral_min = value
@@ -148,7 +148,7 @@ func update_pose():
 	_pelvis.pose_y = twist * (twist_max if twist > 0 else twist_min)
 	_pelvis.pose_z = lateral * (lateral_max if lateral > 0 else lateral_min)
 	
-	_knee.pose_x = straight * (straight_max if straight > 0 else straight_min)
+	_knee.pose_x = bend * (bend_max if bend > 0 else bend_min)
 	
 	_ankle.pose_z = ankle_side
 	_ankle.pose_x = ankle_front

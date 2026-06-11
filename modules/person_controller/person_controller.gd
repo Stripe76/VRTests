@@ -97,18 +97,51 @@ func _on_skeleton_updated():
 	update_weight_on()
 
 
-var _skeleton_offset := Vector3()
 func update_weight_on(apply : bool = true) -> Vector3:
 	if _skeleton and current_weight_on:
-		#var delta : Vector3 = current_weight_on.wo_position - current_weight_on.ik_bone.global_position
-		var delta : Vector3 = current_weight_on.wo_position - _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).origin
+		var bone_pose : Transform3D = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx)
+		var current_foot_global_pos : Vector3 = _skeleton.global_transform * bone_pose.origin
+		
+		var delta_pos : Vector3 = current_weight_on.wo_position - current_foot_global_pos
 		
 		if apply:
-			#delta.x = 0
-			#delta.y = 0
-			#delta.z = 0
-			_skeleton.position = _skeleton_offset + delta
-		return delta
+			var current_foot_rot_y = bone_pose.basis.get_euler().y
+			
+			if not current_weight_on.has_meta("initial_foot_rot_y"):
+				current_weight_on.set_meta("initial_foot_rot_y",current_foot_rot_y)
+			
+			var initial_foot_rot_y : float = current_weight_on.get_meta("initial_foot_rot_y")
+			var delta_rot_y : float = initial_foot_rot_y - current_foot_rot_y
+			
+			if abs(delta_rot_y) > 0.001:
+				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
+				var pivot_mondo = current_weight_on.wo_position
+				
+				# Trova la distanza vettoriale tra l'origine globale dello scheletro e il piede a terra
+				var offset_skeleton = _skeleton.global_transform.origin - pivot_mondo
+				
+				# Ruota lo scheletro sul proprio asse globale
+				_skeleton.global_rotate(Vector3.UP, delta_rot_y)
+				
+				# RIPOSIZIONAMENTO ATTORNAL AL PIVOT:
+				# Ruotiamo l'offset e riposizioniamo lo scheletro in modo che il perno sia il piede
+				_skeleton.global_transform.origin = pivot_mondo + offset_skeleton.rotated(Vector3.UP, delta_rot_y)
+				
+				# Aggiorna il valore di riferimento per il frame successivo
+				current_weight_on.set_meta("initial_foot_rot_y", current_foot_rot_y)
+				
+				# Ricalcola la trasformazione globale e il delta_pos DOPO aver spostato e ruotato lo scheletro,
+				# altrimenti la traslazione finale userebbe i vettori sfasati del frame precedente
+				bone_pose = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx)
+				current_foot_global_pos = _skeleton.global_transform * bone_pose.origin
+				delta_pos = current_weight_on.wo_position - current_foot_global_pos
+			
+			# 3. TRASLAZIONE FINALE
+			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
+			delta_pos.y = 0
+			_skeleton.global_transform.origin += delta_pos
+			
+		return delta_pos
 	return Vector3()
 
 
@@ -181,12 +214,23 @@ func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
 	reset_pose()
 
 
-func weight_on_changed(limb: PersonLimb,weight_on: bool):
+func weight_on_changed(limb: PersonLimb, weight_on: bool):
 	if weight_on:
-		if current_weight_on:
+		if current_weight_on and current_weight_on != limb:
 			current_weight_on.weight_on = false
+			if current_weight_on and current_weight_on.has_meta("initial_foot_rot_y"):
+				current_weight_on.remove_meta("initial_foot_rot_y")
+				
 		current_weight_on = limb
+		
+		# Memorizza l'orientamento globale del nuovo piede nel frame esatto dell'ancoraggio
+		if _skeleton and current_weight_on:
+			var current_rot_y = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).basis.get_euler().y
+			current_weight_on.set_meta("initial_foot_rot_y", current_rot_y)
+			
 	elif limb == current_weight_on:
+		if current_weight_on.has_meta("initial_foot_rot_y"):
+			current_weight_on.remove_meta("initial_foot_rot_y")
 		current_weight_on = null
 
 
@@ -223,8 +267,8 @@ func create_joints(skeleton: Skeleton3D) -> void:
 		abdomen_2 = JointController.new(skeleton,Bones.ABDOMEN_BONE_2,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
 		chest = JointController.new(skeleton,Bones.CHEST_BONE,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
 		
-		left_hip = JointController.new(skeleton,Bones.HIP_LEFT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.1,"y_max":0.15,"z_min":0.11,"z_max":0.19})
-		right_hip = JointController.new(skeleton,Bones.HIP_RIGHT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.15,"y_max":0.1,"z_min":0.19,"z_max":0.11})
+		left_hip = JointController.new(skeleton,Bones.HIP_LEFT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.25,"y_max":0.25,"z_min":0.11,"z_max":0.19})
+		right_hip = JointController.new(skeleton,Bones.HIP_RIGHT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.25,"y_max":0.25,"z_min":0.19,"z_max":0.11})
 		left_knee = JointController.new(skeleton,Bones.KNEE_LEFT_BONE,{"x_min":0.033,"x_max":0.695})
 		right_knee = JointController.new(skeleton,Bones.KNEE_RIGHT_BONE,{"x_min":0.033,"x_max":0.695})
 		left_ankle = JointController.new(skeleton,Bones.ANKLE_LEFT_BONE,{"x_min":0.09,"x_max":0.307,"y_min":0.27,"y_max":0.15,"z_min":0.09,"z_max":0.09})

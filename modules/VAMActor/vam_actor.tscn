@@ -2,7 +2,14 @@
 
 [ext_resource type="Script" uid="uid://m3rl1cqv77dl" path="res://modules/VAMActor/scripts/vam_actor.gd" id="1_pcuk1"]
 [ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="2_0kabd"]
+[ext_resource type="Script" uid="uid://c8gvafih6tjil" path="res://modules/person_controller/movements/movements.gd" id="3_b8mxy"]
 [ext_resource type="PackedScene" uid="uid://bia78lsy6h2wc" path="res://modules/VAMActor/vam_vagina.tscn" id="3_wpamn"]
+[ext_resource type="Script" uid="uid://co87d0v2j3qv" path="res://modules/person_controller/animation/move.gd" id="4_fm15u"]
+[ext_resource type="Script" uid="uid://bvlpdhvjokofl" path="res://modules/person_controller/animation/step.gd" id="5_7jqo0"]
+[ext_resource type="Script" uid="uid://boo1rs6sv38lb" path="res://modules/person_controller/animation/value_bool.gd" id="6_k8ylq"]
+[ext_resource type="Script" uid="uid://c158hsqhgrfpy" path="res://modules/person_controller/animation/value_float.gd" id="7_t5u52"]
+[ext_resource type="Script" uid="uid://bwwhy6om0dg86" path="res://modules/person_controller/movements/walking.gd" id="8_yitp0"]
+[ext_resource type="Script" uid="uid://o1aocex8dx43" path="res://modules/person_controller/movements/turn_to.gd" id="9_k8ylq"]
 
 [sub_resource type="Animation" id="Animation_b8mxy"]
 length = 0.001
@@ -16,7 +23,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.8140000000000001]
+"values": [0.873]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -52,7 +59,55 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [-0.831]
+"values": [-0.861]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PersonController/LeftArm:twist")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.13200000000000012]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PersonController/LeftArm:straight")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.07400000000000007]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PersonController/RightArm:twist")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.04400000000000004]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("PersonController/RightArm:straight")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.05900000000000005]
 }
 
 [sub_resource type="Animation" id="Animation_wpamn"]
@@ -115,6 +170,7 @@ _data = {
 }
 
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
+transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.9999935, 0, 0, 0)
 script = ExtResource("1_pcuk1")
 eyes_color = 2.903
 metadata/_custom_type_script = "uid://m3rl1cqv77dl"
@@ -122,6 +178,165 @@ metadata/_custom_type_script = "uid://m3rl1cqv77dl"
 [node name="Actor" type="AnimationPlayer" parent="." unique_id=87833383]
 libraries/ = SubResource("AnimationLibrary_gdd01")
 speed_scale = 1.692
+
+[node name="Movements" type="Node" parent="." unique_id=359695925]
+script = ExtResource("3_b8mxy")
+
+[node name="Legs" type="Node" parent="Movements" unique_id=1536106551]
+
+[node name="Walking" type="Node" parent="Movements/Legs" unique_id=1408708444 node_paths=PackedStringArray("joint")]
+script = ExtResource("4_fm15u")
+joint = NodePath("..")
+
+[node name="Step1" type="Node" parent="Movements/Legs/Walking" unique_id=274701745 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+end = 0.5
+movement = 0.066
+joint = NodePath("../..")
+
+[node name="weight_on" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=343059902]
+script = ExtResource("6_k8ylq")
+
+[node name="frontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1085648499]
+script = ExtResource("7_t5u52")
+start = 0.1459999999999999
+end = -0.14700000000000002
+
+[node name="Step2" type="Node" parent="Movements/Legs/Walking" unique_id=1706331688 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+start = 0.5
+end = 1.0
+movement = 0.05400000000000005
+joint = NodePath("../..")
+
+[node name="weight_on" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=651379035]
+script = ExtResource("6_k8ylq")
+
+[node name="frontal" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1303972487]
+script = ExtResource("7_t5u52")
+end = 0.1459999999999999
+
+[node name="TurnToIn" type="Node" parent="Movements/Legs" unique_id=2076410617 node_paths=PackedStringArray("joint")]
+script = ExtResource("4_fm15u")
+joint = NodePath("..")
+
+[node name="Step1" type="Node" parent="Movements/Legs/TurnToIn" unique_id=1094728633 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+end = 0.5
+movement = 1.0
+joint = NodePath("../..")
+
+[node name="twist" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=2002229598]
+script = ExtResource("7_t5u52")
+end = 1.0
+
+[node name="bend" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=877390487]
+script = ExtResource("7_t5u52")
+end = 0.1200000000000001
+
+[node name="frontal" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=1239501799]
+script = ExtResource("7_t5u52")
+end = 0.08099999999999996
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=105619989]
+script = ExtResource("7_t5u52")
+end = -0.14600000000000002
+
+[node name="Step2" type="Node" parent="Movements/Legs/TurnToIn" unique_id=870110675 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+start = 0.5
+end = 1.0
+movement = 1.0
+joint = NodePath("../..")
+
+[node name="weight_on" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=893971179]
+script = ExtResource("6_k8ylq")
+end = true
+
+[node name="twist" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=245364190]
+script = ExtResource("7_t5u52")
+start = 1.0
+
+[node name="bend" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=107355752]
+script = ExtResource("7_t5u52")
+start = 0.1200000000000001
+
+[node name="frontal" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=1791578101]
+script = ExtResource("7_t5u52")
+start = 0.08099999999999996
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=448160349]
+script = ExtResource("7_t5u52")
+start = -0.14600000000000002
+
+[node name="TurnToOut" type="Node" parent="Movements/Legs" unique_id=1226863603 node_paths=PackedStringArray("joint")]
+script = ExtResource("4_fm15u")
+movement = 1.0
+joint = NodePath("..")
+
+[node name="Step1" type="Node" parent="Movements/Legs/TurnToOut" unique_id=618277036 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+end = 0.5
+movement = 1.0
+joint = NodePath("../..")
+
+[node name="weight_on" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=185959161]
+script = ExtResource("6_k8ylq")
+end = true
+start = true
+
+[node name="twist" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=1168783843]
+script = ExtResource("7_t5u52")
+end = -1.0
+
+[node name="bend" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=2041347002]
+script = ExtResource("7_t5u52")
+start = 0.14700000000000002
+
+[node name="frontal" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=2069967364]
+script = ExtResource("7_t5u52")
+start = 0.06699999999999995
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=877853802]
+script = ExtResource("7_t5u52")
+start = -0.14600000000000002
+
+[node name="Step2" type="Node" parent="Movements/Legs/TurnToOut" unique_id=1678301312 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+duration = 1.0
+start = 0.5
+end = 1.0
+movement = 1.0
+joint = NodePath("../..")
+
+[node name="twist" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1631635859]
+script = ExtResource("7_t5u52")
+start = -1.0
+
+[node name="bend" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1015309830]
+script = ExtResource("7_t5u52")
+end = 0.14700000000000002
+
+[node name="frontal" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1560948978]
+script = ExtResource("7_t5u52")
+end = 0.06699999999999995
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=2049536963]
+script = ExtResource("7_t5u52")
+end = -0.14600000000000002
+
+[node name="Walking" type="Node" parent="Movements" unique_id=13427316]
+script = ExtResource("8_yitp0")
+
+[node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835]
+script = ExtResource("9_k8ylq")
+movement = 0.754
+speed = 0.0
 
 [node name="VAMVagina" parent="." unique_id=949638534 instance=ExtResource("3_wpamn")]
 skeleton = NodePath("/root/@EditorNode@18148/@Panel@14/@VBoxContainer@15/DockHSplitMain/@VBoxContainer@28/DockVSplitCenter/@VSplitContainer@70/@VBoxContainer@71/@EditorMainScreen@125/MainScreen/@CanvasItemEditor@9334/@VSplitContainer@9117/@HSplitContainer@9119/@HSplitContainer@9121/@Control@9122/@SubViewportContainer@9123/@SubViewport@9124/VAMActor/VAMSkeleton")

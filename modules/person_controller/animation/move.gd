@@ -1,6 +1,5 @@
 @tool
-class_name PersonMove
-extends Node
+class_name PersonMove extends Node
 
 @export_tool_button("Reset","Reload") var reset_action = init_values
 
@@ -40,18 +39,18 @@ func init_values() -> void:
 		total_duration += c.duration
 		c.joint = joint
 	
-	var previous_steps := []
-	var start : float = 0
-	for s : MoveStep in get_children():
-		s.start = start
-		start += s.duration / total_duration
-		s.end = start
-		s.set_previous_steps(previous_steps)
-		previous_steps.insert(0,s)
+	#var previous_steps := []
+	#var start : float = 0
+	#for s : MoveStep in get_children():
+		#s.start = start
+		#start += s.duration / total_duration
+		#s.end = start
+		#s.set_previous_steps(previous_steps)
+		#previous_steps.insert(0,s)
+
 
 func update_position( value: float )-> void:
 	for s : MoveStep in get_children():
 		if s.start < value and s.end > value:
 			s.multiplier = multiplier
 			s.movement = ((value - s.start) / (s.end-s.start))
-			break

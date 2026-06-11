@@ -39,13 +39,13 @@ class_name PersonHead extends Node
 		return eyes_pinned_on
 @export_range(-1,1) var eyes_left_right : float = 0:
 	set(value):
-		eyes_left_right = value
+		eyes_left_right = (value * 10 as int) as float / 10.0
 		update_eyes_pose()
 	get:
 		return eyes_left_right
 @export_range(-1,1) var eyes_up_down : float = 0:
 	set(value):
-		eyes_up_down = value
+		eyes_up_down = (value * 10 as int) as float / 10.0
 		update_eyes_pose()
 	get:
 		return eyes_up_down
