@@ -195,7 +195,7 @@ end = 0.5
 movement = 0.066
 joint = NodePath("../..")
 
-[node name="weight_on" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=343059902]
+[node name="root_on" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=343059902]
 script = ExtResource("6_k8ylq")
 
 [node name="frontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1085648499]
@@ -211,7 +211,7 @@ end = 1.0
 movement = 0.05400000000000005
 joint = NodePath("../..")
 
-[node name="weight_on" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=651379035]
+[node name="root_on" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=651379035]
 script = ExtResource("6_k8ylq")
 
 [node name="frontal" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1303972487]
@@ -253,7 +253,7 @@ end = 1.0
 movement = 1.0
 joint = NodePath("../..")
 
-[node name="weight_on" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=893971179]
+[node name="root_on" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=893971179]
 script = ExtResource("6_k8ylq")
 end = true
 
@@ -285,7 +285,7 @@ end = 0.5
 movement = 1.0
 joint = NodePath("../..")
 
-[node name="weight_on" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=185959161]
+[node name="root_on" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=185959161]
 script = ExtResource("6_k8ylq")
 end = true
 start = true
@@ -335,7 +335,6 @@ script = ExtResource("8_yitp0")
 
 [node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835]
 script = ExtResource("9_k8ylq")
-movement = 0.754
 speed = 0.0
 
 [node name="VAMVagina" parent="." unique_id=949638534 instance=ExtResource("3_wpamn")]

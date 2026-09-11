@@ -1,10 +1,8 @@
 @tool
 class_name VAMHair extends Node3D
 
-@export_tool_button("Generate","Reload") var generate = create_hair
+@export_tool_button("Generate","Reload") var generate = create_hair_editor
 
-@export var library_folder : String
-@export var hair_file : String
 @export var hair_material : ShaderMaterial
 
 @export var force : Vector3:
@@ -29,14 +27,14 @@ class_name VAMHair extends Node3D
 	get:
 		return force_lerp
 
-@export_range(0,30) var _how_many : int = 4:
+@export_range(0,30) var _how_many : int = 1:
 	set(value):
 		_how_many = value
-		create_hair()
+		create_hair_editor()
 	get:
 		return _how_many
 
-@export_range(-0.5,0.5) var AB_distribution: float = -.5
+@export_range(-0.5,0.5) var AB_distribution: float = .5
 @export_group("Hair colors A","a_")
 @export var a_root: Color = Color(0.066, 0.034, 0.01, 1.0)
 @export var a_middle: Color = Color(0.02, 0.015, 0.01, 1.0)
@@ -53,6 +51,9 @@ class_name VAMHair extends Node3D
 @export_range(0,10) var b_weight_middle: int = 10
 @export_range(0,10) var b_weight_tip: int = 10
 @export_range(-1.5,1.5) var b_variation: float = -0.2
+
+
+var _head_tris: Dictionary
 
 var _hair_mesh : MeshInstance3D
 var _hair_debug : MeshInstance3D
@@ -75,15 +76,16 @@ func _ready() -> void:
 	hair_material = ShaderMaterial.new()
 	hair_material.shader = load("res://modules/VAMActor/shaders/hair.gdshader")
 	
-	#create_skeleton($Skeleton)
-	
 	if Engine.is_editor_hint():
-		create_hair()
+		create_hair_editor()
 
 
 var _last_position : Vector3
 var _last_rotation : Quaternion
 func _physics_process(delta: float) -> void:
+	#if Engine.is_editor_hint():
+	#return
+	
 	var head_inv_transform = global_transform.affine_inverse()
 	var gravity = head_inv_transform.basis * Vector3(0, -9.8, 0)
 	
@@ -105,7 +107,7 @@ func _physics_process(delta: float) -> void:
 	
 	style_strength = pow(style_strength, 2.0)
 	
-	force_lerp = style_strength
+	#force_lerp = style_strength
 	
 	_render_process.call_deferred(true,true,shift,inv_delta_rot,gravity,delta,force_lerp,1,0.60)
 	
@@ -113,28 +115,12 @@ func _physics_process(delta: float) -> void:
 	_last_position = global_position
 
 
-func create_hair():
-	if _loaded_strands and _loaded_strands.size() > 0 and _head_tris:
-		var arrays_data = generate_hair_strands(_loaded_strands,_head_tris,_how_many,0.015)
-		
-		var surface_tool := SurfaceTool.new()
-		var arrays := []
-		arrays.resize(Mesh.ARRAY_MAX)
-		arrays[Mesh.ARRAY_INDEX] = arrays_data["Indices"]
-		arrays[Mesh.ARRAY_VERTEX] = arrays_data["Vertices"]
-		arrays[Mesh.ARRAY_NORMAL] = arrays_data["Normals"]
-		arrays[Mesh.ARRAY_COLOR] = arrays_data["Colors"]
-		arrays[Mesh.ARRAY_CUSTOM0] = arrays_data["Customs0"]
-		arrays[Mesh.ARRAY_CUSTOM1] = arrays_data["Customs1"]
-		arrays[Mesh.ARRAY_TEX_UV] = arrays_data["UVs"]
-		
-		surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_LINES)
-		_hair_mesh.mesh =  surface_tool.commit()
-		for i in _hair_mesh.mesh.get_surface_count():
-			_hair_mesh.set_surface_override_material(i,hair_material)
+func create_hair_editor():
+	var filename := "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+	
+	generate_hair(filename,{})
 
 
-var _head_tris: Dictionary
 func generate_hair(filename: String,head_tris: Dictionary):
 	_head_tris = head_tris
 	var file := FileAccess.open(filename,FileAccess.READ)
@@ -162,16 +148,15 @@ func generate_hair(filename: String,head_tris: Dictionary):
 		#generate_hair_debug(file,{})
 
 
-var _loaded_strands : Array
-var input_bytes : PackedByteArray
 func generate_hair_from_file(file: FileAccess,head_tris: Dictionary,how_many: int) -> ArrayMesh:
-	_loaded_strands = load_hair_strands(file)
-	if _loaded_strands.size() <= 0:
+	var loaded_strands = load_hair_strands(file)
+	if loaded_strands.size() <= 0:
 		return
 	
-	var arrays_data := generate_hair_strands(_loaded_strands,head_tris,how_many,0.015)
+	var arrays_data := generate_hair_strands(loaded_strands,head_tris,how_many,0.015)
 	
-	create_verlet_shader( arrays_data )
+	if not _process_shader: 
+		create_verlet_shader( arrays_data )
 	
 	return create_mesh( arrays_data )
 
@@ -212,10 +197,46 @@ func create_mesh(arrays_data: Dictionary) -> ArrayMesh:
 ####################################
 # Hair generation
 ###################################
+
+
+func load_hair_strands(file: FileAccess)-> Array:
+	var strands := []
+
+	file.seek(996)
+
+	var how_many := file.get_32()
+	file.get_32()
+	
+	for s in how_many:
+		var vertices : PackedVector3Array = []
+		var count := file.get_32()
+		file.get_32()
+		
+		for c in range(count):
+			var x = file.get_float()
+			var z = file.get_float()
+			var y = file.get_float()
+			
+			vertices.push_back(Vector3(y,x,z))
+		
+		if vertices.size() > 1:
+			vertices.remove_at(vertices.size()-1)
+			#vertices.remove_at(vertices.size()-1)
+			strands.push_back(vertices)
+	
+	var origin = find_origin(strands) + Vector3(0,-0.06,-0.01)
+	
+	for s : PackedVector3Array in strands:
+		for i in s.size():
+			s[i] = s[i] - origin
+	
+	return strands
+
+
 func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,spacing: float) -> Dictionary:
 	var head_origin : Vector3
 	var normalized : PackedVector3Array
-	if head_tris:
+	if head_tris and head_tris.size() > 0:
 		head_origin = head_tris["Origin"]
 		normalized = PackedVector3Array()
 		
@@ -253,14 +274,14 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 		var last_vertex : Vector3
 		var direction : Vector3
 		
-		if s.size() > 0:
+		if size > 0:
 			direction = s[1].normalized()
 		
 		var strand_origin = s[0]
 		last_vertex = strand_origin
 		
-		if head_tris:
-			offset = find_offset(head_origin,head_tris,strand_origin)
+		#if head_tris and head_tris.size() > 0:
+		offset = find_offset(head_origin,head_tris,strand_origin)
 		
 		var select_a = true if randf() > 0.5 + AB_distribution else false
 		var root_color := a_root if select_a else b_root
@@ -292,13 +313,14 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 					parts = sizei - randi_range(0,4) 
 				for i in parts:
 					var vertex : Vector3 = s[i] - strand_origin + offset
+					#var vertex : Vector3 = s[i]
 					var vertex_offset := (inc + Vector3(randf_range(-0.001,0.001),0.0,randf_range(-0.001,0.001))) * (1.0-(i as float / (size-1)))
 					vertex += vertex_offset
 					
-					if i == 5:
-						length = 0
-					else:
-						length += (vertex-last_vertex).length()
+					#if i == 5:
+						#length = 0
+					#else:
+						#length += (vertex-last_vertex).length()
 					
 					vertices.push_back(vertex)
 					normals.push_back((last_vertex-vertex).normalized())
@@ -361,40 +383,6 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 		}
 
 
-func load_hair_strands(file: FileAccess)-> Array:
-	var strands := []
-
-	file.seek(996)
-
-	var how_many := file.get_32()
-	file.get_32()
-	
-	for s in how_many:
-		var vertices : PackedVector3Array = []
-		var count := file.get_32()
-		file.get_32()
-		
-		for c in range(count):
-			var x = file.get_float()
-			var z = file.get_float()
-			var y = file.get_float()
-			
-			vertices.push_back(Vector3(y,x,z))
-		
-		if vertices.size() > 1:
-			vertices.remove_at(vertices.size()-1)
-			#vertices.remove_at(vertices.size()-1)
-			strands.push_back(vertices)
-	
-	var origin = find_origin(strands) + Vector3(0,-0.06,-0.01)
-	
-	for s : PackedVector3Array in strands:
-		for i in s.size():
-			s[i] = s[i] - origin
-	
-	return strands
-
-
 func find_origin(strands: Array)-> Vector3:
 	var roots := PackedVector3Array()
 	for s : PackedVector3Array in strands:
@@ -404,6 +392,9 @@ func find_origin(strands: Array)-> Vector3:
 
 
 func find_offset(head_origin: Vector3,head_tris: Dictionary,root: Vector3)-> Vector3:
+	if not head_tris or head_tris.size() <= 0:
+		return root
+	
 	var normalized = root.normalized()
 	
 	var idx = 0

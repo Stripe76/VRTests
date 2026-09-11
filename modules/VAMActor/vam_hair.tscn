@@ -3,15 +3,20 @@
 [ext_resource type="Script" uid="uid://dcmp4ls1ha6hy" path="res://modules/VAMActor/scripts/vam_hair.gd" id="1_8yvxm"]
 [ext_resource type="Shader" uid="uid://cp4ju6wkv43jc" path="res://modules/VAMActor/shaders/hair.gdshader" id="2_5l43d"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5l43d"]
+[sub_resource type="Texture2DRD" id="Texture2DRD_5l43d"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_87eex"]
 render_priority = 0
 shader = ExtResource("2_5l43d")
-shader_parameter/root_color = Color(0.36746147, 0.11448177, 0, 1)
-shader_parameter/middle_color = Color(0.84397715, 0.372161, 0.08130572, 1)
-shader_parameter/tip_color = Color(1, 0.5119861, 0.49922973, 1)
+shader_parameter/lerp = 1.0
+shader_parameter/data_points = SubResource("Texture2DRD_5l43d")
+shader_parameter/shininess = 25.0
 
 [node name="VAMHair" type="Node3D" unique_id=1783085919]
 script = ExtResource("1_8yvxm")
-library_folder = "/mnt/data/Projects/Godot/library/"
-hair_file = "Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
-hair_material = SubResource("ShaderMaterial_5l43d")
+hair_material = SubResource("ShaderMaterial_87eex")
+_how_many = 4
+AB_distribution = -0.5
+a_root = Color(0.60176414, 0.24820161, 0, 1)
+a_middle = Color(0.60176414, 0.24820161, 0, 1)
+a_tip = Color(0.60176414, 0.24820161, 0, 1)

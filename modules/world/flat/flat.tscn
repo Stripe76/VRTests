@@ -69,7 +69,7 @@ mouse_target = true
 
 [node name="SubViewport" type="SubViewport" parent="UIContainer/WorldView" unique_id=2100921644]
 handle_input_locally = false
-size = Vector2i(958, 1080)
+size = Vector2i(712, 778)
 render_target_update_mode = 4
 
 [node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("6_hw5o8")]

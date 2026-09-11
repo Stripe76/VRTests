@@ -39,13 +39,17 @@ func _unhandled_input(event):
 			world._on_next_materials()
 
 
+var mouse_mode := Input.mouse_mode
 func switch_ui():
 	if ui_active:
 		ui_active = false
 		player.process_mode = Node.PROCESS_MODE_ALWAYS
+		Input.set_mouse_mode(mouse_mode)
 	else:
 		ui_active = true
 		player.process_mode = Node.PROCESS_MODE_DISABLED
+		mouse_mode = Input.mouse_mode
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	ui_container.visible = ui_active
 	if ui_active:
@@ -73,15 +77,15 @@ func generate_action_map():
 	add_action("StartAnimation",[Key.KEY_SPACE])
 
 
-func add_action(name: String,events: Array):
-	InputMap.add_action(name)
+func add_action(action_name: String,events: Array):
+	InputMap.add_action(action_name)
 	
 	for e in events:
 		if e is Key:
 			var k := InputEventKey.new( ) 
 			k.keycode = e
-			InputMap.action_add_event( name,k )
+			InputMap.action_add_event(action_name,k)
 		if e is MouseButton:
 			var b := InputEventMouseButton.new()
 			b.button_index = e
-			InputMap.action_add_event( name,b )
+			InputMap.action_add_event(action_name,b)

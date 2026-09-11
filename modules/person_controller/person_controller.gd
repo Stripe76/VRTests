@@ -48,7 +48,7 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Hands")
 @export var left_index : JointController
 
-var current_weight_on : PersonLimb
+var current_root : PersonLimb
 
 var _skeleton : Skeleton3D
 
@@ -94,47 +94,47 @@ func _physics_process(_delta: float) -> void:
 
 
 func _on_skeleton_updated():
-	update_weight_on()
+	update_root_on()
 
 
-func update_weight_on(apply : bool = true) -> Vector3:
-	if _skeleton and current_weight_on:
-		var bone_pose : Transform3D = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx)
-		var current_foot_global_pos : Vector3 = _skeleton.global_transform * bone_pose.origin
+func update_root_on(apply : bool = true) -> Vector3:
+	if _skeleton and current_root:
+		var bone_pose : Transform3D = _skeleton.get_bone_global_pose(current_root.ik_bone_idx)
+		var foot_global_pos : Vector3 = _skeleton.global_transform * bone_pose.origin
 		
-		var delta_pos : Vector3 = current_weight_on.wo_position - current_foot_global_pos
+		var delta_pos : Vector3 = current_root.wo_position - foot_global_pos
 		
 		if apply:
-			var current_foot_rot_y = bone_pose.basis.get_euler().y
+			var foot_rot_y = bone_pose.basis.get_euler().y
 			
-			if not current_weight_on.has_meta("initial_foot_rot_y"):
-				current_weight_on.set_meta("initial_foot_rot_y",current_foot_rot_y)
+			if not current_root.has_meta("initial_foot_rot_y"):
+				current_root.set_meta("initial_foot_rot_y",foot_rot_y)
 			
-			var initial_foot_rot_y : float = current_weight_on.get_meta("initial_foot_rot_y")
-			var delta_rot_y : float = initial_foot_rot_y - current_foot_rot_y
+			var initial_foot_rot_y : float = current_root.get_meta("initial_foot_rot_y")
+			var delta_rot_y : float = initial_foot_rot_y - foot_rot_y
 			
 			if abs(delta_rot_y) > 0.001:
 				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
-				var pivot_mondo = current_weight_on.wo_position
+				var pivot_mondo = current_root.wo_position
 				
 				# Trova la distanza vettoriale tra l'origine globale dello scheletro e il piede a terra
 				var offset_skeleton = _skeleton.global_transform.origin - pivot_mondo
 				
 				# Ruota lo scheletro sul proprio asse globale
-				_skeleton.global_rotate(Vector3.UP, delta_rot_y)
+				_skeleton.global_rotate(Vector3.UP,delta_rot_y)
 				
 				# RIPOSIZIONAMENTO ATTORNAL AL PIVOT:
 				# Ruotiamo l'offset e riposizioniamo lo scheletro in modo che il perno sia il piede
-				_skeleton.global_transform.origin = pivot_mondo + offset_skeleton.rotated(Vector3.UP, delta_rot_y)
+				_skeleton.global_transform.origin = pivot_mondo + offset_skeleton.rotated(Vector3.UP,delta_rot_y)
 				
 				# Aggiorna il valore di riferimento per il frame successivo
-				current_weight_on.set_meta("initial_foot_rot_y", current_foot_rot_y)
+				current_root.set_meta("initial_foot_rot_y", foot_rot_y)
 				
 				# Ricalcola la trasformazione globale e il delta_pos DOPO aver spostato e ruotato lo scheletro,
 				# altrimenti la traslazione finale userebbe i vettori sfasati del frame precedente
-				bone_pose = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx)
-				current_foot_global_pos = _skeleton.global_transform * bone_pose.origin
-				delta_pos = current_weight_on.wo_position - current_foot_global_pos
+				bone_pose = _skeleton.get_bone_global_pose(current_root.ik_bone_idx)
+				foot_global_pos = _skeleton.global_transform * bone_pose.origin
+				delta_pos = current_root.wo_position - foot_global_pos
 			
 			# 3. TRASLAZIONE FINALE
 			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
@@ -145,14 +145,14 @@ func update_weight_on(apply : bool = true) -> Vector3:
 	return Vector3()
 
 
-func update_position(new_weight_on: int)-> int:
+func update_position(new_root_on: int)-> int:
 	if _skeleton:
 		var parent : Node3D = _skeleton.get_parent()
 		if parent:
-			var position1 := update_weight_on(false)
+			var position1 := update_root_on(false)
 			#print(position1)
 	
-			var position2 := update_weight_on(false)
+			var position2 := update_root_on(false)
 			#print(position2)
 	
 			var posDelta := Vector3()
@@ -165,11 +165,11 @@ func update_position(new_weight_on: int)-> int:
 			#print(posDelta)
 			
 			#b = false
-	return new_weight_on
+	return new_root_on
 
 
 func reset_pose():
-	current_weight_on = null
+	current_root = null
 	
 	#if _skeleton:
 		#_skeleton.position = Vector3()
@@ -195,10 +195,10 @@ func reset_pose():
 	left_ankle.reset_pose()
 	right_ankle.reset_pose()
 	
-	_left_arm.pinned_on = false
-	_right_arm.pinned_on = false
-	_left_leg.pinned_on = false
-	_right_leg.pinned_on = false
+	_left_arm.ik_on = false
+	_right_arm.ik_on = false
+	_left_leg.ik_on = false
+	_right_leg.ik_on = false
 
 
 func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
@@ -214,24 +214,24 @@ func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
 	reset_pose()
 
 
-func weight_on_changed(limb: PersonLimb, weight_on: bool):
-	if weight_on:
-		if current_weight_on and current_weight_on != limb:
-			current_weight_on.weight_on = false
-			if current_weight_on and current_weight_on.has_meta("initial_foot_rot_y"):
-				current_weight_on.remove_meta("initial_foot_rot_y")
+func root_on_changed(limb: PersonLimb, root_on: bool):
+	if root_on:
+		if current_root and current_root != limb:
+			current_root.root_on = false
+			if current_root and current_root.has_meta("initial_foot_rot_y"):
+				current_root.remove_meta("initial_foot_rot_y")
 				
-		current_weight_on = limb
+		current_root = limb
 		
 		# Memorizza l'orientamento globale del nuovo piede nel frame esatto dell'ancoraggio
-		if _skeleton and current_weight_on:
-			var current_rot_y = _skeleton.get_bone_global_pose(current_weight_on.ik_bone_idx).basis.get_euler().y
-			current_weight_on.set_meta("initial_foot_rot_y", current_rot_y)
+		if _skeleton and current_root:
+			var current_rot_y = _skeleton.get_bone_global_pose(current_root.ik_bone_idx).basis.get_euler().y
+			current_root.set_meta("initial_foot_rot_y", current_rot_y)
 			
-	elif limb == current_weight_on:
-		if current_weight_on.has_meta("initial_foot_rot_y"):
-			current_weight_on.remove_meta("initial_foot_rot_y")
-		current_weight_on = null
+	elif limb == current_root:
+		if current_root.has_meta("initial_foot_rot_y"):
+			current_root.remove_meta("initial_foot_rot_y")
+		current_root = null
 
 
 func set_eye_bones(skeleton: Skeleton3D):
@@ -282,7 +282,7 @@ func create_joints(skeleton: Skeleton3D) -> void:
 
 
 func create_springs(skeleton: Skeleton3D) -> void:
-	add_head_spring("head",skeleton,Bones.NECK_BONE)
+	add_head_spring("head_spring",skeleton,Bones.NECK_BONE)
 	add_torso_spring("torso",skeleton,Bones.ABDOMEN_BONE_1)
 
 	add_breast_spring("left",skeleton,Bones.BREAST_LEFT_BONE,0.8)
@@ -321,8 +321,8 @@ func create_controllers( )-> void:
 	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
 	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)
 	
-	_left_leg.weight_on_changed.connect(weight_on_changed)
-	_right_leg.weight_on_changed.connect(weight_on_changed)
+	_left_leg.root_on_changed.connect(root_on_changed)
+	_right_leg.root_on_changed.connect(root_on_changed)
 
 
 func create_collisions(parent: Node3D,skeleton: Skeleton3D):

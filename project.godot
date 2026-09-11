@@ -30,8 +30,9 @@ XRToolsUserSettings="*uid://c6g3ihox3mn8m"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=1428
+window/size/viewport_height=778
+window/size/mode=2
 
 [dotnet]
 
@@ -44,7 +45,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/daz3d_import/plugin.cfg", "res://addons/godot-xr-tools/plugin.cfg", "res://addons/vam_obj_import/plugin.cfg")
+enabled=PackedStringArray("res://addons/Mirror/plugin.cfg", "res://addons/daz3d_import/plugin.cfg", "res://addons/godot-xr-tools/plugin.cfg", "res://addons/vam_obj_import/plugin.cfg")
 
 [filesystem]
 

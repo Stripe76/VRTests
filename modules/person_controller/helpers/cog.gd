@@ -41,12 +41,12 @@ func update_cog()-> void:
 	#var x_pos := x * get_half_width()
 	#print(x_pos)
 	if x > 0:
-		left_leg.weight_on = false
-		right_leg.weight_on = true
+		left_leg.root_on = false
+		right_leg.root_on = true
 		
-		right_leg.pinned_on = false
-		#if not left_leg.pinned_on:
-		#	left_leg.pinned_on = true
+		right_leg.ik_on = false
+		#if not left_leg.ik_on:
+		#	left_leg.ik_on = true
 		#left_leg.ik.global_position = left_leg.foot_bone.global_position
 		
 		right_leg.hips_vertical = -x
@@ -59,12 +59,12 @@ func update_cog()-> void:
 		#	left_leg.ik_influence = 1.0
 		#right_leg.ik_influence = 0
 	if x < 0:
-		left_leg.weight_on = true
-		right_leg.weight_on = false
+		left_leg.root_on = true
+		right_leg.root_on = false
 		
-		left_leg.pinned_on = false
-		#if not right_leg.pinned_on:
-		#	right_leg.pinned_on = true
+		left_leg.ik_on = false
+		#if not right_leg.ik_on:
+		#	right_leg.ik_on = true
 		#right_leg.ik.global_position = right_leg.foot_bone.global_position
 		
 		left_leg.hips_vertical = -x

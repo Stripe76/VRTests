@@ -10,7 +10,7 @@ var press_to_hold := true
 func pick_up(node: XRToolsFunctionPickup):
 		#print("pick_up")
 	if limb:
-		limb.pinned_on = true
+		limb.ik_on = true
 		
 		var remote : RemoteTransform3D =  node.find_child("RemoteTransform")
 		if remote:
