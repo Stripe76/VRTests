@@ -8,14 +8,14 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_87eex"]
 render_priority = 0
 shader = ExtResource("2_5l43d")
-shader_parameter/lerp = 1.0
+shader_parameter/lerp = 0.2
 shader_parameter/data_points = SubResource("Texture2DRD_5l43d")
 shader_parameter/shininess = 25.0
 
 [node name="VAMHair" type="Node3D" unique_id=1783085919]
 script = ExtResource("1_8yvxm")
 hair_material = SubResource("ShaderMaterial_87eex")
-_how_many = 4
+force_lerp = 0.5
 AB_distribution = -0.5
 a_root = Color(0.60176414, 0.24820161, 0, 1)
 a_middle = Color(0.60176414, 0.24820161, 0, 1)

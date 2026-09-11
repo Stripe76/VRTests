@@ -19,7 +19,7 @@ class_name VAMHair extends Node3D
 			hair_material.set_shader_parameter("force",Vector4(force.x,force.y,force.z,strentgh))
 	get:
 		return strentgh
-@export var force_lerp : float = 1.0:
+@export_range(0,1) var force_lerp : float = 1.0:
 	set(value):
 		force_lerp = value
 		if hair_material:
@@ -44,7 +44,7 @@ class_name VAMHair extends Node3D
 @export_range(0,10) var a_weight_tip: int = 10
 @export_range(-1.5,1.5) var a_variation: float = -0.3
 @export_group("Hair colors B","b_")
-@export var b_root: Color = Color(0.109, 0.049, 0.0, 1.0)
+@export var b_root: Color = Color(0.84, 0.755, 0.534, 1.0)
 @export var b_middle: Color = Color(0.84, 0.755, 0.534, 1.0)
 @export var b_tip: Color = Color(0.83, 0.736, 0.576, 1.0)
 @export_range(0,10) var b_weight_root: int = 1
@@ -54,7 +54,6 @@ class_name VAMHair extends Node3D
 
 
 var _head_tris: Dictionary
-
 var _hair_mesh : MeshInstance3D
 var _hair_debug : MeshInstance3D
 
@@ -65,8 +64,12 @@ func _notification(what: int) -> void:
 		NOTIFICATION_EDITOR_PRE_SAVE:
 			_editor_owner = owner
 			owner = null
+			_hair_mesh.owner = null
+			_hair_debug.owner = null
 		NOTIFICATION_EDITOR_POST_SAVE:
 			owner = _editor_owner
+			_hair_mesh.owner = _editor_owner
+			_hair_debug.owner = self
 func _validate_property(property: Dictionary):
 	if ["HairMesh"].has(property["name"]):
 		property["usage"] = PROPERTY_USAGE_EDITOR
@@ -113,6 +116,8 @@ func _physics_process(delta: float) -> void:
 	
 	_last_rotation = current_rot
 	_last_position = global_position
+	# Force editor update
+	global_position = global_position
 
 
 func create_hair_editor():
@@ -131,13 +136,16 @@ func generate_hair(filename: String,head_tris: Dictionary):
 		_hair_mesh = MeshInstance3D.new()
 		_hair_mesh.name = "HairMesh"
 		add_child(_hair_mesh)
-		_hair_mesh.owner = owner
+		if owner:
+			_hair_mesh.owner = owner
+		else:
+			_hair_mesh.owner = self
 		
 	if not _hair_debug and Engine.is_editor_hint():
 		_hair_debug = MeshInstance3D.new()
 		_hair_debug.name = "HairDebug"
 		add_child(_hair_debug)
-		_hair_debug.owner = owner
+		_hair_debug.owner = self
 	
 	_hair_mesh.mesh = generate_hair_from_file(file,head_tris,_how_many)
 	for i in _hair_mesh.mesh.get_surface_count():
@@ -145,7 +153,6 @@ func generate_hair(filename: String,head_tris: Dictionary):
 	
 	if _hair_debug and Engine.is_editor_hint():
 		generate_hair_debug(file,head_tris)
-		#generate_hair_debug(file,{})
 
 
 func generate_hair_from_file(file: FileAccess,head_tris: Dictionary,how_many: int) -> ArrayMesh:
@@ -153,8 +160,7 @@ func generate_hair_from_file(file: FileAccess,head_tris: Dictionary,how_many: in
 	if loaded_strands.size() <= 0:
 		return
 	
-	var arrays_data := generate_hair_strands(loaded_strands,head_tris,how_many,0.015)
-	
+	var arrays_data := generate_hair_strands(loaded_strands,head_tris,how_many,0.015)	
 	if not _process_shader: 
 		create_verlet_shader( arrays_data )
 	
@@ -173,10 +179,10 @@ func verlet_shader_initialized():
 	print("verlet_shader_initialized")
 	var image : Texture2DRD = hair_material.get_shader_parameter("data_points")
 	if not image:
+		#print("texture_rid: ",_curr_pose_rid)
 		image = Texture2DRD.new()
 		image.texture_rd_rid = _curr_pose_rid
 		hair_material.set_shader_parameter("data_points",image)
-		print("texture_rid: ",_curr_pose_rid)
 
 
 func create_mesh(arrays_data: Dictionary) -> ArrayMesh:
@@ -274,13 +280,12 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 		var last_vertex : Vector3
 		var direction : Vector3
 		
-		if size > 0:
+		if sizei > 0:
 			direction = s[1].normalized()
 		
 		var strand_origin = s[0]
 		last_vertex = strand_origin
 		
-		#if head_tris and head_tris.size() > 0:
 		offset = find_offset(head_origin,head_tris,strand_origin)
 		
 		var select_a = true if randf() > 0.5 + AB_distribution else false
@@ -313,19 +318,13 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 					parts = sizei - randi_range(0,4) 
 				for i in parts:
 					var vertex : Vector3 = s[i] - strand_origin + offset
-					#var vertex : Vector3 = s[i]
 					var vertex_offset := (inc + Vector3(randf_range(-0.001,0.001),0.0,randf_range(-0.001,0.001))) * (1.0-(i as float / (size-1)))
-					vertex += vertex_offset
-					
-					#if i == 5:
-						#length = 0
-					#else:
-						#length += (vertex-last_vertex).length()
+					#vertex += vertex_offset
+					length += (vertex-last_vertex).length()
 					
 					vertices.push_back(vertex)
 					normals.push_back((last_vertex-vertex).normalized())
 					uvs.push_back(Vector2(i,col))
-					colors.push_back(root_color)
 				
 					var v := i / size
 					if v < weight_root:
@@ -336,11 +335,12 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 							colors.push_back(middle_color)
 						else:
 							colors.push_back(lerp(middle_color,tip_color,(v-weight_middle)/(1.0-weight_middle)))
-							
+					
 					customs0.push_back(vertex_offset.x)
 					customs0.push_back(vertex_offset.y)
 					customs0.push_back(vertex_offset.z)
 					customs0.push_back(0)
+					
 					customs1.push_back(direction.x)
 					customs1.push_back(direction.y)
 					customs1.push_back(direction.z)

@@ -60,7 +60,6 @@ void main()
 			curr = rotate_vector( curr,params.rotate );
 			prev = rotate_vector( prev.xyz,params.rotate );
 		}
-		bool update = true;
 		if (params.do_shift)
 		{
 			curr -= params.shift * (v / particles) * 0.5;
@@ -70,10 +69,17 @@ void main()
 		vec3 new_pos = curr + velocity*params.damping + params.gravity*params.dt*params.dt;
 
 		int prev_v = int(v) - 1;
-		vec3 parent_rest = imageLoad(rest_pose,ivec2(prev_v,s)).rgb;
+		vec3 rest_pos = imageLoad(rest_pose,ivec2(v,s)).rgb;
+
+		new_pos = mix(new_pos,rest_pos,params.lerp * (1.0-(float(v)/particles) ) );
+		//if(v < 10)
+			//new_pos = mix(new_pos,rest_pos,params.lerp * (1.0-(float(v)/10) ) );
+
+		//vec3 parent_rest = imageLoad(rest_pose,ivec2(prev_v,s)).rgb;
 		vec3 parent_vertex = imageLoad(curr_pose,ivec2(prev_v,s)).rgb;
 
-		parent_vertex = mix(parent_vertex,parent_rest,params.lerp * (1-(float(v)/particles)*params.lerp) );
+		//parent_vertex = mix(parent_vertex,parent_rest,params.lerp * (1-(float(v)/particles) ) );
+		//parent_vertex = mix(parent_vertex,parent_rest,params.lerp );
 
 		vec3 diff = new_pos - parent_vertex;
 		float d = length(diff);

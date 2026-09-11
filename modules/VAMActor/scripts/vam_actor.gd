@@ -125,23 +125,27 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )
 	_hair.name = "Hair"
+	_hair._how_many = 4
+	_hair.force_lerp = 0.5
 	
-	#_hair = VAMHair.new()
-	#_hair.name = "Hair"
-	#_hair._how_many = 4
-	#_hair.a_root = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.a_middle = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.a_tip = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.b_root = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.b_middle = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.b_tip = Color(0.539, 0.295, 0.046, 1.0)
-	#_hair.a_weight_root = 1
-	#_hair.a_weight_middle = 1
-	#_hair.a_weight_tip = 1
-	#_hair.b_weight_root = 1
-	#_hair.b_weight_middle = 1
-	#_hair.b_weight_tip = 1
-	#_hair.AB_distribution = -0.5
+	_hair.a_root = Color(0.326, 0.165, 0.0, 1.0)
+	_hair.a_middle = Color(0.451, 0.214, 0.0, 1.0)
+	_hair.a_tip = Color(0.808, 0.425, 0.0, 1.0)
+	
+	_hair.b_root = Color(0.0, 0.0, 0.0, 1.0)
+	_hair.b_middle = Color(0.0, 0.0, 0.0, 1.0)
+	_hair.b_tip = Color(0.0, 0.0, 0.0, 1.0)
+	
+	_hair.a_weight_root = 1
+	_hair.a_weight_middle = 1
+	_hair.a_weight_tip = 1
+	
+	_hair.b_weight_root = 1
+	_hair.b_weight_middle = 1
+	_hair.b_weight_tip = 1
+	
+	_hair.AB_distribution = -0.5
+	
 	var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
 	load_hair(hair_file,_mesh.head_tris)
 	

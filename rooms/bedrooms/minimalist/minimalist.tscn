@@ -40,14 +40,13 @@ adjustment_saturation = 0.75
 [node name="Minimalist" unique_id=814273015 instance=ExtResource("1_kfhau")]
 script = ExtResource("2_vitkp")
 
-[node name="Cylinder_003" parent="Scene Collection/Furnitures/Ceiling Fan" parent_id_path=PackedInt32Array(386798877) index="0" unique_id=1181314137]
+[node name="Cylinder_003" parent="Scene Collection/Furnitures/Ceiling Fan" parent_id_path=PackedInt32Array(1250141873) index="0" unique_id=1103095470]
 script = ExtResource("3_76j7g")
 
 [node name="Ligths" type="Node3D" parent="." index="1" unique_id=673321347]
 
 [node name="Ceiling" type="Node3D" parent="Ligths" index="0" unique_id=2114142217]
 script = ExtResource("2_jm4tx")
-angle = 75.0
 energy = 1.0
 
 [node name="Spot1" type="SpotLight3D" parent="Ligths/Ceiling" index="0" unique_id=138727842]

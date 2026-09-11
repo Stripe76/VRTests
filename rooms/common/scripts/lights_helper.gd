@@ -14,7 +14,7 @@ extends Node3D
 		set_spot_value("spot_attenuation",attenuation)
 	get:
 		return attenuation
-@export_range(5.0,180.0) var angle : float = 40.0:
+@export_range(5.0,180.0) var angle : float = 75.0:
 	set(value):
 		angle = value
 		set_spot_value("spot_angle",angle)
