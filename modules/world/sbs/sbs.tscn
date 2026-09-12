@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cybk5mrw71mls"]
+[gd_scene format=3 uid="uid://cybk5mrw71mls"]
 
 [ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="1_1v4le"]
-[ext_resource type="Script" uid="uid://emv75wo0ugp2" path="res://modules/world_sbs/scripts/sbs.gd" id="1_a4746"]
-[ext_resource type="PackedScene" uid="uid://dqtudc0n0gptr" path="res://modules/player_sbs/player_sbs.tscn" id="2_oqv1b"]
+[ext_resource type="Script" uid="uid://emv75wo0ugp2" path="res://modules/world/sbs/scripts/sbs.gd" id="1_a4746"]
+[ext_resource type="PackedScene" uid="uid://dqtudc0n0gptr" path="res://modules/world/sbs/player.tscn" id="2_oqv1b"]
 
 [node name="SBS" type="Control"]
 layout_mode = 3

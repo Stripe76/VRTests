@@ -29,6 +29,7 @@ size = 5.0
 
 [node name="FreeCamera" type="Node3D" parent="." unique_id=231351705]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.88, 0)
+visible = false
 script = ExtResource("2_20j0k")
 delta_curve = SubResource("Curve_20j0k")
 

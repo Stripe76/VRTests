@@ -8,8 +8,8 @@ var current_camera := 0
 func _ready() -> void:
 	generate_action_map()
 	
-	iso_camera.visible = true
-	free_camera.visible = false
+	iso_camera.visible = false
+	free_camera.visible = true
 
 
 func _unhandled_input(event: InputEvent) -> void:

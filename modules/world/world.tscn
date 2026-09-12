@@ -15,70 +15,7 @@ visible = false
 metadata/_edit_lock_ = true
 
 [node name="Minimalist" parent="Environment" unique_id=814273015 instance=ExtResource("4_rmlpf")]
-
-[node name="Lights" type="Node" parent="." unique_id=1400390997]
-
-[node name="OmniLight3D4" type="OmniLight3D" parent="Lights" unique_id=137661104]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34650087, 1.8618711, 2.0672631)
-visible = false
-light_energy = 2.0
-shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 2.0
-
-[node name="OmniLight3D5" type="OmniLight3D" parent="Lights" unique_id=512499761]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, -0.386623)
-visible = false
-shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 2.0
-
-[node name="OmniLight3D6" type="OmniLight3D" parent="Lights" unique_id=1171628380]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, -2.35878)
-visible = false
-light_energy = 2.0
-shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 2.0
-
-[node name="OmniLight3D7" type="OmniLight3D" parent="Lights" unique_id=2077514856]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120834, 2.91949, 2.17032)
-visible = false
-shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 2.0
-
-[node name="OmniLight3D3" type="OmniLight3D" parent="Lights" unique_id=1407702166]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5627002, 2.08959, 0.046169043)
-visible = false
-light_energy = 1.118
-shadow_enabled = true
-omni_range = 10.0
-omni_attenuation = 2.0
-
-[node name="Back" type="SpotLight3D" parent="Lights" unique_id=99075947]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.5181065, 1.1375687, -3.0010955)
-visible = false
-light_energy = 0.859
-spot_range = 20.173
-
-[node name="Left" type="SpotLight3D" parent="Lights" unique_id=1991484075]
-transform = Transform3D(0.6270908, -0.02535355, 0.77853346, -0.16290998, 0.97309864, 0.16290994, -0.7617202, -0.22899015, 0.6060907, 0.8997319, 1.7785915, 1)
-visible = false
-light_energy = 1.519
-light_size = 0.104
-
-[node name="Right" type="SpotLight3D" parent="Lights" unique_id=740677624]
-transform = Transform3D(-0.12901556, 0.51641506, -0.84656394, -0.08097415, 0.8453614, 0.528022, 0.988331, 0.13667282, -0.06724852, -1.8513807, 1.9075825, 1)
-visible = false
-light_energy = 2.766
-light_size = 0.091
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lights" unique_id=478376152]
-transform = Transform3D(-0.10452851, -0.6122889, 0.78369397, 0, 0.7880109, 0.6156615, -0.9945219, 0.06435419, -0.08236959, 0, 1, 0)
-visible = false
-light_energy = 5.0
-shadow_enabled = true
+metadata/_edit_lock_ = true
 
 [node name="Persons" type="Node3D" parent="." unique_id=1978302120]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)

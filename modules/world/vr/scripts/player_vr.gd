@@ -47,8 +47,8 @@ func set_head_skin_shader(shader):
 	$UIViewports.set_head_skin_shader(shader)
 
 
-func _on_right_hand_button_pressed(name: String) -> void:
-	if name == "ax_button":
+func _on_right_hand_button_pressed(button_name: String) -> void:
+	if button_name == "ax_button":
 		next_mesh.emit()
-	if name == "by_button":
+	elif button_name == "by_button":
 		next_materials.emit()
