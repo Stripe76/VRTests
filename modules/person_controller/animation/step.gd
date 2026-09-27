@@ -1,49 +1,50 @@
 @tool
 class_name MoveStep extends Node
 
-@export var duration : float
-@export var start : float
-@export var end : float
+@export_tool_button("Reset","Reload") var reset_button = reset
 
-@export var movement : float:
+@export var joint : Node:
 	set(value):
-		movement = value
-		set_movement(movement)
+		joint = value
+		init_values()
 	get:
-		return movement
+		return joint
+@export_range(-20,20) var speed : float = 1:
+	set(value):
+		speed = value
+		for c in get_children():
+			c.multiplier = speed
+	get:
+		return speed
+@export_range(0,2) var duration : float:
+	set(value):
+		duration = value
+		for c in get_children():
+			c.duration = duration
+	get:
+		return duration
 
-@export var multiplier : float = 1.0
 
-@export var joint : Node
+func init_values() -> void:
+	for c in get_children():
+		c.joint = joint
 
 
-func set_movement(move: float):
+func reset():
 	if joint:
-		for v in get_children():
-			if v is ValueFloat:
-				#var value = lerp(v.start*multiplier,v.end*multiplier,move)
-				var value = cubic_interpolate(v.start*multiplier,v.end*multiplier,.3,.3,movement)
-				joint.set(v.name,value)
-				#print(v.name," ",value," (",v.start,";",v.end,";",move,")")
-				#joint.set(v.name,lerp(v.start,v.end,(1 - cos(PI * movement)) / 2))
-				#joint.set(v.name,cubic_interpolate(v.start*multiplier,v.end*multiplier,0.2,0.3,movement))
-			elif v is ValueBool:
-				#prints("v.name",v.end)
-				joint.set(v.name,v.end)
+		for c in get_children():
+			joint.set(c.name,c.target)
 
 
-func set_previous_steps(steps: Array):
-	if steps:
-		for v in get_children():
-			if steps.size() > 0:
-				for s : MoveStep in steps:
-					var value = s.find_child(v.name)
-					if value:
-						#v.start = value.end
-						v.start = 0
-						break
-	elif joint:
-		for v in get_children():
-			var value = joint.get(v.name)
-			if value:
-				v.start = value
+func start():
+	print(name,": start ")
+	for c in get_children():
+		c.start()
+
+
+func update(delta: float)-> bool:
+	var done := true
+	for c in get_children():
+		if not c.update(delta):
+			done = false
+	return done

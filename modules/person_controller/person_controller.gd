@@ -271,8 +271,8 @@ func create_joints(skeleton: Skeleton3D) -> void:
 		right_hip = JointController.new(skeleton,Bones.HIP_RIGHT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.25,"y_max":0.25,"z_min":0.19,"z_max":0.11})
 		left_knee = JointController.new(skeleton,Bones.KNEE_LEFT_BONE,{"x_min":0.033,"x_max":0.695})
 		right_knee = JointController.new(skeleton,Bones.KNEE_RIGHT_BONE,{"x_min":0.033,"x_max":0.695})
-		left_ankle = JointController.new(skeleton,Bones.ANKLE_LEFT_BONE,{"x_min":0.09,"x_max":0.307,"y_min":0.27,"y_max":0.15,"z_min":0.09,"z_max":0.09})
-		right_ankle = JointController.new(skeleton,Bones.ANKLE_RIGHT_BONE,{"x_min":0.09,"x_max":0.307,"y_min":0.15,"y_max":0.27,"z_min":0.09,"z_max":0.09})
+		left_ankle = JointController.new(skeleton,Bones.ANKLE_LEFT_BONE,{"x_min":0.29,"x_max":0.307,"y_min":0.27,"y_max":0.15,"z_min":0.09,"z_max":0.09})
+		right_ankle = JointController.new(skeleton,Bones.ANKLE_RIGHT_BONE,{"x_min":0.29,"x_max":0.307,"y_min":0.15,"y_max":0.27,"z_min":0.09,"z_max":0.09})
 	
 		left_index = JointController.new(skeleton,Bones.LEFT_INDEX,{"x_min":0.09,"x_max":0.307,"y_min":0.15,"y_max":0.27})
 		
