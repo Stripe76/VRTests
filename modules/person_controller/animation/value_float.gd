@@ -20,32 +20,20 @@ class_name ValueFloat extends Node
 		multiplier = value
 	get:
 		return multiplier
-@export_range(0,2) var duration : float:
-	set(value):
-		duration = value
-	get:
-		return duration
 @export var curve : Curve
 
-var time := 0.0
 var begin := 0.0
-var delta := 10.0
+var delta := .2
 
 
 func start():
-	time = 0.0
+	#print(name,": start")
 	begin = joint.get(name)
 	delta = target - begin
-	#print("begin: ",begin," delta: ",delta)
 
 
-func update(elapsed: float):
-	time += elapsed
-	
-	if time > duration:
-		return true
+func update(move: float):
 	if joint and curve:
-		var value : float = clamp(begin + (speed/100.0) * multiplier * curve.sample_baked(time/duration),-1,1)
-		begin = value
+		var value : float = begin + delta * curve.sample_baked(move)
+		
 		joint.set(name,value)
-	return false

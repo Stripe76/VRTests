@@ -35,10 +35,14 @@ var _collar : JointController
 var _shoulder : JointController
 var _elbow : JointController
 
-func _init(limb_name: String,collar : JointController,shoulder : JointController,elbow : JointController,parent: Node3D) -> void:
+var _inverter : float = 1.0
+
+func _init(limb_name: String,inverter : float,collar : JointController,shoulder : JointController,elbow : JointController,parent: Node3D) -> void:
 	name = limb_name
 	parent.add_child(self)
 	owner = parent.get_parent()
+	
+	_inverter = inverter
 	
 	_collar = collar
 	_shoulder = shoulder
@@ -48,10 +52,10 @@ func _init(limb_name: String,collar : JointController,shoulder : JointController
 func update_pose():
 	_collar.pose_y = horizontal
 	#_collar.pose_z = (vertical + twist) / 2
-	_collar.pose_z = vertical
+	_collar.pose_z = _inverter * vertical
 	
 	_shoulder.pose_x = twist
 	_shoulder.pose_y = horizontal
-	_shoulder.pose_z = vertical
+	_shoulder.pose_z = _inverter * vertical
 	
-	_elbow.pose_y = straight
+	_elbow.pose_y = _inverter * straight

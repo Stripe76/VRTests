@@ -4,16 +4,16 @@ class_name PersonLeg extends PersonLimb
 	set(value):
 		hips_vertical = value
 		
-		_hip.pose_z = hips_vertical * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
+		_hip.pose_z = _inverter * value * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
 	get:
-		return hips_vertical
+		return _inverter * _hip.pose_z / (hips_vertical_max if _hip.pose_z > 0 else hips_vertical_min)
 @export_range(-1,1) var hips_horizontal : float = 0:
 	set(value):
 		hips_horizontal = value
 		
-		_hip.pose_y = hips_horizontal * (hips_horizontal_max if hips_horizontal > 0 else hips_horizontal_min)
+		_hip.pose_y = _inverter * value * (hips_horizontal_max if hips_horizontal > 0 else hips_horizontal_min)
 	get:
-		return hips_horizontal
+		return  _inverter * _hip.pose_y / (hips_horizontal_max if _hip.pose_y > 0 else hips_horizontal_min)
 @export_range(-1,1) var bend : float = 0:
 	set(value):
 		bend = value
@@ -32,14 +32,14 @@ class_name PersonLeg extends PersonLimb
 	set(value):
 		lateral = value
 		
-		_pelvis.pose_z = lateral * (lateral_max if lateral > 0 else lateral_min)
+		_pelvis.pose_z = lateral * _inverter * (lateral_max if lateral > 0 else lateral_min)
 	get:
 		return lateral
 @export_range(-1,1) var twist : float = 0:
 	set(value):
 		twist = value
 		
-		_pelvis.pose_y = twist * (twist_max if twist > 0 else twist_min)
+		_pelvis.pose_y = _inverter * twist * (twist_max if twist > 0 else twist_min)
 	get:
 		return twist
 @export_range(-1,1) var ankle_side : float = 0:
@@ -63,14 +63,14 @@ class_name PersonLeg extends PersonLimb
 	set(value):
 		hips_vertical_min = value
 		
-		_hip.pose_z = hips_vertical * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
+		_hip.pose_z = hips_vertical * _inverter * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
 	get:
 		return hips_vertical_min
 @export_range(0,1) var hips_vertical_max : float = 1:
 	set(value):
 		hips_vertical_max = value
 		
-		_hip.pose_z = hips_vertical * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
+		_hip.pose_z = hips_vertical * _inverter * (hips_vertical_max if hips_vertical > 0 else hips_vertical_min)
 	get:
 		return hips_vertical_max
 @export_range(0,1) var hips_horizontal_min : float = 1:
@@ -119,28 +119,28 @@ class_name PersonLeg extends PersonLimb
 	set(value):
 		lateral_min = value
 		
-		_pelvis.pose_z = lateral * (lateral_max if lateral > 0 else lateral_min)
+		_pelvis.pose_z = lateral * _inverter * (lateral_max if lateral > 0 else lateral_min)
 	get:
 		return lateral_min
 @export_range(0,1) var lateral_max : float = 1:
 	set(value):
 		lateral_max = value
 		
-		_pelvis.pose_z = lateral * (lateral_max if lateral > 0 else lateral_min)
+		_pelvis.pose_z = lateral * _inverter * (lateral_max if lateral > 0 else lateral_min)
 	get:
 		return lateral_max
 @export_range(0,1) var twist_min : float = 1:
 	set(value):
 		twist_min = value
 		
-		_pelvis.pose_y = twist * (twist_max if twist > 0 else twist_min)
+		_pelvis.pose_y = _inverter * twist * (twist_max if twist > 0 else twist_min)
 	get:
 		return twist_min
 @export_range(0,1) var twist_max : float = 1:
 	set(value):
 		twist_max = value
 		
-		_pelvis.pose_y = twist * (twist_max if twist > 0 else twist_min)
+		_pelvis.pose_y = _inverter * twist * (twist_max if twist > 0 else twist_min)
 	get:
 		return twist_max
 
@@ -149,11 +149,15 @@ var _pelvis : JointController
 var _knee : JointController
 var _ankle : JointController
 
+var _inverter : float = 1.0
 
-func _init(limb_name: String,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
+
+func _init(limb_name: String,inverter: float,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
 	name = limb_name
 	parent.add_child(self)
 	owner = parent.get_parent()
+	
+	_inverter = inverter
 	
 	_hip = hip
 	_pelvis = pelvis

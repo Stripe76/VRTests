@@ -9,6 +9,7 @@ class_name MoveStep extends Node
 		init_values()
 	get:
 		return joint
+		
 @export_range(-20,20) var speed : float = 1:
 	set(value):
 		speed = value
@@ -16,13 +17,18 @@ class_name MoveStep extends Node
 			c.multiplier = speed
 	get:
 		return speed
-@export_range(0,2) var duration : float:
+@export_range(0,2) var duration : float = 1
+
+@export var begin : float
+@export var end : float
+
+@export_range(0,1) var movement : float:
 	set(value):
-		duration = value
-		for c in get_children():
-			c.duration = duration
+		movement = value
+		update(movement)
 	get:
-		return duration
+		return movement
+@export var multiplier : float = 1.0
 
 
 func init_values() -> void:
@@ -41,10 +47,6 @@ func start():
 	for c in get_children():
 		c.start()
 
-
-func update(delta: float)-> bool:
-	var done := true
+func update(move: float):
 	for c in get_children():
-		if not c.update(delta):
-			done = false
-	return done
+		c.update(move)

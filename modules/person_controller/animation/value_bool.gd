@@ -2,14 +2,19 @@
 class_name ValueBool
 extends Node
 
-@export var end : bool:
-	set(value):
-		end = value
-		var parent = get_parent()
-		if parent:
-			parent.set("movement",1)
-	get:
-		return end
+@export var joint : Node
 
-@export_group("Debug")
-@export var start : bool
+@export var target : bool:
+	set(value):
+		target = value
+	get:
+		return target
+
+
+func start():
+	if joint:
+		joint.set(name,target)
+
+
+func update(_move: float):
+	pass

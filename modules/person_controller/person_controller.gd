@@ -113,7 +113,7 @@ func update_root_on(apply : bool = true) -> Vector3:
 			var initial_foot_rot_y : float = current_root.get_meta("initial_foot_rot_y")
 			var delta_rot_y : float = initial_foot_rot_y - foot_rot_y
 			
-			if abs(delta_rot_y) > 0.001:
+			if abs(delta_rot_y) > 0.001 and true:
 				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
 				var pivot_mondo = current_root.wo_position
 				
@@ -138,7 +138,10 @@ func update_root_on(apply : bool = true) -> Vector3:
 			
 			# 3. TRASLAZIONE FINALE
 			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
-			delta_pos.y = 0
+			delta_pos.x = 0
+			#delta_pos.y = 0
+			delta_pos.z = 0
+			
 			_skeleton.global_transform.origin += delta_pos
 			
 		return delta_pos
@@ -199,6 +202,10 @@ func reset_pose():
 	_right_arm.ik_on = false
 	_left_leg.ik_on = false
 	_right_leg.ik_on = false
+	
+	if _skeleton:
+		_skeleton.position = Vector3.ZERO;
+		_skeleton.rotation = Vector3.ZERO;
 
 
 func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
@@ -313,13 +320,13 @@ func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
 func create_controllers( )-> void:
 	_head = PersonHead.new("Head",head,neck,left_eye,right_eye,self)
 	
-	_left_arm = PersonArm.new("LeftArm",left_collar,left_shoulder,left_elbow,self)
-	_right_arm = PersonArm.new("RightArm",right_collar,right_shoulder,right_elbow,self)
+	_left_arm = PersonArm.new("LeftArm",1,left_collar,left_shoulder,left_elbow,self)
+	_right_arm = PersonArm.new("RightArm",-1,right_collar,right_shoulder,right_elbow,self)
 	
 	_torso = PersonTorso.new("Torso",hips,pelvis,abdomen_1,abdomen_2,chest,self)
 	
-	_left_leg = PersonLeg.new("LeftLeg",pelvis,left_hip,left_knee,left_ankle,self)
-	_right_leg = PersonLeg.new("RightLeg",pelvis,right_hip,right_knee,right_ankle,self)
+	_left_leg = PersonLeg.new("LeftLeg",1,pelvis,left_hip,left_knee,left_ankle,self)
+	_right_leg = PersonLeg.new("RightLeg",-1,pelvis,right_hip,right_knee,right_ankle,self)
 	
 	_left_leg.root_on_changed.connect(root_on_changed)
 	_right_leg.root_on_changed.connect(root_on_changed)
