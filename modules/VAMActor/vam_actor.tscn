@@ -170,16 +170,40 @@ _data = {
 }
 
 [sub_resource type="Curve" id="Curve_k8ylq"]
+_data = [Vector2(0, 0), 0.0, -0.027207993, 0, 0, Vector2(1, 1), 4.3826913e-07, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_nqrty"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_67ek6"]
+_data = [Vector2(0, 0), 0.0, -0.14149888, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_t5u52"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_yitp0"]
-_data = [Vector2(0.50799996, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_ei043"]
+_data = [Vector2(0, 0), 0.0, 0.049934674, 0, 0, Vector2(0.50399995, 1), 4.4142623, 4.4142623, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_sojb5"]
+_data = [Vector2(0, 0), 0.0, -0.023580262, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
+
+[sub_resource type="Curve" id="Curve_s6jmj"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.49200004, 0.5055467), 3.4869041, 3.4869041, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_yitp0"]
+_data = [Vector2(0, 0), 0.0, -0.12511486, 0, 0, Vector2(0.67200005, 0.4746434), 5.1505537, 5.1505537, 0, 0, Vector2(1, 1), -0.5886351, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_47l0a"]
+_data = [Vector2(0, 0), 0.0, 0.13107939, 0, 0, Vector2(0.107999995, 0.16129029), 3.6785529, 3.6785529, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
 transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.9999935, 0, 0, 0)
@@ -217,7 +241,7 @@ curve = SubResource("Curve_k8ylq")
 [node name="straight" type="Node" parent="Movements/Arms/Walking/Step1" unique_id=1391579737 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../..")
-target = -0.23
+target = -0.08599999999999997
 curve = SubResource("Curve_k8ylq")
 
 [node name="Step2" type="Node" parent="Movements/Arms/Walking" unique_id=1578557321 node_paths=PackedStringArray("joint")]
@@ -349,32 +373,32 @@ joint = NodePath("../../..")
 
 [node name="Walking" type="Node" parent="Movements/Torso" unique_id=2071608444 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
-joint = NodePath("../../../PersonController/Torso")
+joint = NodePath("..")
 movement = 0.202
 
 [node name="Step1" type="Node" parent="Movements/Torso/Walking" unique_id=1248997301 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
-joint = NodePath("../../../../PersonController/Torso")
+joint = NodePath("../..")
 end = 0.5
 movement = 0.404
 
 [node name="rotate" type="Node" parent="Movements/Torso/Walking/Step1" unique_id=290485695 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/Torso")
-target = -0.15100000000000002
+joint = NodePath("../../..")
+target = -0.06000000000000005
 curve = SubResource("Curve_k8ylq")
 
 [node name="Step2" type="Node" parent="Movements/Torso/Walking" unique_id=439847984 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
-joint = NodePath("../../../../PersonController/Torso")
+joint = NodePath("../..")
 begin = 0.5
 end = 1.0
 movement = 0.03600000000000003
 
 [node name="rotate" type="Node" parent="Movements/Torso/Walking/Step2" unique_id=524146652 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/Torso")
-target = 0.15100000000000002
+joint = NodePath("../../..")
+target = 0.06499999999999995
 curve = SubResource("Curve_k8ylq")
 
 [node name="Legs" type="Node" parent="Movements" unique_id=1536106551]
@@ -382,13 +406,13 @@ curve = SubResource("Curve_k8ylq")
 [node name="Walking" type="Node" parent="Movements/Legs" unique_id=1408708444 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
 joint = NodePath("../../../PersonController/LeftLeg")
-movement = 0.202
+movement = 1.0
 
 [node name="Step1" type="Node" parent="Movements/Legs/Walking" unique_id=274701745 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../../../../PersonController/LeftLeg")
 end = 0.5
-movement = 0.404
+movement = 0.994
 
 [node name="root_on" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=415282009 node_paths=PackedStringArray("joint")]
 script = ExtResource("6_k8ylq")
@@ -404,25 +428,25 @@ curve = SubResource("Curve_k8ylq")
 [node name="hips_horizontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1200693855 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 0.7989999999999999
+target = -0.15800000000000003
 curve = SubResource("Curve_k8ylq")
 
 [node name="twist" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2000958464 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.453
-curve = SubResource("Curve_k8ylq")
+target = 0.43199999999999994
+curve = SubResource("Curve_nqrty")
 
 [node name="frontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2033098176 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.05100000000000004
-curve = SubResource("Curve_k8ylq")
+target = -0.10699999999999998
+curve = SubResource("Curve_67ek6")
 
 [node name="lateral" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=71350511 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.16600000000000004
+target = -0.123
 curve = SubResource("Curve_k8ylq")
 
 [node name="bend" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2118672602 node_paths=PackedStringArray("joint")]
@@ -431,36 +455,48 @@ joint = NodePath("../../../../../PersonController/LeftLeg")
 target = 0.266
 curve = SubResource("Curve_t5u52")
 
+[node name="ankle_front" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1854038600 node_paths=PackedStringArray("joint")]
+script = ExtResource("7_t5u52")
+joint = NodePath("../../../../../PersonController/LeftLeg")
+target = -0.121
+curve = SubResource("Curve_ei043")
+
 [node name="Step2" type="Node" parent="Movements/Legs/Walking" unique_id=1706331688 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../../../../PersonController/LeftLeg")
 begin = 0.5
 end = 1.0
-movement = 0.03600000000000003
+movement = 0.972
 
 [node name="frontal" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=178183429 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 0.17300000000000004
-curve = SubResource("Curve_k8ylq")
+target = 0.19799999999999995
+curve = SubResource("Curve_sojb5")
 
 [node name="twist" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1734204678 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 0.45300000000000007
-curve = SubResource("Curve_k8ylq")
+target = -0.18700000000000006
+curve = SubResource("Curve_s6jmj")
 
 [node name="lateral" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1640922759 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.137
+target = -0.123
 curve = SubResource("Curve_k8ylq")
 
 [node name="bend" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=45050661 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.04300000000000004
+target = 0.04499999999999993
 curve = SubResource("Curve_yitp0")
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=756796214 node_paths=PackedStringArray("joint")]
+script = ExtResource("7_t5u52")
+joint = NodePath("../../../../../PersonController/LeftLeg")
+target = 0.27300000000000013
+curve = SubResource("Curve_47l0a")
 
 [node name="TurnToIn" type="Node" parent="Movements/Legs" unique_id=2076410617 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
@@ -571,7 +607,7 @@ joint = NodePath("../../..")
 [node name="Walking" type="Node" parent="Movements" unique_id=13427316 node_paths=PackedStringArray("controller")]
 script = ExtResource("8_yitp0")
 controller = NodePath("../../PersonController")
-speed = 0.685
+speed = 0.781
 
 [node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835 node_paths=PackedStringArray("controller")]
 script = ExtResource("9_k8ylq")

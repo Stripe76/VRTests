@@ -113,7 +113,7 @@ func update_root_on(apply : bool = true) -> Vector3:
 			var initial_foot_rot_y : float = current_root.get_meta("initial_foot_rot_y")
 			var delta_rot_y : float = initial_foot_rot_y - foot_rot_y
 			
-			if abs(delta_rot_y) > 0.001 and true:
+			if abs(delta_rot_y) > 0.001 and false:
 				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
 				var pivot_mondo = current_root.wo_position
 				
@@ -139,7 +139,8 @@ func update_root_on(apply : bool = true) -> Vector3:
 			# 3. TRASLAZIONE FINALE
 			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
 			delta_pos.x = 0
-			#delta_pos.y = 0
+			delta_pos.y = 0
+			#delta_pos.y = delta_pos.y / 24.0
 			delta_pos.z = 0
 			
 			_skeleton.global_transform.origin += delta_pos
