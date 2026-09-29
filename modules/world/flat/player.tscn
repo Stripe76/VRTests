@@ -22,7 +22,7 @@ script = ExtResource("2_p14d7")
 delta_curve = SubResource("Curve_p14d7")
 
 [node name="Camera3D" type="Camera3D" parent="IsoCamera" unique_id=483568025]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
 current = true
 fov = 35.0
 size = 5.0

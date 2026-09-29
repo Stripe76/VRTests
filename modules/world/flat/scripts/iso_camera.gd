@@ -61,6 +61,14 @@ func _physics_process(delta: float) -> void:
 			get_tree().call_group("Scene","set_person_position",origin,result.position)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			camera.fov *= .95
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			camera.fov *= 1.05
+
+
 var north_wall := true
 var south_wall := true
 var east_wall := true
