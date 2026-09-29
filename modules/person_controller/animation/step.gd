@@ -43,9 +43,9 @@ func reset():
 
 
 func start():
-	print(name,": start ")
 	for c in get_children():
 		c.start()
+
 
 func update(move: float):
 	for c in get_children():

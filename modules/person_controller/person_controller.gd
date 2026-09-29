@@ -140,7 +140,7 @@ func update_root_on(apply : bool = true) -> Vector3:
 			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
 			delta_pos.x = 0
 			delta_pos.y = 0
-			#delta_pos.y = delta_pos.y / 24.0
+			#delta_pos.y = delta_pos.y / 20.0
 			delta_pos.z = 0
 			
 			_skeleton.global_transform.origin += delta_pos
