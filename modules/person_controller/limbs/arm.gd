@@ -1,5 +1,15 @@
 class_name PersonArm extends PersonLimb
 
+@export var limp_on: bool = false:
+	set(value):
+		limp_on = value
+		
+		_collar.limp_on = limp_on
+		_shoulder.limp_on = limp_on
+		_elbow.limp_on = limp_on
+	get:
+		return limp_on
+
 @export_range(-1,1) var straight : float = 0:
 	set(value):
 		straight = value
@@ -30,6 +40,17 @@ class_name PersonArm extends PersonLimb
 		update_pose()
 	get:
 		return wrist
+
+@export_range(0,4) var stiffness : float = 0:
+	set(value):
+		stiffness = value
+		
+		_collar.stiffness = stiffness
+		_shoulder.stiffness = stiffness
+		_elbow.stiffness = stiffness
+	get: 
+		return stiffness
+
 
 var _collar : JointController
 var _shoulder : JointController

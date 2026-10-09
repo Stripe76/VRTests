@@ -203,8 +203,9 @@ func reset_pose():
 
 func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
 	set_eye_bones(_skeleton)
-	create_joints(_skeleton)
+	
 	create_springs(_skeleton)
+	create_joints(_skeleton)
 	
 	create_controllers( )
 	create_collisions(parent,skeleton)
@@ -250,12 +251,12 @@ func create_joints(skeleton: Skeleton3D) -> void:
 		left_eye = JointController.new(skeleton,Bones.EYE_LEFT_BONE,{"x_min":0.15,"x_max":0.15,"y_min":0.15,"y_max":0.15})
 		right_eye = JointController.new(skeleton,Bones.EYE_RIGHT_BONE,{"x_min":0.15,"x_max":0.15,"y_min":0.15,"y_max":0.15})
 		
-		left_collar = JointController.new(skeleton,Bones.COLLAR_LEFT_BONE,{"x_min":0.1,"x_max":0.05,"y_min":0.15,"y_max":0.05,"z_min":0.053,"z_max":0.11})
-		right_collar = JointController.new(skeleton,Bones.COLLAR_RIGHT_BONE,{"x_min":0.05,"x_max":0.1,"y_min":0.05,"y_max":0.15,"z_min":0.11,"z_max":0.053})
-		left_shoulder = JointController.new(skeleton,Bones.SHOULDER_LEFT_BONE,{"x_min":0.3,"x_max":0.2,"y_min":0.5,"y_max":0.15,"z_min":0.47,"z_max":0.135})
-		right_shoulder = JointController.new(skeleton,Bones.SHOULDER_RIGHT_BONE,{"x_min":0.2,"x_max":0.3,"y_min":0.15,"y_max":0.5,"z_min":0.135,"z_max":0.47})
-		left_elbow = JointController.new(skeleton,Bones.ELBOW_LEFT_BONE,{"y_min":0.766,"y_max":0.072})
-		right_elbow = JointController.new(skeleton,Bones.ELBOW_RIGHT_BONE,{"y_min":0.072,"y_max":0.766})
+		left_collar = JointController.new(skeleton,Bones.COLLAR_LEFT_BONE,{"x_min":0.1,"x_max":0.05,"y_min":0.15,"y_max":0.05,"z_min":0.053,"z_max":0.24},_skeleton.get_node_or_null("left_collar"),2)
+		right_collar = JointController.new(skeleton,Bones.COLLAR_RIGHT_BONE,{"x_min":0.05,"x_max":0.1,"y_min":0.05,"y_max":0.15,"z_min":0.24,"z_max":0.053},_skeleton.get_node_or_null("right_collar"),2)
+		left_shoulder = JointController.new(skeleton,Bones.SHOULDER_LEFT_BONE,{"x_min":0.3,"x_max":0.2,"y_min":0.5,"y_max":0.15,"z_min":0.47,"z_max":0.16},_skeleton.get_node_or_null("left_shoulder"))
+		right_shoulder = JointController.new(skeleton,Bones.SHOULDER_RIGHT_BONE,{"x_min":0.2,"x_max":0.3,"y_min":0.15,"y_max":0.5,"z_min":0.16,"z_max":0.47},_skeleton.get_node_or_null("right_shoulder"))
+		left_elbow = JointController.new(skeleton,Bones.ELBOW_LEFT_BONE,{"y_min":0.766,"y_max":0.072},_skeleton.get_node_or_null("left_elbow"))
+		right_elbow = JointController.new(skeleton,Bones.ELBOW_RIGHT_BONE,{"y_min":0.072,"y_max":0.766},_skeleton.get_node_or_null("right_elbow"))
 		
 		both_collars = DoubleJoint.new(left_collar,right_collar,[1])
 		both_shoulders = DoubleJoint.new(left_shoulder,right_shoulder,[1])
@@ -288,8 +289,11 @@ func create_springs(skeleton: Skeleton3D) -> void:
 	add_breast_spring("left",skeleton,Bones.BREAST_LEFT_BONE,0.8)
 	add_breast_spring("right",skeleton,Bones.BREAST_RIGHT_BONE,1.2)
 	
-	add_shoulder_spring("left",skeleton,Bones.SHOULDER_LEFT_BONE)
-	add_shoulder_spring("right",skeleton,Bones.SHOULDER_RIGHT_BONE)
+	add_arm_spring("left",skeleton,Bones.COLLAR_LEFT_BONE)
+	add_arm_spring("right",skeleton,Bones.COLLAR_RIGHT_BONE)
+
+	#add_leg_spring("left",skeleton,Bones.HIP_LEFT_BONE)
+	#add_leg_spring("right",skeleton,Bones.HIP_RIGHT_BONE)
 
 
 func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
@@ -646,10 +650,17 @@ func add_breast_spring(name:String,skeleton: Skeleton3D,bone: int,variance: floa
 	pass
 
 
-func add_shoulder_spring(name:String,skeleton: Skeleton3D,bone: int):
-	add_spring(name+"_collar",skeleton,bone,1,1.0,0.5)
-	add_spring(name+"_elbow",skeleton,bone+1,1,1.0,0.2)
-	add_spring(name+"_wrist",skeleton,bone+2,1,1.0,0.2)
+func add_arm_spring(spring:String,skeleton: Skeleton3D,bone: int):
+	add_spring(spring+"_collar",skeleton,bone,1,3.5,0.5)
+	add_spring(spring+"_shoulder",skeleton,bone+1,1,1.0,0.2)
+	add_spring(spring+"_elbow",skeleton,bone+2,1,1.0,0.2)
+	add_spring(spring+"_wrist",skeleton,bone+3,1,1.0,0.2)
+
+
+func add_leg_spring(name:String,skeleton: Skeleton3D,bone: int):
+	add_spring(name+"_hip",skeleton,bone,1,1.0,0.5)
+	add_spring(name+"_knee",skeleton,bone+1,1,1.0,0.2)
+	add_spring(name+"_ankle",skeleton,bone+2,1,1.0,0.2)
 
 
 func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,stiffness: float,drag: float):

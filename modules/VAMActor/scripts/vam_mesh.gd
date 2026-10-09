@@ -106,7 +106,13 @@ func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
 	weights_padding(model_weights)
 	
 	#print("Meshes creation")
-	var meshes : Array = create_meshes(base_model,model_vertices,model_normals,model_indices,model_uvs,model_weights,model_vertex_groups)
+	var meshes : Array = create_meshes(base_model,
+										model_vertices,
+										model_normals,
+										model_indices,
+										model_uvs,
+										model_weights,
+										model_vertex_groups)
 	
 	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
@@ -222,51 +228,21 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			#var mesh_customs0 : PackedFloat32Array = surface["customs0"]
 			var mesh_colors : PackedColorArray = surface["colors"]
 			
-			var index = model_indices[tris]
-	
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in bones_number:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if material == 15 or material == 11:
-				head_vertices.push_back(model_vertices[index])
-				head_normalized.push_back(model_vertices[index].normalized())
-			tris += 1
-		
-			index = model_indices[tris]
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in bones_number:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if material == 15 or material == 11 or material == 18:
-				head_vertices.push_back(model_vertices[index])
-				head_normalized.push_back(model_vertices[index].normalized())
-			tris += 1
-			
-			index = model_indices[tris]
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in bones_number:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if material == 15 or material == 11:
-				head_vertices.push_back(model_vertices[index])
-				head_normalized.push_back(model_vertices[index].normalized())
-			tris += 1
+			for i in 3:
+				var index = model_indices[tris]
+				#mesh_indices.push_back(mesh_vertices.size())
+				mesh_vertices.push_back(model_vertices[index])
+				mesh_uvs.push_back(model_uvs[index])
+				mesh_normals.push_back(model_normals[index])
+				for c in bones_number:
+					mesh_bones.push_back(model_weights[index]["s"][c*2])
+					mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+				mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
+				
+				if material == 15 or material == 11 or material == 18:
+					head_vertices.push_back(model_vertices[index])
+					head_normalized.push_back(model_vertices[index].normalized())
+				tris += 1
 		else:
 			tris += 3
 	
@@ -359,10 +335,10 @@ func get_vertex_color(vertex_groups: Dictionary,map: int,index: int) -> Color:
 			color.r = 0
 			color.g = 0
 		elif vertex_groups["RightInnerLabia"].has(index) or \
-		 	vertex_groups["RightSide"].has(index):
+			vertex_groups["RightSide"].has(index):
 			color.r = 0
 		elif vertex_groups["LeftInnerLabia"].has(index) or \
-		 	vertex_groups["LeftSide"].has(index):
+			vertex_groups["LeftSide"].has(index):
 			color.g = 0
 	return color
 
