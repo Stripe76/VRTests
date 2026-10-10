@@ -1,5 +1,6 @@
 class_name Bones
 enum {
+	ROOT = 0,
 	EYE_LEFT_BONE = 27,
 	EYE_RIGHT_BONE = 26,
 	

@@ -1,3 +1,4 @@
+@tool
 class_name PersonLeg extends PersonLimb
 
 @export_range(-1,1) var hips_vertical : float = 0:
@@ -18,16 +19,16 @@ class_name PersonLeg extends PersonLimb
 	set(value):
 		bend = value
 		
-		_knee.pose_x = bend * (bend_max if bend > 0 else bend_min)
+		_knee.pose_x = value * (bend_max if bend > 0 else bend_min)
 	get:
-		return bend
+		return _knee.pose_x / (bend_max if _knee.pose_x > 0 else bend_min)
 @export_range(-1,1) var frontal : float = 0:
 	set(value):
 		frontal = value
 		
-		_pelvis.pose_x = -frontal * (frontal_max if frontal > 0 else frontal_min)
+		_pelvis.pose_x = -value * (frontal_max if frontal > 0 else frontal_min)
 	get:
-		return frontal
+		return -_pelvis.pose_x / (frontal_max if _pelvis.pose_x < 0 else frontal_min)
 @export_range(-1,1) var lateral : float = 0:
 	set(value):
 		lateral = value
@@ -50,13 +51,30 @@ class_name PersonLeg extends PersonLimb
 	get:
 		return ankle_side
 @export_range(-1,1) var ankle_front : float = 0:
-	
 	set(value):
 		ankle_front = value
 		
 		_ankle.pose_x = ankle_front
 	get:
 		return ankle_front
+@export_range(-1,1) var drop : float = 0:
+	set(value):
+		drop = value
+		
+		#_body.height += value - ik_bone.global_position.y
+		#_body.height = value
+		_body._skeleton.position.y += value - ik_bone.global_position.y
+		
+	get:
+		#print("drop: ",ik_bone.global_position.y)
+		return ik_bone.global_position.y
+		#return drop
+@export var drop_now : bool = 0:
+	set(value):
+		drop = 0
+	get:
+		return false
+
 
 @export_group("Multipliers")
 @export_range(0,1) var hips_vertical_min : float = 1:
@@ -144,6 +162,7 @@ class_name PersonLeg extends PersonLimb
 	get:
 		return twist_max
 
+var _body : JointController
 var _hip : JointController
 var _pelvis : JointController
 var _knee : JointController
@@ -152,13 +171,14 @@ var _ankle : JointController
 var _inverter : float = 1.0
 
 
-func _init(limb_name: String,inverter: float,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
+func _init(limb_name: String,inverter: float,body: JointController,hip : JointController,pelvis : JointController,knee : JointController,ankle : JointController,parent: Node3D) -> void:
 	name = limb_name
 	parent.add_child(self)
 	owner = parent.get_parent()
 	
 	_inverter = inverter
 	
+	_body = body
 	_hip = hip
 	_pelvis = pelvis
 	_knee = knee

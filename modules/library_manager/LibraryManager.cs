@@ -62,7 +62,7 @@ public partial class LibraryManager : Node
 				}
 				catch( Exception e )
 				{
-					GD.PushError( file + ": " + e.Message );
+					//GD.PushError( file + ": " + e.Message );
 				}
 			}
 			//GD.Print( _looks );
@@ -281,7 +281,7 @@ public partial class LibraryManager : Node
 		}
 		catch( Exception e )
 		{
-			GD.PushError( e.Message );
+			//GD.PushError( e.Message );
 		}
 	}
 	private void AddSceneVAP( string archive,ZipArchiveEntry entry )

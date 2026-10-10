@@ -11,18 +11,21 @@ class_name JointController extends Resource
 @export_range(-1,1) var pose_x : float = 0:
 	set(value):
 		pose_x = value
-		update_pose(pose_x,pose_y,pose_z,height)
-	get: return pose_x
+		update_pose(value,pose_y,pose_z,height)
+	get:
+		return pose_x
 @export_range(-1,1) var pose_y : float = 0:
 	set(value):
 		pose_y = value
-		update_pose(pose_x,pose_y,pose_z,height)
-	get: return pose_y
+		update_pose(pose_x,value,pose_z,height)
+	get:
+		return pose_y
 @export_range(-1,1) var pose_z : float = 0:
 	set(value):
 		pose_z = value
-		update_pose(pose_x,pose_y,pose_z,height)
-	get: return pose_z
+		update_pose(pose_x,pose_y,value,height)
+	get:
+		return pose_z
 @export_range(-1,1) var height : float = 0:
 	set(value):
 		height = value
@@ -74,6 +77,10 @@ var _skeleton : Skeleton3D
 var _base_position : Vector3
 
 var _spring : SpringBoneSimulator3D
+
+var _drag : float
+var _gravity : float
+var _stiffness : float
 var _limp_stiffness : float
 
 
@@ -97,6 +104,8 @@ func reset_pose():
 	pose_x = 0
 	pose_y = 0
 	pose_z = 0
+	
+	height = 0
 
 
 func update_pose(x: float,y: float,z: float,h: float):
@@ -109,9 +118,6 @@ func update_pose(x: float,y: float,z: float,h: float):
 		_skeleton.set_bone_pose_rotation(_bone,Quaternion.from_euler(Vector3(new_x*PI,new_y*PI,new_z*PI)))
 
 
-var _drag : float
-var _gravity : float
-var _stiffness : float
 func set_limp(limp: bool):
 	if _spring:
 		if limp:

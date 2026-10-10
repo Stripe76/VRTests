@@ -12,6 +12,7 @@ class_name VAMActor extends Node3D
 		return eyes_color
 #@onready var _genitals := $VAMVagina
 
+@onready var target := $Target
 @onready var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 
 var _look_id : int = -1
@@ -30,6 +31,19 @@ func _ready() -> void:
 	if Engine.is_editor_hint() and not get_parent() is Node3D:
 		generate_model()
 
+
+func _process(delta: float) -> void:
+	if _skeleton and false:
+		var distance = (target.position - _skeleton.position).length()
+		#print(distance)
+		var ap : AnimationPlayer = $Actor
+		if distance > 1.5 and not ap.is_playing():
+			_skeleton.look_at(target.position)
+			_skeleton.rotate(Vector3.UP,-PI)
+			
+			ap.play("walking_ik")
+		if distance < 1.0 and ap.is_playing():
+			ap.stop()
 
 func _exit_tree():
 	if _mesh_thread:
@@ -114,10 +128,9 @@ func load_look_sync(library: LibraryManager,lookID: int,spawn_position: Vector3,
 
 
 func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,async: bool):
-	add_child(_skeleton)
-	_skeleton.add_child(_mesh)
-	
 	_person_controller = add_person_controller(_skeleton,_mesh)
+	
+	$Movements.person_controller = _person_controller
 	
 	_skeleton.owner = self
 	_mesh.owner = self
@@ -194,9 +207,12 @@ func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonControl
 	
 	person_controller._left_eye_aabb = mesh.left_eye_aabb
 	person_controller._right_eye_aabb = mesh.right_eye_aabb
-
+	
 	add_child(person_controller)
 	person_controller.owner = self
+
+	add_child(_skeleton)
+	_skeleton.add_child(_mesh)
 	
 	person_controller.initialize(self,skeleton)
 	

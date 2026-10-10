@@ -6,6 +6,12 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 
 @export_tool_button("Reset","Reload") var reset_action = reset_pose
 
+@export_group("Root")
+@export var enable_X : bool
+@export var enable_Y : bool
+@export var enable_Z : bool
+@export var enable_rotation : bool
+
 @export_group("Head")
 @export var head : JointController
 @export var neck : JointController
@@ -26,6 +32,7 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export var both_elbows : DoubleJoint
 
 @export_group("Torso")
+@export var body : JointController
 @export var hips : JointController
 @export var pelvis : JointController
 @export var abdomen_1 : JointController
@@ -48,9 +55,11 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Hands")
 @export var left_index : JointController
 
-var current_root : PersonLimb
+var _current_root : PersonLimb
 
 var _skeleton : Skeleton3D
+
+var _person: Person
 
 var _head: PersonHead
 var _torso: PersonTorso
@@ -89,7 +98,11 @@ func _init(skeleton: Skeleton3D) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	#update_weight_on()
+	#if _skeleton and not _current_root:
+		#last_delta_pos *= 1.0 - (0.1 * _delta)
+		#print(last_delta_pos)
+		
+		#_skeleton.global_transform.origin += last_delta_pos * _delta
 	pass
 
 
@@ -97,55 +110,65 @@ func _on_skeleton_updated():
 	update_root_on()
 
 
-func update_root_on(apply : bool = true) -> Vector3:
-	if _skeleton and current_root:
-		var bone_pose : Transform3D = _skeleton.get_bone_global_pose(current_root.ik_bone_idx)
-		var foot_global_pos : Vector3 = _skeleton.global_transform * bone_pose.origin
+func root_on_changed(limb: PersonLimb, root_on: bool):
+	if root_on:
+		if _current_root and _current_root != limb:
+			_current_root.root_on = false
+				
+		_current_root = limb
 		
-		var delta_pos : Vector3 = current_root.wo_position - foot_global_pos
+		# Memorizza l'orientamento globale del nuovo piede nel frame esatto dell'ancoraggio
+		if _skeleton and _current_root:
+			_current_root.ro_y_rotation = _skeleton.get_bone_global_pose(_current_root.ik_bone_idx).basis.get_euler().y
+	elif limb == _current_root:
+		_current_root = null
+
+
+var last_delta_pos : Vector3
+func update_root_on(apply : bool = true) -> Vector3:
+	if _skeleton and _current_root:
+		var foot_position : Vector3 = _current_root.ik_bone.global_position
+		var delta_position : Vector3 = _current_root.ro_position - foot_position
+		
+		last_delta_pos = delta_position
 		
 		if apply:
-			var foot_rot_y = bone_pose.basis.get_euler().y
+			var bone_pose : Transform3D = _skeleton.get_bone_global_pose(_current_root.ik_bone_idx)
+			var foot_y_rotation = bone_pose.basis.get_euler().y
+			var delta_rotation : float = _current_root.ro_y_rotation - foot_y_rotation
 			
-			if not current_root.has_meta("initial_foot_rot_y"):
-				current_root.set_meta("initial_foot_rot_y",foot_rot_y)
-			
-			var initial_foot_rot_y : float = current_root.get_meta("initial_foot_rot_y")
-			var delta_rot_y : float = initial_foot_rot_y - foot_rot_y
-			
-			if abs(delta_rot_y) > 0.001 and false:
+			if abs(delta_rotation) > 0.001 and enable_rotation:
 				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
-				var pivot_mondo = current_root.wo_position
+				var world_pivot = _current_root.ro_position
 				
 				# Trova la distanza vettoriale tra l'origine globale dello scheletro e il piede a terra
-				var offset_skeleton = _skeleton.global_transform.origin - pivot_mondo
+				var offset_skeleton = _skeleton.global_transform.origin - world_pivot
 				
 				# Ruota lo scheletro sul proprio asse globale
-				_skeleton.global_rotate(Vector3.UP,delta_rot_y)
+				_skeleton.global_rotate(Vector3.UP,delta_rotation)
 				
 				# RIPOSIZIONAMENTO ATTORNAL AL PIVOT:
 				# Ruotiamo l'offset e riposizioniamo lo scheletro in modo che il perno sia il piede
-				_skeleton.global_transform.origin = pivot_mondo + offset_skeleton.rotated(Vector3.UP,delta_rot_y)
+				_skeleton.global_transform.origin = world_pivot + offset_skeleton.rotated(Vector3.UP,delta_rotation)
 				
 				# Aggiorna il valore di riferimento per il frame successivo
-				current_root.set_meta("initial_foot_rot_y", foot_rot_y)
+				_current_root.ro_y_rotation = foot_y_rotation
 				
 				# Ricalcola la trasformazione globale e il delta_pos DOPO aver spostato e ruotato lo scheletro,
 				# altrimenti la traslazione finale userebbe i vettori sfasati del frame precedente
-				bone_pose = _skeleton.get_bone_global_pose(current_root.ik_bone_idx)
-				foot_global_pos = _skeleton.global_transform * bone_pose.origin
-				delta_pos = current_root.wo_position - foot_global_pos
+				bone_pose = _skeleton.get_bone_global_pose(_current_root.ik_bone_idx)
+				foot_position = _skeleton.global_transform * bone_pose.origin
+				delta_position = _current_root.ro_position - foot_position
 			
-			# 3. TRASLAZIONE FINALE
-			# Muove lo scheletro per annullare l'ultimo millimetro di micro-slittamento rimasto
-			delta_pos.x = 0
-			delta_pos.y = 0
-			#delta_pos.y = delta_pos.y / 20.0
-			delta_pos.z = 0
+			if not enable_X:
+				delta_position.x = 0
+			if not enable_Y:
+				delta_position.y = 0
+			if not enable_Z:
+				delta_position.z = 0
+			_skeleton.global_transform.origin += delta_position
 			
-			_skeleton.global_transform.origin += delta_pos
-			
-		return delta_pos
+		return delta_position
 	return Vector3()
 
 
@@ -173,7 +196,7 @@ func update_position(new_root_on: int)-> int:
 
 
 func reset_pose():
-	current_root = null
+	_current_root = null
 	
 	#if _skeleton:
 		#_skeleton.position = Vector3()
@@ -223,26 +246,6 @@ func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
 	reset_pose()
 
 
-func root_on_changed(limb: PersonLimb, root_on: bool):
-	if root_on:
-		if current_root and current_root != limb:
-			current_root.root_on = false
-			if current_root and current_root.has_meta("initial_foot_rot_y"):
-				current_root.remove_meta("initial_foot_rot_y")
-				
-		current_root = limb
-		
-		# Memorizza l'orientamento globale del nuovo piede nel frame esatto dell'ancoraggio
-		if _skeleton and current_root:
-			var current_rot_y = _skeleton.get_bone_global_pose(current_root.ik_bone_idx).basis.get_euler().y
-			current_root.set_meta("initial_foot_rot_y", current_rot_y)
-			
-	elif limb == current_root:
-		if current_root.has_meta("initial_foot_rot_y"):
-			current_root.remove_meta("initial_foot_rot_y")
-		current_root = null
-
-
 func set_eye_bones(skeleton: Skeleton3D):
 	var origin = _left_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
 	skeleton.set_bone_rest(Bones.EYE_LEFT_BONE,Transform3D(Basis( ),origin))
@@ -254,6 +257,8 @@ func set_eye_bones(skeleton: Skeleton3D):
 
 
 func create_joints(skeleton: Skeleton3D) -> void:
+		body = JointController.new(skeleton,Bones.ROOT)
+		
 		head = JointController.new(skeleton,Bones.HEAD_BONE,{"x_min":0.18,"x_max":0.05,"y_min":0.15,"y_max":0.15,"z_min":0.05,"z_max":0.05})
 		neck = JointController.new(skeleton,Bones.NECK_BONE,{"x_min":0.15,"x_max":0.20,"y_min":0.20,"y_max":0.20,"z_min":0.05,"z_max":0.05})
 		left_eye = JointController.new(skeleton,Bones.EYE_LEFT_BONE,{"x_min":0.15,"x_max":0.15,"y_min":0.15,"y_max":0.15})
@@ -274,7 +279,7 @@ func create_joints(skeleton: Skeleton3D) -> void:
 		pelvis = JointController.new(skeleton,Bones.PELVIS_BONE,{"y_min":0.123,"y_max":0.123,"z_min":0.150,"z_max":0.150})
 		abdomen_1 = JointController.new(skeleton,Bones.ABDOMEN_BONE_1,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
 		abdomen_2 = JointController.new(skeleton,Bones.ABDOMEN_BONE_2,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
-		chest = JointController.new(skeleton,Bones.CHEST_BONE,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160})
+		chest = JointController.new(skeleton,Bones.CHEST_BONE,{"x_min":0.260,"x_max":0.260,"y_min":0.160,"y_max":0.160,"z_min":0.160,"z_max":0.160},_skeleton.get_node_or_null("torso"))
 		
 		left_hip = JointController.new(skeleton,Bones.HIP_LEFT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.25,"y_max":0.25,"z_min":0.11,"z_max":0.19})
 		right_hip = JointController.new(skeleton,Bones.HIP_RIGHT_BONE,{"x_min":0.545,"x_max":0.290,"y_min":0.25,"y_max":0.25,"z_min":0.19,"z_max":0.11})
@@ -315,23 +320,25 @@ func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
 
 	add_head_ik(skeleton,parent,container,_head,Bones.HEAD_BONE,Bones.EYE_LEFT_BONE,Bones.EYE_RIGHT_BONE)
 	
-	add_limb_ik(skeleton,parent,container,"Left","Arm","Hand",_left_arm,Bones.SHOULDER_LEFT_BONE,Vector3(0.2,1,-0.5))
-	add_limb_ik(skeleton,parent,container,"Right","Arm","Hand",_right_arm,Bones.SHOULDER_RIGHT_BONE,Vector3(-0.2,1,-0.5))
+	add_limb_ik(skeleton,parent,container,"Left","Arm","Hand",_left_arm,Bones.SHOULDER_LEFT_BONE,0,Vector3(0.2,1,-0.5))
+	add_limb_ik(skeleton,parent,container,"Right","Arm","Hand",_right_arm,Bones.SHOULDER_RIGHT_BONE,0,Vector3(-0.2,1,-0.5))
 	
-	add_limb_ik(skeleton,parent,container,"Left","Leg","Foot",_left_leg,Bones.HIP_LEFT_BONE,Vector3(0.1,1,1))
-	add_limb_ik(skeleton,parent,container,"Right","Leg","Foot",_right_leg,Bones.HIP_RIGHT_BONE,Vector3(-0.1,1,1))
+	add_limb_ik(skeleton,parent,container,"Left","Leg","Foot",_left_leg,Bones.HIP_LEFT_BONE,0,Vector3(0.1,1,1))
+	add_limb_ik(skeleton,parent,container,"Right","Leg","Foot",_right_leg,Bones.HIP_RIGHT_BONE,0,Vector3(-0.1,1,1))
 
 
 func create_controllers( )-> void:
+	_person = Person.new("Person",_skeleton,self)
+	
 	_head = PersonHead.new("Head",head,neck,left_eye,right_eye,self)
 	
 	_left_arm = PersonArm.new("LeftArm",1,left_collar,left_shoulder,left_elbow,self)
 	_right_arm = PersonArm.new("RightArm",-1,right_collar,right_shoulder,right_elbow,self)
 	
-	_torso = PersonTorso.new("Torso",hips,pelvis,abdomen_1,abdomen_2,chest,self)
+	_torso = PersonTorso.new("Torso",body,hips,pelvis,abdomen_1,abdomen_2,chest,self)
 	
-	_left_leg = PersonLeg.new("LeftLeg",1,pelvis,left_hip,left_knee,left_ankle,self)
-	_right_leg = PersonLeg.new("RightLeg",-1,pelvis,right_hip,right_knee,right_ankle,self)
+	_left_leg = PersonLeg.new("LeftLeg",1,hips,pelvis,left_hip,left_knee,left_ankle,self)
+	_right_leg = PersonLeg.new("RightLeg",-1,hips,pelvis,right_hip,right_knee,right_ankle,self)
 	
 	_left_leg.root_on_changed.connect(root_on_changed)
 	_right_leg.root_on_changed.connect(root_on_changed)
@@ -346,8 +353,11 @@ func create_collisions(parent: Node3D,skeleton: Skeleton3D):
 	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
 	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
 	
-	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent,_left_leg)
-	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent,_right_leg)
+	add_physical_bone(skeleton,Bones.ANKLE_LEFT_BONE,parent,_left_leg)
+	add_physical_bone(skeleton,Bones.ANKLE_RIGHT_BONE,parent,_right_leg)
+	
+	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent)
+	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent)
 
 
 func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
@@ -432,18 +442,25 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controll
 	controller.ik_target_eyes = target_eyes
 
 
-func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,side: String,limb: String,handle: String,controller: Node,start_bone: int,pole_position: Vector3):
+func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,side: String,limb: String,handle: String,controller: PersonLimb,start_bone: int,last_bone_offset: int,pole_position: Vector3):
 	var ik_node := TwoBoneIK3D.new()
 	ik_node.name = side+limb+"IK"
 	ik_node.set_setting_count(1)
 	ik_node.set_root_bone(0,start_bone)
 	ik_node.set_middle_bone(0,start_bone+1)
-	ik_node.set_end_bone(0,start_bone+3)
+	ik_node.set_end_bone(0,start_bone+2+last_bone_offset)
 	ik_node.active = false
 	
+	var target_origin := Node3D.new()
+	target_origin.name = side+handle+"Local"
+	#target_origin.position = Vector3(0,1.65,0)
+	container.add_child(target_origin)
+	target_origin.owner = parent
+	
 	var target_node := MeshInstance3D.new()
-	target_node.name = side+handle
-	container.add_child(target_node)
+	target_node.name = side+handle+"Global"
+	target_node.top_level = true
+	target_origin.add_child(target_node)
 	target_node.owner = parent
 	
 	#if target_name == "Foot":
@@ -478,7 +495,12 @@ func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,side: St
 	
 	controller.ik = ik_node
 	#controller.ik_bone = handle
-	controller.ik_target = target_node
+	controller.local_target = target_origin
+	controller.global_target = target_node
+	
+	if controller.ik_bone:
+		controller.local_target.position = Vector3(0,controller.ik_bone.position.y,0)
+		controller.local_target.global_position = controller.local_target.global_position
 
 
 func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) -> void:
@@ -627,9 +649,9 @@ func create_bone_full_mesh(bone: int,bones_vertices: Dictionary,horizontal: bool
 	return collision
 
 
-func duplicate_skeleton(parent: Node3D,skeleton: Skeleton3D,name: String)-> Skeleton3D:
+func duplicate_skeleton(parent: Node3D,skeleton: Skeleton3D,skeleton_name: String)-> Skeleton3D:
 	var new_skeleton := Skeleton3D.new()
-	new_skeleton.name = name
+	new_skeleton.name = skeleton_name
 	
 	for i in skeleton.get_bone_count():
 		new_skeleton.add_bone(skeleton.get_bone_name(i))
@@ -645,17 +667,16 @@ func duplicate_skeleton(parent: Node3D,skeleton: Skeleton3D,name: String)-> Skel
 	return new_skeleton
 
 
-func add_head_spring(name:String,skeleton: Skeleton3D,bone: int):
-	add_spring(name,skeleton,bone,1,2.0,1.0)
+func add_head_spring(spring:String,skeleton: Skeleton3D,bone: int):
+	add_spring(spring,skeleton,bone,1,2.0,1.0)
 
 
-func add_torso_spring(name:String,skeleton: Skeleton3D,bone: int):
-	add_spring(name,skeleton,bone,4,4,0.8)
+func add_torso_spring(spring:String,skeleton: Skeleton3D,bone: int):
+	add_spring(spring,skeleton,bone,4,4,0.8).active = false
 
 
-func add_breast_spring(name:String,skeleton: Skeleton3D,bone: int,variance: float):
-	add_spring(name+"_breast",skeleton,bone,0,0.5,0.12)
-	pass
+func add_breast_spring(spring:String,skeleton: Skeleton3D,bone: int,_variance: float):
+	add_spring(spring+"_breast",skeleton,bone,0,0.5,0.12)
 
 
 func add_arm_spring(spring:String,skeleton: Skeleton3D,bone: int):
@@ -671,7 +692,7 @@ func add_leg_spring(name:String,skeleton: Skeleton3D,bone: int):
 	add_spring(name+"_ankle",skeleton,bone+2,1,1.0,0.2)
 
 
-func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,stiffness: float,drag: float):
+func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,stiffness: float,drag: float) -> SpringBoneSimulator3D:
 	var spring := SpringBoneSimulator3D.new()
 	spring.setting_count = 1
 	spring.set_root_bone(0,bone)
@@ -689,3 +710,5 @@ func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,st
 	skeleton.add_child(spring)
 	spring.name = name
 	spring.owner = skeleton.get_parent()
+	
+	return spring

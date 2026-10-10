@@ -28,7 +28,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("SwitchMode"):
 		switch_ui()
 	elif event.is_action_released("StartAnimation"):
-		scene_manager.toggle_animation("walking_ik 2")
+		scene_manager.toggle_animation("walking_ik")
 
 
 func _unhandled_input(event):

@@ -1,15 +1,18 @@
 [gd_scene format=3 uid="uid://dkpvupck5lb4d"]
 
 [ext_resource type="Script" uid="uid://m3rl1cqv77dl" path="res://modules/VAMActor/scripts/vam_actor.gd" id="1_pcuk1"]
-[ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="2_0kabd"]
+[ext_resource type="Animation" uid="uid://ba1w0hq8bp0k8" path="res://modules/VAMActor/animations/walking_ik.res" id="2_ei043"]
+[ext_resource type="Animation" uid="uid://5xxygdtf3l15" path="res://modules/VAMActor/animations/walking_ik.tres" id="2_yitp0"]
 [ext_resource type="Script" uid="uid://c8gvafih6tjil" path="res://modules/person_controller/movements/movements.gd" id="3_b8mxy"]
 [ext_resource type="PackedScene" uid="uid://bia78lsy6h2wc" path="res://modules/VAMActor/vam_vagina.tscn" id="3_wpamn"]
 [ext_resource type="Script" uid="uid://co87d0v2j3qv" path="res://modules/person_controller/animation/move.gd" id="4_fm15u"]
 [ext_resource type="Script" uid="uid://bvlpdhvjokofl" path="res://modules/person_controller/animation/step.gd" id="5_7jqo0"]
 [ext_resource type="Script" uid="uid://boo1rs6sv38lb" path="res://modules/person_controller/animation/value_bool.gd" id="6_k8ylq"]
 [ext_resource type="Script" uid="uid://c158hsqhgrfpy" path="res://modules/person_controller/animation/value_float.gd" id="7_t5u52"]
+[ext_resource type="Script" uid="uid://c0j02twsnw813" path="res://modules/person_controller/animation/tween_float.gd" id="8_t5u52"]
 [ext_resource type="Script" uid="uid://bwwhy6om0dg86" path="res://modules/person_controller/movements/walking.gd" id="8_yitp0"]
 [ext_resource type="Script" uid="uid://o1aocex8dx43" path="res://modules/person_controller/movements/turn_to.gd" id="9_k8ylq"]
+[ext_resource type="Script" uid="uid://cwghg3u2a3na4" path="res://modules/person_controller/animation/tween_vector3.gd" id="9_yitp0"]
 
 [sub_resource type="Animation" id="Animation_b8mxy"]
 length = 0.001
@@ -109,6 +112,54 @@ tracks/7/keys = {
 "update": 0,
 "values": [-0.05900000000000005]
 }
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("PersonController/LeftLeg:root_on")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("PersonController/RightLeg:root_on")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("PersonController/LeftLeg:drop_now")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("PersonController/RightLeg:drop_now")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_wpamn"]
 resource_name = "rest"
@@ -166,48 +217,36 @@ tracks/3/keys = {
 _data = {
 &"RESET": SubResource("Animation_b8mxy"),
 &"rest": SubResource("Animation_wpamn"),
-&"walking_ik 2": ExtResource("2_0kabd")
+&"walking_ik": ExtResource("2_ei043"),
+&"walking_ik 2": ExtResource("2_yitp0")
 }
 
-[sub_resource type="Curve" id="Curve_k8ylq"]
-_data = [Vector2(0, 0), 0.0, -0.027207993, 0, 0, Vector2(1, 1), 4.3826913e-07, 0.0, 0, 0]
-point_count = 2
-
 [sub_resource type="Curve" id="Curve_nqrty"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 1.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 1.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_67ek6"]
-_data = [Vector2(0, 0), 0.0, -0.14149888, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_t5u52"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 1.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 1.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_ei043"]
-_data = [Vector2(0, 0), 0.0, 3.5103006, 0, 0, Vector2(1, 1), 3.311368e-07, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_yitp0"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_sojb5"]
-_data = [Vector2(0, 0), 0.0, -0.023580262, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
 point_count = 2
-
-[sub_resource type="Curve" id="Curve_s6jmj"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.47999996, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_0pep5"]
-_data = [Vector2(0, 0), 0.0, 0.39676672, 0, 0, Vector2(0.36399996, 0.55857384), 2.558736, 2.558736, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_yitp0"]
-_data = [Vector2(0, 0), 0.0, -0.12511486, 0, 0, Vector2(0.49200004, 1), 0.06777047, 0.06777047, 0, 0, Vector2(1, 0), -0.5886351, 0.0, 0, 0]
-point_count = 3
 
 [sub_resource type="Curve" id="Curve_47l0a"]
-_data = [Vector2(0, 0), 0.0, 0.092445806, 0, 0, Vector2(1, 1), 0.14715877, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_yitp0"]
+size = Vector2(1, 20)
 
 [node name="VAMActor" type="Node3D" unique_id=1805902460]
 transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.99999344, 0, 0, 0)
@@ -217,7 +256,10 @@ metadata/_custom_type_script = "uid://m3rl1cqv77dl"
 
 [node name="Actor" type="AnimationPlayer" parent="." unique_id=87833383]
 libraries/ = SubResource("AnimationLibrary_gdd01")
-speed_scale = 1.692
+speed_scale = 1.402
+
+[node name="Target" type="Marker3D" parent="." unique_id=621522795]
+transform = Transform3D(1.0000066, 0, 0, 0, 1, 0, 0, 0, 1.0000066, -0.14655676, 0, 3.7679691)
 
 [node name="Movements" type="Node" parent="." unique_id=359695925 node_paths=PackedStringArray("person_controller")]
 script = ExtResource("3_b8mxy")
@@ -228,44 +270,34 @@ person_controller = NodePath("../PersonController")
 [node name="Walking" type="Node" parent="Movements/Arms" unique_id=35640769 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
 joint = NodePath("..")
-movement = 0.202
 
 [node name="Step1" type="Node" parent="Movements/Arms/Walking" unique_id=2095527105 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-end = 0.5
-movement = 0.404
 
 [node name="twist" type="Node" parent="Movements/Arms/Walking/Step1" unique_id=1492343163 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../..")
 target = -0.268
-curve = SubResource("Curve_k8ylq")
 
 [node name="straight" type="Node" parent="Movements/Arms/Walking/Step1" unique_id=1391579737 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../..")
 target = -0.08599999999999997
-curve = SubResource("Curve_k8ylq")
 
 [node name="Step2" type="Node" parent="Movements/Arms/Walking" unique_id=1578557321 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-begin = 0.5
-end = 1.0
-movement = 0.03600000000000003
 
 [node name="twist" type="Node" parent="Movements/Arms/Walking/Step2" unique_id=1648410815 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../..")
 target = 0.46
-curve = SubResource("Curve_k8ylq")
 
 [node name="straight" type="Node" parent="Movements/Arms/Walking/Step2" unique_id=1360714461 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
 joint = NodePath("../../..")
 target = 0.08600000000000008
-curve = SubResource("Curve_k8ylq")
 
 [node name="TurnToIn" type="Node" parent="Movements/Arms" unique_id=2060188857 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
@@ -274,8 +306,6 @@ joint = NodePath("..")
 [node name="Step1" type="Node" parent="Movements/Arms/TurnToIn" unique_id=826293257 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-duration = 0.0
-end = nan
 
 [node name="twist" type="Node" parent="Movements/Arms/TurnToIn/Step1" unique_id=1147471004 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
@@ -296,9 +326,6 @@ joint = NodePath("../../..")
 [node name="Step2" type="Node" parent="Movements/Arms/TurnToIn" unique_id=873939337 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-duration = 0.0
-begin = nan
-end = nan
 
 [node name="root_on" type="Node" parent="Movements/Arms/TurnToIn/Step2" unique_id=36150218 node_paths=PackedStringArray("joint")]
 script = ExtResource("6_k8ylq")
@@ -327,8 +354,6 @@ joint = NodePath("..")
 [node name="Step1" type="Node" parent="Movements/Arms/TurnToOut" unique_id=1543035059 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-duration = 0.0
-end = nan
 
 [node name="root_on" type="Node" parent="Movements/Arms/TurnToOut/Step1" unique_id=188157091 node_paths=PackedStringArray("joint")]
 script = ExtResource("6_k8ylq")
@@ -353,9 +378,6 @@ joint = NodePath("../../..")
 [node name="Step2" type="Node" parent="Movements/Arms/TurnToOut" unique_id=1965641085 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-duration = 0.0
-begin = nan
-end = nan
 
 [node name="twist" type="Node" parent="Movements/Arms/TurnToOut/Step2" unique_id=758895199 node_paths=PackedStringArray("joint")]
 script = ExtResource("7_t5u52")
@@ -378,239 +400,213 @@ joint = NodePath("../../..")
 [node name="Walking" type="Node" parent="Movements/Torso" unique_id=2071608444 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
 joint = NodePath("..")
-movement = 0.202
 
 [node name="Step1" type="Node" parent="Movements/Torso/Walking" unique_id=1248997301 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-end = 0.5
-movement = 0.404
+duration = 0.5
 
-[node name="rotate" type="Node" parent="Movements/Torso/Walking/Step1" unique_id=290485695 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
+[node name="height" type="Node" parent="Movements/Torso/Walking/Step1" unique_id=701711257 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = -0.06000000000000005
-curve = SubResource("Curve_k8ylq")
+signal_end = true
+target = 0.04000000000000003
+curve = SubResource("Curve_nqrty")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
 
-[node name="Step2" type="Node" parent="Movements/Torso/Walking" unique_id=439847984 node_paths=PackedStringArray("joint")]
+[node name="Step2" type="Node" parent="Movements/Torso/Walking" unique_id=665003505 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-begin = 0.5
-end = 1.0
-movement = 0.03600000000000003
 
-[node name="rotate" type="Node" parent="Movements/Torso/Walking/Step2" unique_id=524146652 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
+[node name="height" type="Node" parent="Movements/Torso/Walking/Step2" unique_id=1617098741 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = 0.06499999999999995
-curve = SubResource("Curve_k8ylq")
+target = 0.04099999999999992
+curve = SubResource("Curve_67ek6")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="Legs" type="Node" parent="Movements" unique_id=1536106551]
 
-[node name="Walking" type="Node" parent="Movements/Legs" unique_id=1408708444 node_paths=PackedStringArray("joint")]
+[node name="StepForward" type="Node" parent="Movements/Legs" unique_id=1408708444 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
 joint = NodePath("..")
-movement = 1.0
+duration = 0.6
 
-[node name="Step1" type="Node" parent="Movements/Legs/Walking" unique_id=274701745 node_paths=PackedStringArray("joint")]
+[node name="Forward" type="Node" parent="Movements/Legs/StepForward" unique_id=274701745 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
-joint = NodePath("../../../../PersonController/LeftLeg")
-end = 0.5
+joint = NodePath("../..")
+duration = 0.5
 
-[node name="root_on" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=415282009 node_paths=PackedStringArray("joint")]
-script = ExtResource("6_k8ylq")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = true
-
-[node name="hips_vertical" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1966336565 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 0.3999999999999999
-curve = SubResource("Curve_k8ylq")
-
-[node name="hips_horizontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1200693855 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.05800000000000005
-curve = SubResource("Curve_k8ylq")
-
-[node name="twist" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2000958464 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.273
-curve = SubResource("Curve_nqrty")
-
-[node name="frontal" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2033098176 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.18300000000000005
-curve = SubResource("Curve_67ek6")
-
-[node name="lateral" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=71350511 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = -0.591
-curve = SubResource("Curve_k8ylq")
-
-[node name="bend" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=2118672602 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 1.0
-curve = SubResource("Curve_t5u52")
-
-[node name="ankle_front" type="Node" parent="Movements/Legs/Walking/Step1" unique_id=1854038600 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
-target = 0.27300000000000013
+[node name="frontal" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=1214987513 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+signal_end = true
+target = 0.16900000000000004
 curve = SubResource("Curve_ei043")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
 
-[node name="Step2" type="Node" parent="Movements/Legs/Walking" unique_id=1706331688 node_paths=PackedStringArray("joint")]
-script = ExtResource("5_7jqo0")
-joint = NodePath("../..")
-begin = 0.5
-end = 1.0
-movement = 1.0
-
-[node name="frontal" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=178183429 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
+[node name="bend" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=433855545 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = 0.21300000000000008
-curve = SubResource("Curve_sojb5")
-
-[node name="twist" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1734204678 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-target = -0.15800000000000003
-curve = SubResource("Curve_s6jmj")
-
-[node name="lateral" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=1640922759 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-target = 0.10499999999999998
-curve = SubResource("Curve_0pep5")
-
-[node name="bend" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=45050661 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-target = 0.28800000000000003
 curve = SubResource("Curve_yitp0")
+delay = 0.35
+duration = 0.2
+metadata/_custom_type_script = "uid://c0j02twsnw813"
 
-[node name="ankle_front" type="Node" parent="Movements/Legs/Walking/Step2" unique_id=756796214 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
+[node name="hips_vertical" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=741079943 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = 0.409
+target = -0.10599999999999998
+curve = SubResource("Curve_yitp0")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="hips_horizontal" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=1635955079 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = -0.31100000000000005
+curve = SubResource("Curve_yitp0")
+delay = 0.1
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="lateral" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=1472830104 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = -0.08199999999999996
+curve = SubResource("Curve_yitp0")
+delay = 0.1
+duration = 0.3
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=1099327658 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+curve = SubResource("Curve_yitp0")
+duration = 0.1
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="Forward3" type="Node" parent="Movements/Legs/StepForward" unique_id=1170343418 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+joint = NodePath("../..")
+duration = 0.1
+
+[node name="drop" type="Node" parent="Movements/Legs/StepForward/Forward3" unique_id=1998346940 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+signal_end = true
+curve = SubResource("Curve_yitp0")
+duration = 0.1
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="PushBack" type="Node" parent="Movements/Legs" unique_id=587712079 node_paths=PackedStringArray("joint")]
+script = ExtResource("4_fm15u")
+joint = NodePath("..")
+duration = 0.6
+
+[node name="Back" type="Node" parent="Movements/Legs/PushBack" unique_id=537148744 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+joint = NodePath("../..")
+duration = 0.1
+
+[node name="root_on" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=549779429 node_paths=PackedStringArray("joint")]
+script = ExtResource("6_k8ylq")
+joint = NodePath("../../..")
+target = true
+duration = 0.6
+metadata/_custom_type_script = "uid://boo1rs6sv38lb"
+
+[node name="frontal" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=924147558 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = -0.112
+curve = SubResource("Curve_sojb5")
+duration = 0.6
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="hips_vertical" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=947099894 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = 0.1060000000000001
 curve = SubResource("Curve_47l0a")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
 
-[node name="TurnToIn" type="Node" parent="Movements/Legs" unique_id=2076410617 node_paths=PackedStringArray("joint")]
+[node name="hips_horizontal" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=397705474 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = 0.31099999999999994
+curve = SubResource("Curve_yitp0")
+delay = 0.1
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="lateral" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=517889554 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = -0.222
+curve = SubResource("Curve_yitp0")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=1255484573 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+signal_end = true
+target = 0.08499999999999996
+curve = SubResource("Curve_yitp0")
+duration = 0.1
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="Back2" type="Node" parent="Movements/Legs/PushBack" unique_id=1565913502 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+joint = NodePath("../..")
+duration = 0.5
+
+[node name="ankle_front" type="Node" parent="Movements/Legs/PushBack/Back2" unique_id=5834435 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+signal_end = true
+target = -0.29100000000000004
+curve = SubResource("Curve_yitp0")
+duration = 0.5
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="Back3" type="Node" parent="Movements/Legs/PushBack" unique_id=1573950071 node_paths=PackedStringArray("joint")]
+script = ExtResource("5_7jqo0")
+joint = NodePath("../..")
+
+[node name="bend" type="Node" parent="Movements/Legs/PushBack/Back3" unique_id=1491417303 node_paths=PackedStringArray("joint")]
+script = ExtResource("8_t5u52")
+joint = NodePath("../../..")
+target = 0.19199999999999995
+curve = SubResource("Curve_sojb5")
+duration = 0.2
+metadata/_custom_type_script = "uid://c0j02twsnw813"
+
+[node name="Person" type="Node" parent="Movements" unique_id=719345551]
+
+[node name="Walking" type="Node" parent="Movements/Person" unique_id=1986911580 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
 joint = NodePath("..")
 
-[node name="Step1" type="Node" parent="Movements/Legs/TurnToIn" unique_id=1094728633 node_paths=PackedStringArray("joint")]
+[node name="Step1" type="Node" parent="Movements/Person/Walking" unique_id=1409509222 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
 joint = NodePath("../..")
-duration = 0.0
-end = nan
 
-[node name="twist" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=2002229598 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
+[node name="position" type="Node" parent="Movements/Person/Walking/Step1" unique_id=929783756 node_paths=PackedStringArray("joint")]
+script = ExtResource("9_yitp0")
 joint = NodePath("../../..")
+target = Vector3(0, 0, 0.96)
+speed = 2.0
+metadata/_custom_type_script = "uid://cwghg3u2a3na4"
 
-[node name="bend" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=877390487 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="frontal" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=1239501799 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToIn/Step1" unique_id=105619989 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="Step2" type="Node" parent="Movements/Legs/TurnToIn" unique_id=870110675 node_paths=PackedStringArray("joint")]
-script = ExtResource("5_7jqo0")
-joint = NodePath("../..")
-duration = 0.0
-begin = nan
-end = nan
-
-[node name="root_on" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=893971179 node_paths=PackedStringArray("joint")]
-script = ExtResource("6_k8ylq")
-joint = NodePath("../../..")
-
-[node name="twist" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=245364190 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="bend" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=107355752 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="frontal" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=1791578101 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToIn/Step2" unique_id=448160349 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="TurnToOut" type="Node" parent="Movements/Legs" unique_id=1226863603 node_paths=PackedStringArray("joint")]
-script = ExtResource("4_fm15u")
-joint = NodePath("..")
-
-[node name="Step1" type="Node" parent="Movements/Legs/TurnToOut" unique_id=618277036 node_paths=PackedStringArray("joint")]
-script = ExtResource("5_7jqo0")
-joint = NodePath("../..")
-duration = 0.0
-end = nan
-
-[node name="root_on" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=185959161 node_paths=PackedStringArray("joint")]
-script = ExtResource("6_k8ylq")
-joint = NodePath("../../..")
-
-[node name="twist" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=1168783843 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="bend" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=2041347002 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="frontal" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=2069967364 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToOut/Step1" unique_id=877853802 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="Step2" type="Node" parent="Movements/Legs/TurnToOut" unique_id=1678301312 node_paths=PackedStringArray("joint")]
-script = ExtResource("5_7jqo0")
-joint = NodePath("../..")
-duration = 0.0
-begin = nan
-end = nan
-
-[node name="twist" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1631635859 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="bend" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1015309830 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="frontal" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=1560948978 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="ankle_front" type="Node" parent="Movements/Legs/TurnToOut/Step2" unique_id=2049536963 node_paths=PackedStringArray("joint")]
-script = ExtResource("7_t5u52")
-joint = NodePath("../../..")
-
-[node name="Walking" type="Node" parent="Movements" unique_id=13427316 node_paths=PackedStringArray("controller")]
+[node name="Walking2" type="Node" parent="Movements" unique_id=1324564607 node_paths=PackedStringArray("controller")]
 script = ExtResource("8_yitp0")
 controller = NodePath("../../PersonController")
-speed = 0.155
 
 [node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835 node_paths=PackedStringArray("controller")]
 script = ExtResource("9_k8ylq")
@@ -618,7 +614,7 @@ controller = NodePath("../../PersonController")
 speed = -1.122
 
 [node name="VAMVagina" parent="." unique_id=949638534 instance=ExtResource("3_wpamn")]
-skeleton = NodePath("/root/@EditorNode@18148/@Panel@14/@VBoxContainer@15/DockHSplitMain/@VBoxContainer@28/DockVSplitCenter/@VSplitContainer@70/@VBoxContainer@71/@EditorMainScreen@125/MainScreen/@CanvasItemEditor@9334/@VSplitContainer@9117/@HSplitContainer@9119/@HSplitContainer@9121/@Control@9122/@SubViewportContainer@9123/@SubViewport@9124/VAMActor/VAMSkeleton")
+skeleton = NodePath("")
 set_stretch = 0.0
 left_size = Vector3(0.019248087, 0.11550003, 0.058707282)
 left_offset = Vector3(-0.0004912056, 0.872916, -0.019485474)
@@ -639,5 +635,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018756881, 0.872916, 0)
 
 [node name="Center" parent="VAMVagina" index="4" unique_id=59137849]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0004912056, 0.872916, 0.011212587)
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1696262441]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.791)
+visible = false
+mesh = SubResource("PlaneMesh_yitp0")
 
 [editable path="VAMVagina"]
