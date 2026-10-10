@@ -146,7 +146,7 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	_hair.AB_distribution = -0.5
 	
-	#var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+	var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
 	#load_hair(hair_file,_mesh.head_tris)
 	
 	position = spawn_position

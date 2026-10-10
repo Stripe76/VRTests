@@ -1,5 +1,13 @@
 class_name JointController extends Resource
 
+@export var limp_on : bool:
+	set(value):
+		limp_on = value
+		
+		set_limp(limp_on)
+	get:
+		return limp_on
+
 @export_range(-1,1) var pose_x : float = 0:
 	set(value):
 		pose_x = value
@@ -20,6 +28,14 @@ class_name JointController extends Resource
 		height = value
 		update_pose(pose_x,pose_y,pose_z,height)
 	get: return height
+
+@export_range(0,4) var stiffness : float = 0:
+	set(value):
+		stiffness = value
+		if _spring:
+			_spring.set_stiffness(0,stiffness)
+	get: 
+		return stiffness
 
 @export_group("Ranges")
 @export_range(0,1) var x_min : float = 0:
@@ -57,11 +73,17 @@ var _bone : int
 var _skeleton : Skeleton3D
 var _base_position : Vector3
 
+var _spring : SpringBoneSimulator3D
+var _limp_stiffness : float
 
-func _init(skeleton: Skeleton3D,bone: int,limits : Dictionary = {}) -> void:
+
+func _init(skeleton: Skeleton3D,bone: int,limits : Dictionary = {},spring : SpringBoneSimulator3D = null,limp_stiffness : float = 0) -> void:
 	_bone = bone
 	_skeleton = skeleton
 	_base_position = skeleton.get_bone_pose_position(bone)
+	
+	_spring = spring
+	_limp_stiffness = limp_stiffness
 	
 	if limits.has("x_min"):	x_min = limits["x_min"]
 	if limits.has("x_max"):	x_max = limits["x_max"]
@@ -85,6 +107,25 @@ func update_pose(x: float,y: float,z: float,h: float):
 		
 		_skeleton.set_bone_pose_position(_bone,_base_position+Vector3(0,h,0))
 		_skeleton.set_bone_pose_rotation(_bone,Quaternion.from_euler(Vector3(new_x*PI,new_y*PI,new_z*PI)))
+
+
+var _drag : float
+var _gravity : float
+var _stiffness : float
+func set_limp(limp: bool):
+	if _spring:
+		if limp:
+			_drag = _spring.get_drag(0)
+			_gravity = _spring.get_gravity(0)
+			_stiffness = _spring.get_stiffness(0)
+			
+			_spring.set_drag(0,0.1)
+			_spring.set_gravity(0,1.0)
+			_spring.set_stiffness(0,_limp_stiffness)
+		else:
+			_spring.set_drag(0,_drag)
+			_spring.set_gravity(0,_gravity)
+			_spring.set_stiffness(0,_stiffness)
 
 
 static func update_rotation(to_set: float,pose_min: float,pose_max: float) -> float:

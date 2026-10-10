@@ -5,20 +5,53 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="modules\person_controller\arm.gd" />
-    <Content Include="modules\person_controller\arm.gd.uid" />
-    <Content Include="modules\person_controller\cog.gd" />
-    <Content Include="modules\person_controller\cog.gd.uid" />
-    <Content Include="modules\person_controller\leg.gd" />
-    <Content Include="modules\person_controller\leg.gd.uid" />
-    <Content Include="modules\person_controller\movement.gd" />
-    <Content Include="modules\person_controller\movement.gd.uid" />
+    <Content Include="modules\person_controller\limbs\arm.gd" />
+    <Content Include="modules\person_controller\limbs\arm.gd.uid" />
+    <Content Include="modules\person_controller\limbs\head.gd" />
+    <Content Include="modules\person_controller\limbs\head.gd.uid" />
+    <Content Include="modules\person_controller\limbs\leg.gd" />
+    <Content Include="modules\person_controller\limbs\leg.gd.uid" />
+    <Content Include="modules\person_controller\limbs\limb.gd" />
+    <Content Include="modules\person_controller\limbs\limb.gd.uid" />
+    <Content Include="modules\person_controller\limbs\torso.gd" />
+    <Content Include="modules\person_controller\limbs\torso.gd.uid" />
     <Content Include="modules\person_controller\movements\walking.gd" />
     <Content Include="modules\person_controller\movements\walking.gd.uid" />
-    <Content Include="modules\person_controller\movements\walking.tscn" />
-    <Content Include="modules\person_controller\step.gd" />
-    <Content Include="modules\person_controller\step.gd.uid" />
-    <Content Include="modules\person_controller\value.gd" />
-    <Content Include="modules\person_controller\value.gd.uid" />
+    <Content Include="modules\person_controller\person_controller.gd" />
+    <Content Include="modules\person_controller\person_controller.gd.uid" />
+    <Content Include="modules\VAMActor\hair.vab" />
+    <Content Include="modules\VAMActor\scripts\bones_enum.gd" />
+    <Content Include="modules\VAMActor\scripts\bones_enum.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\bone_character_body.gd" />
+    <Content Include="modules\VAMActor\scripts\bone_character_body.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\double_joint.gd" />
+    <Content Include="modules\VAMActor\scripts\double_joint.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\generate_collisions_shapes.gd" />
+    <Content Include="modules\VAMActor\scripts\generate_collisions_shapes.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\node_3d.gd" />
+    <Content Include="modules\VAMActor\scripts\node_3d.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\procedural_mesh.gd" />
+    <Content Include="modules\VAMActor\scripts\procedural_mesh.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\procedural_mesh_istance.gd" />
+    <Content Include="modules\VAMActor\scripts\procedural_mesh_istance.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\spring_pusher.gd" />
+    <Content Include="modules\VAMActor\scripts\spring_pusher.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\task_manager.gd" />
+    <Content Include="modules\VAMActor\scripts\task_manager.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_actor.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_actor.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_eye.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_eye.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_hair.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_hair.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_material.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_material.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_mesh.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_mesh.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_skeleton.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_skeleton.gd.uid" />
+    <Content Include="modules\VAMActor\scripts\vam_vagina.gd" />
+    <Content Include="modules\VAMActor\scripts\vam_vagina.gd.uid" />
+    <Content Include="PROXYAI.md" />
   </ItemGroup>
 </Project>
