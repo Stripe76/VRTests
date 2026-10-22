@@ -2,6 +2,12 @@
 class_name VAMMesh
 extends MeshInstance3D
 
+@export_group("Debug")
+@export_tool_button("Generate","Add") var generate_action = debug_generate_model
+@export var test_look_id := 2
+@export var included_bones := []
+@export var bones_treshold := 0.5
+
 @export_group("Meshes")
 @export var full_body : Mesh
 @export var genitals : Mesh
@@ -36,16 +42,17 @@ func _ready() -> void:
 	limbs_material.shader = SKIN_SHADER
 	genitals_material.shader = SKIN_SHADER
 	
-	head_material.set_shader_parameter("use_micro_detail",true)
-	head_material.set_shader_parameter("use_ambient_occlusion",true)
+	#head_material.set_shader_parameter("use_micro_detail",true)
+	#head_material.set_shader_parameter("use_ambient_occlusion",true)
 	#head_material.set_shader_parameter("use_noise",false)
 
 	if Engine.is_editor_hint() and false:
-		var base_model := load("res://modules/VAMActor/resources/Genesis2Female.dsf")
-	
-		load_mesh(base_model,"/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
-		self.mesh = full_body
-		load_materials("/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
+		debug_generate_model()
+		#var base_model := load("res://modules/VAMActor/resources/Genesis2Female.dsf")
+	#
+		#load_mesh(base_model,"/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
+		#self.mesh = full_body
+		#load_materials("/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
 
 
 func _validate_property(property: Dictionary):
@@ -54,7 +61,21 @@ func _validate_property(property: Dictionary):
 		property["usage"] = PROPERTY_USAGE_EDITOR
 
 
-func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: String):
+var _library : LibraryManager
+func debug_generate_model():
+	var lookID = test_look_id
+	if not _library:
+		_library = LibraryManager.new()
+		_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	if _library:
+		var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
+		
+		load_mesh_new(daz_model,_library,lookID,included_bones,bones_treshold)
+		self.mesh = full_body
+		load_materials_new(_library,lookID)
+
+
+func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: String,bones_to_include: Array = [],treshold: float = 0.0):
 	if not base_model:
 		return
 	var model_vertices : PackedVector3Array = base_model.vertices.duplicate()
@@ -78,7 +99,15 @@ func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: St
 	weights_padding(model_weights)
 	
 	#print("Meshes creation")
-	var meshes : Array = create_meshes(base_model,model_vertices,model_normals,model_indices,model_uvs,model_weights,model_vertex_groups)
+	var meshes : Array = create_meshes(base_model,
+									model_vertices,
+									model_normals,
+									model_indices,
+									model_uvs,
+									model_weights,
+									model_vertex_groups,
+									bones_to_include,
+									treshold)
 	
 	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
@@ -87,7 +116,7 @@ func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: St
 	genitals = meshes[MESH_GENITALS]
 
 
-func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
+func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bones_to_include: Array = [],treshold: float = 0.0):
 	if not base_model:
 		return
 	
@@ -107,12 +136,14 @@ func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
 	
 	#print("Meshes creation")
 	var meshes : Array = create_meshes(base_model,
-										model_vertices,
-										model_normals,
-										model_indices,
-										model_uvs,
-										model_weights,
-										model_vertex_groups)
+									model_vertices,
+									model_normals,
+									model_indices,
+									model_uvs,
+									model_weights,
+									model_vertex_groups,
+									bones_to_include,
+									treshold)
 	
 	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
@@ -195,56 +226,26 @@ func set_weights(model_weights: Array):
 	#body_material.set_shader_parameter("x_weights",ImageTexture.create_from_image(weights))
 
 
-func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array,model_vertex_groups: Dictionary) -> Array:
-	var surfaces := []
-	for i in 8:
-		surfaces.push_back({ 
-			"vertices" : PackedVector3Array(),
-			#"indices" : PackedInt32Array(),
-			"normals" : PackedVector3Array(),
-			"uvs" : PackedVector2Array(),
-			"bones" : PackedInt32Array(),
-			"weights" : PackedFloat32Array(),
-			"colors" : PackedColorArray(),
-			#"customs0" : PackedFloat32Array(),
-			} )
-	
+const BONES_NUMBER := 8
+func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array,model_vertex_groups: Dictionary,bones_to_include: Array,treshold: float) -> Array:
+	# Head vertices are used for hair grooming
+	var head_materials = [11,15] # 15 e 11
 	var head_vertices := []
-	var head_normalized := []
 	
-	var tris : int = 0
-	const bones_number := 8
-	for material in daz_model.materials:
-		var map : int = map_material(material)
-			
-		if map >= 0 and map < surfaces.size():
-			var surface = surfaces[map]
-			var mesh_vertices : PackedVector3Array = surface["vertices"]
-			#var mesh_indices : PackedInt32Array = surface["indices"]
-			var mesh_normals : PackedVector3Array = surface["normals"]
-			var mesh_uvs : PackedVector2Array = surface["uvs"]
-			var mesh_bones : PackedInt32Array = surface["bones"]
-			var mesh_weights : PackedFloat32Array = surface["weights"]
-			#var mesh_customs0 : PackedFloat32Array = surface["customs0"]
-			var mesh_colors : PackedColorArray = surface["colors"]
-			
-			for i in 3:
-				var index = model_indices[tris]
-				#mesh_indices.push_back(mesh_vertices.size())
-				mesh_vertices.push_back(model_vertices[index])
-				mesh_uvs.push_back(model_uvs[index])
-				mesh_normals.push_back(model_normals[index])
-				for c in bones_number:
-					mesh_bones.push_back(model_weights[index]["s"][c*2])
-					mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-				mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-				
-				if material == 15 or material == 11 or material == 18:
-					head_vertices.push_back(model_vertices[index])
-					head_normalized.push_back(model_vertices[index].normalized())
-				tris += 1
-		else:
-			tris += 3
+	var surfaces := create_surfaces(daz_model,
+									model_vertices,
+									model_normals,
+									model_indices,
+									model_uvs,
+									model_weights,
+									model_vertex_groups,
+									head_materials,
+									head_vertices,
+									bones_to_include,
+									treshold)
+	var head_normalized := []
+	for h in head_vertices:
+		head_normalized.push_back(h.normalized())
 	
 	head_tris["Vertices"] = head_vertices
 	head_tris["Normalized"] = head_normalized
@@ -283,7 +284,7 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 			surface_tool.create_from_arrays(arrays)
 			surface_tool.generate_tangents( )
 			
-			if bones_number == 8:
+			if BONES_NUMBER == 8:
 				surface_tool.set_skin_weight_count(SurfaceTool.SKIN_8_WEIGHTS)
 				surface_tool.commit(array_mesh,Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS)
 			else:
@@ -297,6 +298,112 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 	
 	return [body_mesh,genitals_mesh]
 
+
+func create_surfaces(daz_model: Daz3DMesh,
+					model_vertices: PackedVector3Array,
+					model_normals: PackedVector3Array,
+					model_indices: Array,
+					model_uvs: PackedVector2Array,
+					model_weights: Array,
+					model_vertex_groups: Dictionary,
+					to_extract: Array,
+					extracted_vertices: PackedVector3Array,
+					bones_to_include: Array,
+					treshold: float)-> Array:
+	var surfaces := []
+	for i in 8:
+		surfaces.push_back({ 
+			"vertices" : PackedVector3Array(),
+			#"indices" : PackedInt32Array(),
+			"normals" : PackedVector3Array(),
+			"uvs" : PackedVector2Array(),
+			"bones" : PackedInt32Array(),
+			"weights" : PackedFloat32Array(),
+			"colors" : PackedColorArray(),
+			#"customs0" : PackedFloat32Array(),
+			} )
+	
+	var tris : int = 0
+	for material in daz_model.materials:
+		var map : int = map_material(material)
+			
+		if map >= 0 and map < surfaces.size():
+			var surface = surfaces[map]
+			var mesh_vertices : PackedVector3Array = surface["vertices"]
+			#var mesh_indices : PackedInt32Array = surface["indices"]
+			var mesh_normals : PackedVector3Array = surface["normals"]
+			var mesh_uvs : PackedVector2Array = surface["uvs"]
+			var mesh_bones : PackedInt32Array = surface["bones"]
+			var mesh_weights : PackedFloat32Array = surface["weights"]
+			#var mesh_customs0 : PackedFloat32Array = surface["customs0"]
+			var mesh_colors : PackedColorArray = surface["colors"]
+			
+			if not bones_to_include.is_empty():
+				if not( bones_is_included(model_weights,bones_to_include,model_indices[tris],treshold) or
+						bones_is_included(model_weights,bones_to_include,model_indices[tris+1],treshold) or
+						bones_is_included(model_weights,bones_to_include,model_indices[tris+2],treshold) ):
+					tris += 3
+					continue
+			
+			var index = model_indices[tris]
+			
+			#mesh_indices.push_back(mesh_vertices.size())
+			mesh_vertices.push_back(model_vertices[index])
+			mesh_uvs.push_back(model_uvs[index])
+			mesh_normals.push_back(model_normals[index])
+			for c in BONES_NUMBER:
+				mesh_bones.push_back(model_weights[index]["s"][c*2])
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
+			
+			if not to_extract.is_empty() and to_extract.has(material):
+				extracted_vertices.push_back(model_vertices[index])
+			tris += 1
+		
+			index = model_indices[tris]
+			#mesh_indices.push_back(mesh_vertices.size())
+			mesh_vertices.push_back(model_vertices[index])
+			mesh_uvs.push_back(model_uvs[index])
+			mesh_normals.push_back(model_normals[index])
+			for c in BONES_NUMBER:
+				mesh_bones.push_back(model_weights[index]["s"][c*2])
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
+			
+			if material == 15 or material == 11 or material == 18:
+				extracted_vertices.push_back(model_vertices[index])
+			tris += 1
+			
+			index = model_indices[tris]
+			#mesh_indices.push_back(mesh_vertices.size())
+			mesh_vertices.push_back(model_vertices[index])
+			mesh_uvs.push_back(model_uvs[index])
+			mesh_normals.push_back(model_normals[index])
+			for c in BONES_NUMBER:
+				mesh_bones.push_back(model_weights[index]["s"][c*2])
+				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
+			
+			if material == 15 or material == 11:
+				extracted_vertices.push_back(model_vertices[index])
+			tris += 1
+		else:
+			tris += 3
+	return surfaces
+
+
+func bones_is_included(model_weights: Array,bones_to_include: Array,index: int,treshold: float) -> bool:
+	var include := false
+	for c in BONES_NUMBER:
+		var bone : int = model_weights[index]["s"][c*2]
+		if not bones_to_include.has(bone):
+			continue
+		var weight : float = model_weights[index]["s"][c*2+1]
+		if weight > treshold:
+			include = true
+			break
+	return include
+	
 
 func add_eye(surface_tool: SurfaceTool,body_mesh: ArrayMesh,eye: Dictionary,offset: Vector3,scaling : float = 0.035):
 	var surface_index := body_mesh.get_surface_count()
@@ -335,10 +442,10 @@ func get_vertex_color(vertex_groups: Dictionary,map: int,index: int) -> Color:
 			color.r = 0
 			color.g = 0
 		elif vertex_groups["RightInnerLabia"].has(index) or \
-			vertex_groups["RightSide"].has(index):
+		 	vertex_groups["RightSide"].has(index):
 			color.r = 0
 		elif vertex_groups["LeftInnerLabia"].has(index) or \
-			vertex_groups["LeftSide"].has(index):
+		 	vertex_groups["LeftSide"].has(index):
 			color.g = 0
 	return color
 

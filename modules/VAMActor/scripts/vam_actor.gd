@@ -1,8 +1,13 @@
 @tool
 class_name VAMActor extends Node3D
 
-@export_tool_button("Generate","Add") var generate_action = generate_model
+@export_group("Debug")
+@export_tool_button("Generate","Reload") var generate_action = debug_generate_model
+@export_tool_button("Load texture","Reload") var set_textures = debug_set_textures
+@export var test_look_id := 2
+@export var texture_id := 2
 
+@export_group("")
 @export_range(0,5) var eyes_color : float = 0:
 	set(value):
 		eyes_color = value
@@ -25,11 +30,12 @@ var _person_controller : PersonController
 
 var _mesh_thread : Thread
 var _materials_thread : Thread
+var _load_hair := false
 
 
 func _ready() -> void:
 	if Engine.is_editor_hint() and not get_parent() is Node3D:
-		generate_model()
+		debug_generate_model()
 
 
 func _process(delta: float) -> void:
@@ -44,6 +50,7 @@ func _process(delta: float) -> void:
 			ap.play("walking_ik")
 		if distance < 1.0 and ap.is_playing():
 			ap.stop()
+
 
 func _exit_tree():
 	if _mesh_thread:
@@ -65,12 +72,17 @@ func reset():
 		_person_controller.reset_pose()
 
 
-func generate_model():
+func debug_generate_model():
 	if not _library:
 		_library = LibraryManager.new()
 		_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
 	if _library:
-		load_look(_library,2,Vector3()) # Barbie
+		load_look(_library,test_look_id,Vector3())
+
+
+func debug_set_textures():
+	if _library:
+		load_materials_async(_library,texture_id)
 
 
 func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
@@ -118,8 +130,8 @@ func load_look_pre():
 
 
 func load_look_sync(library: LibraryManager,lookID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
-	_skeleton = load_skeleton_new(_daz_model,library,lookID)
-	_mesh = load_mesh_new(_daz_model,library,lookID,_skeleton.left_eye_bone_origin,_skeleton.right_eye_bone_origin)
+	_skeleton = load_skeleton(_daz_model,library,lookID)
+	_mesh = load_mesh(_daz_model,library,lookID,_skeleton.left_eye_bone_origin,_skeleton.right_eye_bone_origin)
 	
 	call_deferred("load_look_done",library,lookID,spawn_position,true)
 	
@@ -159,8 +171,9 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	_hair.AB_distribution = -0.5
 	
-	var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
-	#load_hair(hair_file,_mesh.head_tris)
+	if _load_hair:
+		var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+		load_hair(hair_file,_mesh.head_tris)
 	
 	position = spawn_position
 	
@@ -221,7 +234,7 @@ func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonControl
 	return person_controller
 
 
-func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,lookID: int) -> VAMSkeleton:
+func load_skeleton(base_model: Daz3DMesh,library: LibraryManager,lookID: int) -> VAMSkeleton:
 	var skeleton := VAMSkeleton.new()
 	skeleton.name = "VAMSkeleton"
 	
@@ -230,7 +243,7 @@ func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,lookID: int
 	return skeleton
 
 
-func load_mesh_new(daz_model: Daz3DMesh,library: LibraryManager,lookID: int,left_eye_bone_origin: Vector3,right_eye_bone_origin: Vector3) -> VAMMesh:
+func load_mesh(daz_model: Daz3DMesh,library: LibraryManager,lookID: int,left_eye_bone_origin: Vector3,right_eye_bone_origin: Vector3) -> VAMMesh:
 	var vam_mesh = VAMMesh.new()
 	vam_mesh.name = "VAMMesh"
 	
