@@ -98,7 +98,7 @@ func generate_shapes(skeleton: Skeleton3D,simulator: Node3D,mesh_instance: Node3
 		if physical_bone_node is BoneAttachment3D:
 			physical_bone_node = physical_bone_node.find_child(filter)
 			
-		if not physical_bone_node:
+		if not physical_bone_node or physical_bone_node.name.contains("_noshape"):
 			continue
 		
 		if remove_existing_collision_shapes:
@@ -140,7 +140,7 @@ func generate_shape(cs: CollisionShape3D,transformed_points : Array,capsules: bo
 	if capsules:
 		var aabb := _points_aabb(transformed_points)
 		
-		var shrink_factor := 0.85
+		var shrink_factor := 0.65
 		var center = aabb.get_center()
 		var size = aabb.size * shrink_factor
 		

@@ -55,6 +55,7 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Hands")
 @export var left_index : JointController
 
+
 var _current_root : PersonLimb
 
 var _skeleton : Skeleton3D
@@ -108,6 +109,19 @@ func _physics_process(_delta: float) -> void:
 
 func _on_skeleton_updated():
 	update_root_on()
+
+
+func toggle_ragdoll():
+	var simulator : PhysicalBoneSimulator3D = _skeleton.get_node("Ragdoll")
+	if simulator:
+		if simulator.is_simulating_physics():
+			simulator.physical_bones_stop_simulation()
+		else:
+			var hips : PhysicalBone3D = _skeleton.get_node("Ragdoll/lFoot")
+			hips.linear_velocity = Vector3(10,10,10)
+			print(hips.angular_velocity)
+			simulator.physical_bones_start_simulation()
+			
 
 
 func root_on_changed(limb: PersonLimb, root_on: bool):
@@ -232,16 +246,16 @@ func reset_pose():
 		_skeleton.rotation = Vector3.ZERO;
 
 
-func initialize(parent: Node3D,skeleton: Skeleton3D) -> void:
-	set_eye_bones(_skeleton)
+func initialize(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D) -> void:
+	set_eye_bones(skeleton)
 	
-	create_springs(_skeleton)
-	create_joints(_skeleton)
+	create_springs(skeleton)
+	create_joints(skeleton)
 	
 	create_controllers( )
-	create_collisions(parent,skeleton)
-	create_center_of_gravity(_skeleton,parent)
-	create_iks(_skeleton,parent)
+	create_collisions(parent,skeleton,mesh)
+	create_center_of_gravity(skeleton,parent)
+	create_iks(skeleton,parent)
 	
 	reset_pose()
 
@@ -344,28 +358,56 @@ func create_controllers( )-> void:
 	_right_leg.root_on_changed.connect(root_on_changed)
 
 
-func create_collisions(parent: Node3D,skeleton: Skeleton3D):
-	add_physical_bone(skeleton,Bones.HEAD_BONE,parent)
+func create_collisions(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D):
+	var simulator : PhysicalBoneSimulator3D
+	if mesh:
+		simulator = PhysicalBoneSimulator3D.new()
+		simulator.name = "Ragdoll"
+		simulator.influence = 0.95
+		
+		skeleton.add_child(simulator)
+		simulator.owner = parent
 	
-	add_physical_bone(skeleton,59,parent)
-	add_physical_bone(skeleton,38,parent)
+	# Head
+	add_physical_bone(Bones.HEAD_BONE,skeleton,parent,simulator,head)
 	
-	add_physical_bone(skeleton,Bones.HAND_LEFT_BONE,parent,_left_arm)
-	add_physical_bone(skeleton,Bones.HAND_RIGHT_BONE,parent,_right_arm)
+	# Arms
+	add_physical_bone(Bones.COLLAR_LEFT_BONE,skeleton,parent,simulator,left_collar)
+	add_physical_bone(Bones.COLLAR_RIGHT_BONE,skeleton,parent,simulator,right_collar)
+	add_physical_bone(Bones.SHOULDER_LEFT_BONE,skeleton,parent,simulator,left_shoulder)
+	add_physical_bone(Bones.SHOULDER_RIGHT_BONE,skeleton,parent,simulator,right_shoulder)
+	add_physical_bone(Bones.ELBOW_LEFT_BONE,skeleton,parent,simulator,left_elbow)
+	add_physical_bone(Bones.ELBOW_RIGHT_BONE,skeleton,parent,simulator,right_elbow)
+	add_physical_bone(Bones.HAND_LEFT_BONE,skeleton,parent,simulator,null,Vector3.ONE,false,_left_arm)
+	add_physical_bone(Bones.HAND_RIGHT_BONE,skeleton,parent,simulator,null,Vector3.ONE,false,_right_arm)
 	
-	add_physical_bone(skeleton,Bones.ANKLE_LEFT_BONE,parent,_left_leg)
-	add_physical_bone(skeleton,Bones.ANKLE_RIGHT_BONE,parent,_right_leg)
+	# Torso	
+	add_physical_bone(Bones.HIPS_BONE,skeleton,parent,simulator,null)
+	add_physical_bone(Bones.PELVIS_BONE,skeleton,parent,simulator,null,Vector3.ONE,true)
+	add_physical_bone(Bones.ABDOMEN_BONE_1,skeleton,parent,simulator,null)
+	add_physical_bone(Bones.ABDOMEN_BONE_2,skeleton,parent,simulator,abdomen_2,Vector3(.1,.1,.1))
+	add_physical_bone(Bones.CHEST_BONE,skeleton,parent,simulator,null)
 	
-	add_physical_bone(skeleton,Bones.TOE_LEFT_BONE,parent)
-	add_physical_bone(skeleton,Bones.TOE_RIGHT_BONE,parent)
+	# Legs
+	add_physical_bone(Bones.HIP_LEFT_BONE,skeleton,parent,simulator,left_hip)
+	add_physical_bone(Bones.HIP_RIGHT_BONE,skeleton,parent,simulator,right_hip)
+	add_physical_bone(Bones.KNEE_LEFT_BONE,skeleton,parent,simulator,left_knee)
+	add_physical_bone(Bones.KNEE_RIGHT_BONE,skeleton,parent,simulator,right_knee)
+	add_physical_bone(Bones.ANKLE_LEFT_BONE,skeleton,parent,simulator,left_ankle,Vector3.ONE,false,_left_leg)
+	add_physical_bone(Bones.ANKLE_RIGHT_BONE,skeleton,parent,simulator,right_ankle,Vector3.ONE,false,_right_leg)
+	add_physical_bone(Bones.TOE_LEFT_BONE,skeleton,parent,simulator)
+	add_physical_bone(Bones.TOE_RIGHT_BONE,skeleton,parent,simulator)
+	
+	if simulator:
+		create_collisions_shapes(skeleton,simulator,mesh)
 
 
-func create_collisions_shapes(skeleton: Skeleton3D,mesh: MeshInstance3D):
+func create_collisions_shapes(skeleton: Skeleton3D,simulator: PhysicalBoneSimulator3D,mesh: MeshInstance3D):
 	var shapes := GenerateCollisionShape.new()
 	shapes.remove_existing_collision_shapes = true
-	shapes.generate_shapes(skeleton,skeleton,mesh,"Mesh")
+	#shapes.generate_shapes(skeleton,skeleton,mesh,"Mesh")
 	shapes.use_capsules = true
-	shapes.generate_shapes(skeleton,skeleton,mesh,"Capsule")
+	shapes.generate_shapes(skeleton,simulator,mesh,"Capsule")
 
 
 func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controller: Node,head_bone: int,left_eye_bone: int,right_eye_bone: int):
@@ -557,7 +599,14 @@ func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
 	return bones_vertices
 
 
-func add_physical_bone(skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : PersonLimb = null) -> void:
+func add_physical_bone(bone_idx: int,
+						skeleton: Skeleton3D,
+						parent: Node3D,
+						simulator: PhysicalBoneSimulator3D = null,
+						joint: JointController = null,
+						multiplier: Vector3 = Vector3.ONE,
+						no_collision: bool = false,
+						limb : PersonLimb = null) -> void:
 	var bone_name := skeleton.get_bone_name(bone_idx)
 	var bone = BoneAttachment3D.new()
 	bone.name = bone_name
@@ -584,6 +633,30 @@ func add_physical_bone(skeleton: Skeleton3D,bone_idx: int,parent: Node3D,limb : 
 	bone.owner = parent
 	mesh.owner = parent
 	capsule.owner = parent
+	
+	if simulator:
+		var physical_bone := PhysicalBone3D.new()
+		physical_bone.name = bone_name + ("_noshape" if no_collision else "")
+		physical_bone.bone_name = bone_name
+		physical_bone.mass = 10
+		physical_bone.bounce = 0.105
+		physical_bone.friction = 0.95
+		physical_bone.linear_damp = 2.5
+		physical_bone.linear_damp_mode = PhysicalBone3D.DAMP_MODE_REPLACE
+		physical_bone.angular_damp = 2.5
+		physical_bone.angular_damp_mode = PhysicalBone3D.DAMP_MODE_REPLACE
+		physical_bone.visible = not Engine.is_editor_hint()
+		
+		if joint:
+			joint.apply_limits_to_physical_bone(physical_bone,1.0,multiplier)
+		else:
+			physical_bone.joint_type = PhysicalBone3D.JOINT_TYPE_6DOF
+
+		var bone_rest_transform: Transform3D = skeleton.get_bone_global_rest(bone_idx)
+		physical_bone.transform = bone_rest_transform
+		
+		simulator.add_child(physical_bone)
+		physical_bone.owner = parent
 
 
 func add_spring_pusher(pusher_name:String,bone: SpringBoneSimulator3D,shape: CollisionShape3D,parent: Node3D):

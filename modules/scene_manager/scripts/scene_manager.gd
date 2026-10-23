@@ -70,6 +70,13 @@ func looks_loaded():
 	start_animation("RESET")
 
 
+func toggle_ragdoll():
+	if _current_person:
+		var controller : PersonController = _current_person.get_person_controller()
+		if controller:
+			controller.toggle_ragdoll()
+
+
 func toggle_animation(animation: String):
 	if _current_person:
 		var player : AnimationPlayer = _current_person.get_animation_player()

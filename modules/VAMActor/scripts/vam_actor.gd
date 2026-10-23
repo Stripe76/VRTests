@@ -67,6 +67,10 @@ func get_animation_player() -> AnimationPlayer:
 	return $Actor
 
 
+func get_person_controller() -> PersonController:
+	return _person_controller
+
+
 func reset():
 	if _person_controller:
 		_person_controller.reset_pose()
@@ -144,34 +148,34 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	$Movements.person_controller = _person_controller
 	
-	_skeleton.owner = self
-	_mesh.owner = self
-	_person_controller.owner = self
-	
-	_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )
-	_hair.name = "Hair"
-	_hair._how_many = 4
-	_hair.force_lerp = 0.5
-	
-	_hair.a_root = Color(0.326, 0.165, 0.0, 1.0)
-	_hair.a_middle = Color(0.451, 0.214, 0.0, 1.0)
-	_hair.a_tip = Color(0.808, 0.425, 0.0, 1.0)
-	
-	_hair.b_root = Color(0.0, 0.0, 0.0, 1.0)
-	_hair.b_middle = Color(0.0, 0.0, 0.0, 1.0)
-	_hair.b_tip = Color(0.0, 0.0, 0.0, 1.0)
-	
-	_hair.a_weight_root = 1
-	_hair.a_weight_middle = 1
-	_hair.a_weight_tip = 1
-	
-	_hair.b_weight_root = 1
-	_hair.b_weight_middle = 1
-	_hair.b_weight_tip = 1
-	
-	_hair.AB_distribution = -0.5
+	#_skeleton.owner = self
+	#_mesh.owner = self
+	#_person_controller.owner = self
 	
 	if _load_hair:
+		_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )
+		_hair.name = "Hair"
+		_hair._how_many = 4
+		_hair.force_lerp = 0.5
+		
+		_hair.a_root = Color(0.326, 0.165, 0.0, 1.0)
+		_hair.a_middle = Color(0.451, 0.214, 0.0, 1.0)
+		_hair.a_tip = Color(0.808, 0.425, 0.0, 1.0)
+		
+		_hair.b_root = Color(0.0, 0.0, 0.0, 1.0)
+		_hair.b_middle = Color(0.0, 0.0, 0.0, 1.0)
+		_hair.b_tip = Color(0.0, 0.0, 0.0, 1.0)
+		
+		_hair.a_weight_root = 1
+		_hair.a_weight_middle = 1
+		_hair.a_weight_tip = 1
+		
+		_hair.b_weight_root = 1
+		_hair.b_weight_middle = 1
+		_hair.b_weight_tip = 1
+		
+		_hair.AB_distribution = -0.5
+	
 		var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
 		load_hair(hair_file,_mesh.head_tris)
 	
@@ -223,11 +227,13 @@ func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonControl
 	
 	add_child(person_controller)
 	person_controller.owner = self
-
-	add_child(_skeleton)
-	_skeleton.add_child(_mesh)
 	
-	person_controller.initialize(self,skeleton)
+	add_child(skeleton)
+	skeleton.owner = self
+	skeleton.add_child(mesh)
+	mesh.owner = self
+	
+	person_controller.initialize(self,skeleton,mesh)
 	
 	#if $Movements and $PersonController:
 	#	$Movements.person_controller = $PersonController
