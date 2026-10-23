@@ -100,6 +100,36 @@ func _init(skeleton: Skeleton3D,bone: int,limits : Dictionary = {},spring : Spri
 	if limits.has("z_max"):	z_max = limits["z_max"]
 
 
+func apply_limits_to_physical_bone(phys_bone: PhysicalBone3D,multiplier: float,xyz_multiplier: Vector3) -> void:
+	# 1. Force the joint to use 6 Degrees of Freedom
+	phys_bone.joint_type = PhysicalBone3D.JOINT_TYPE_6DOF
+	
+	# 2. Map X-Axis Limits (Pitch)
+	if x_min > 0 or x_max > 0:
+		phys_bone.set(&"joint_constraints/x/enable", true)
+		phys_bone.set(&"joint_constraints/x/angular_limit_upper", x_min * 180 * xyz_multiplier.x * multiplier)
+		phys_bone.set(&"joint_constraints/x/angular_limit_lower", -x_max * 180.0 * xyz_multiplier.y * multiplier)
+	else:
+		# If no limits are defined, lock the axis or leave it free depending on preference
+		phys_bone.set(&"joint_constraints/x/enable", true)
+
+	# 3. Map Y-Axis Limits (Yaw)
+	if y_min > 0 or y_max > 0:
+		phys_bone.set(&"joint_constraints/y/enable", true)
+		phys_bone.set(&"joint_constraints/y/angular_limit_upper", y_max * 180.0 * xyz_multiplier.y * multiplier)
+		phys_bone.set(&"joint_constraints/y/angular_limit_lower", -y_min * 180.0 * xyz_multiplier.y * multiplier)
+	else:
+		phys_bone.set(&"joint_constraints/y/enable", true)
+
+	# 4. Map Z-Axis Limits (Roll)
+	if z_min > 0 or z_max > 0:
+		phys_bone.set(&"joint_constraints/z/enable", true)
+		phys_bone.set(&"joint_constraints/z/angular_limit_upper", z_max * 180.0 * xyz_multiplier.z * multiplier)
+		phys_bone.set(&"joint_constraints/z/angular_limit_lower", -z_min * 180.0 * xyz_multiplier.z * multiplier)
+	else:
+		phys_bone.set(&"joint_constraints/z/enable", true)
+
+
 func reset_pose():
 	pose_x = 0
 	pose_y = 0
