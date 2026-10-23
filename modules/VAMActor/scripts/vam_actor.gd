@@ -6,6 +6,7 @@ class_name VAMActor extends Node3D
 @export_tool_button("Load texture","Reload") var set_textures = debug_set_textures
 @export var test_look_id := 2
 @export var texture_id := 2
+@export_tool_button("Ragdoll","PhysicalBone3D") var set_ragdoll = debug_set_ragdoll
 
 @export_group("")
 @export_range(0,5) var eyes_color : float = 0:
@@ -36,6 +37,8 @@ var _load_hair := false
 func _ready() -> void:
 	if Engine.is_editor_hint() and not get_parent() is Node3D:
 		debug_generate_model()
+	else:
+		$Floor.queue_free()
 
 
 func _process(delta: float) -> void:
@@ -87,6 +90,16 @@ func debug_generate_model():
 func debug_set_textures():
 	if _library:
 		load_materials_async(_library,texture_id)
+
+
+var ragdoll_active := false
+func debug_set_ragdoll():
+	if _person_controller:
+		ragdoll_active = not ragdoll_active
+		
+		$PhysicsToggle.activate_physics = true
+		
+		_person_controller.enable_ragdoll = ragdoll_active
 
 
 func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):

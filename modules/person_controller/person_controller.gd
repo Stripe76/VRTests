@@ -12,6 +12,26 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export var enable_Z : bool
 @export var enable_rotation : bool
 
+@export_group("Ragdoll")
+@export var enable_ragdoll : bool:
+	set(value):
+		enable_ragdoll = value
+		
+		var simulator : PhysicalBoneSimulator3D = _skeleton.get_node("Ragdoll")
+		if simulator:
+			if value:
+				simulator.physical_bones_start_simulation()
+			else:
+				simulator.physical_bones_stop_simulation()
+			random_push(simulator.get_node("hip"),-.5)
+			random_push(simulator.get_node("head"),1.2)
+			random_push(simulator.get_node("chest"),.5)
+			random_push(simulator.get_node("lHand"),.2)
+			random_push(simulator.get_node("rHand"),.2)
+	get:
+		return enable_ragdoll
+
+
 @export_group("Head")
 @export var head : JointController
 @export var neck : JointController
@@ -111,17 +131,16 @@ func _on_skeleton_updated():
 	update_root_on()
 
 
-func toggle_ragdoll():
-	var simulator : PhysicalBoneSimulator3D = _skeleton.get_node("Ragdoll")
-	if simulator:
-		if simulator.is_simulating_physics():
-			simulator.physical_bones_stop_simulation()
-		else:
-			var hips : PhysicalBone3D = _skeleton.get_node("Ragdoll/lFoot")
-			hips.linear_velocity = Vector3(10,10,10)
-			print(hips.angular_velocity)
-			simulator.physical_bones_start_simulation()
-			
+func random_push(bone: PhysicalBone3D,forward: float):
+	if bone:
+		var angle := randf_range(0.0,2.0 * PI)
+		var push_direction := Vector3(cos(angle),0.0,forward)
+		var push_force := 2500.0 * absf(forward)
+		
+		bone.apply_central_impulse(push_direction * push_force)
+		
+		var random_spin := Vector3(randf_range(-2.0, 2.0), randf_range(-5.0, 5.0), randf_range(-2.0, 2.0))
+		bone.angular_velocity = random_spin
 
 
 func root_on_changed(limb: PersonLimb, root_on: bool):
@@ -372,8 +391,8 @@ func create_collisions(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D)
 	add_physical_bone(Bones.HEAD_BONE,skeleton,parent,simulator,head)
 	
 	# Arms
-	add_physical_bone(Bones.COLLAR_LEFT_BONE,skeleton,parent,simulator,left_collar)
-	add_physical_bone(Bones.COLLAR_RIGHT_BONE,skeleton,parent,simulator,right_collar)
+	add_physical_bone(Bones.COLLAR_LEFT_BONE,skeleton,parent,simulator,null)
+	add_physical_bone(Bones.COLLAR_RIGHT_BONE,skeleton,parent,simulator,null)
 	add_physical_bone(Bones.SHOULDER_LEFT_BONE,skeleton,parent,simulator,left_shoulder)
 	add_physical_bone(Bones.SHOULDER_RIGHT_BONE,skeleton,parent,simulator,right_shoulder)
 	add_physical_bone(Bones.ELBOW_LEFT_BONE,skeleton,parent,simulator,left_elbow)
@@ -638,14 +657,13 @@ func add_physical_bone(bone_idx: int,
 		var physical_bone := PhysicalBone3D.new()
 		physical_bone.name = bone_name + ("_noshape" if no_collision else "")
 		physical_bone.bone_name = bone_name
-		physical_bone.mass = 10
-		physical_bone.bounce = 0.105
+		physical_bone.mass = 1000 if bone_name == "head" or bone_name == "hip" or bone_name == "lHand" or bone_name == "rHand" else 100
+		physical_bone.bounce = 0.10
 		physical_bone.friction = 0.95
-		physical_bone.linear_damp = 2.5
+		physical_bone.linear_damp = 2.50
 		physical_bone.linear_damp_mode = PhysicalBone3D.DAMP_MODE_REPLACE
-		physical_bone.angular_damp = 2.5
+		physical_bone.angular_damp = 4.50
 		physical_bone.angular_damp_mode = PhysicalBone3D.DAMP_MODE_REPLACE
-		physical_bone.visible = not Engine.is_editor_hint()
 		
 		if joint:
 			joint.apply_limits_to_physical_bone(physical_bone,1.0,multiplier)
