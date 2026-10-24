@@ -75,6 +75,7 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export_group("Hands")
 @export var left_index : JointController
 
+var _person_id : int = -1
 
 var _current_root : PersonLimb
 
@@ -105,26 +106,11 @@ func _notification(what: int) -> void:
 			owner = _editor_owner
 
 
-func _init(skeleton: Skeleton3D) -> void:
-	print("--- PersonController._init")
+func _init(person_id: int,skeleton: Skeleton3D) -> void:
+	_person_id = person_id
 	_skeleton = skeleton
 	if _skeleton:
-		#_skeleton.add_child(self)
-		#self.owner = _skeleton
-		
-		#_skeleton_pose = duplicate_skeleton(parent,skeleton,"SkeletonPose")
-		#_skeleton_springs = duplicate_skeleton(parent,skeleton,"SkeletonSprings")
-		
 		_skeleton.skeleton_updated.connect(_on_skeleton_updated)
-
-
-func _physics_process(_delta: float) -> void:
-	#if _skeleton and not _current_root:
-		#last_delta_pos *= 1.0 - (0.1 * _delta)
-		#print(last_delta_pos)
-		
-		#_skeleton.global_transform.origin += last_delta_pos * _delta
-	pass
 
 
 func _on_skeleton_updated():
@@ -654,7 +640,7 @@ func add_physical_bone(bone_idx: int,
 	capsule.owner = parent
 	
 	if simulator:
-		var physical_bone := PhysicalBone3D.new()
+		var physical_bone := RagdollBone.new(_person_id,bone_idx)
 		physical_bone.name = bone_name + ("_noshape" if no_collision else "")
 		physical_bone.bone_name = bone_name
 		physical_bone.mass = 1000 if bone_name == "head" or bone_name == "hip" or bone_name == "lHand" or bone_name == "rHand" else 100

@@ -3,6 +3,7 @@ extends Control
 var _scene_manager : SceneManager
 var _person_button : PackedScene = load("res://ui/panels/person_button.tscn")
 
+
 func set_scene_manager(scene_manager: SceneManager):
 	_scene_manager = scene_manager
 	_scene_manager.persons_list_changed.connect(persons_list_changed)

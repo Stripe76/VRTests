@@ -32,46 +32,25 @@ func _input(event: InputEvent) -> void:
 		scene_manager.toggle_ragdoll()
 
 
-func _unhandled_input(event):
-	if not ui_active:
-		if event.is_action_released("NextMesh"):
-			world._on_next_mesh()
-		elif event.is_action_released("NextMaterial"):
-			world._on_next_materials()
-
-
-var mouse_mode := Input.mouse_mode
 func switch_ui():
+	ui_active = not ui_active
+	
 	if ui_active:
-		ui_active = false
-		player.process_mode = Node.PROCESS_MODE_ALWAYS
-		Input.set_mouse_mode(mouse_mode)
-	else:
-		ui_active = true
 		player.process_mode = Node.PROCESS_MODE_DISABLED
-		mouse_mode = Input.mouse_mode
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	else:
+		player.process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	ui_container.visible = ui_active
+	
 	if ui_active:
 		player.reparent(ui_world_view)
 	else:
 		player.reparent(self)
 
 
-#func _unhandled_key_input(event: InputEvent) -> void:
-	#if event.is_action_pressed("Up"):
-		#move.y = move_speed.y
-	#elif event.is_action("Down"):
-		#move.y = -move_speed.y
-	#elif event.is_action("Left"):
-		#move.x = -move_speed.x
-	#elif event.is_action("Right"):
-		#move.x = move_speed.x
-
-
 func generate_action_map():
-	add_action("SwitchMode",[MouseButton.MOUSE_BUTTON_RIGHT,KEY_ESCAPE])
+	#add_action("SwitchMode",[MouseButton.MOUSE_BUTTON_RIGHT,KEY_ESCAPE])
+	add_action("SwitchMode",[KEY_ESCAPE])
 	
 	add_action("NextMesh",[Key.KEY_2])
 	add_action("NextMaterial",[Key.KEY_1])

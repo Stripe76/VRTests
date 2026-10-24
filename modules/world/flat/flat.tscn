@@ -21,19 +21,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="UI" type="Control" parent="UIContainer" unique_id=1836542862 groups=["UI"]]
+[node name="UI" type="VBoxContainer" parent="UIContainer" unique_id=1378465709 groups=["UI"]]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("4_kvpox")
 
+[node name="Selection" type="Control" parent="UIContainer/UI" unique_id=618002716]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
 [node name="Main" type="HBoxContainer" parent="UIContainer/UI" unique_id=1065891151]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Menu" parent="UIContainer/UI/Main" unique_id=1990414711 instance=ExtResource("5_kvpox")]
 custom_minimum_size = Vector2(220, 0)
@@ -42,10 +42,6 @@ layout_mode = 2
 [node name="Panels" type="VBoxContainer" parent="UIContainer/UI/Main" unique_id=1088734319]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Selection" type="Control" parent="UIContainer/UI/Main/Panels" unique_id=618002716]
-custom_minimum_size = Vector2(0, 100)
-layout_mode = 2
 
 [node name="MainPanel" type="Control" parent="UIContainer/UI/Main/Panels" unique_id=1409399728]
 custom_minimum_size = Vector2(500, 0)
@@ -61,7 +57,7 @@ mouse_target = true
 
 [node name="SubViewport" type="SubViewport" parent="UIContainer/WorldView" unique_id=2100921644]
 handle_input_locally = false
-size = Vector2i(712, 778)
+size = Vector2i(700, 778)
 render_target_update_mode = 4
 
 [node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("6_hw5o8")]

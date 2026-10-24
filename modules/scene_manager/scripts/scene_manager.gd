@@ -42,9 +42,10 @@ func select_person(id: int):
 
 func select_looks(id: int):
 	if _current_person_index < 0:
-		_current_person = VAM_ACTOR_SCENE.instantiate()
-		_current_person_index = _persons.size()
-		_current_person.name = "Person_%s" % _current_person_index
+		var person_id = _persons.size()
+		_current_person = VAM_ACTOR_SCENE.instantiate().with(person_id)
+		_current_person_index = person_id
+		_current_person.name = "Person_%s" % person_id
 		
 		_persons.push_back(_current_person)
 		

@@ -21,6 +21,8 @@ class_name VAMActor extends Node3D
 @onready var target := $Target
 @onready var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 
+var _person_id : int = -1
+
 var _look_id : int = -1
 var _library : LibraryManager
 
@@ -32,6 +34,16 @@ var _person_controller : PersonController
 var _mesh_thread : Thread
 var _materials_thread : Thread
 var _load_hair := false
+
+var _mutex = Mutex.new()
+var _loading_scene := false
+var _loading_material := false
+
+
+func with(person_id: int) -> VAMActor:
+	_person_id = person_id
+	
+	return self
 
 
 func _ready() -> void:
@@ -109,9 +121,6 @@ func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
 	load_look_sync(library,lookID,spawn_position)
 
 
-var _mutex = Mutex.new()
-var _loading_scene := false
-var _loading_material := false
 func load_look_async(library: LibraryManager,lookID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
 	_mutex.lock()
 	if _loading_scene or _loading_material:
@@ -232,7 +241,7 @@ func load_materials_async(library: LibraryManager,lookID: int):
 
 
 func add_person_controller(skeleton: VAMSkeleton,mesh: VAMMesh )-> PersonController:
-	var person_controller = PersonController.new(skeleton)
+	var person_controller = PersonController.new(_person_id,skeleton)
 	person_controller.name = "PersonController"
 	
 	person_controller._left_eye_aabb = mesh.left_eye_aabb

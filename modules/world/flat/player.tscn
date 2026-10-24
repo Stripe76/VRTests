@@ -15,24 +15,24 @@ point_count = 2
 [node name="Player" type="Node3D" unique_id=829102050]
 script = ExtResource("1_mexil")
 
-[node name="IsoCamera" type="Node3D" parent="." unique_id=60670623]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="PivotCamera" type="Node3D" parent="." unique_id=60670623]
+transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0, 1, 0)
 visible = false
 script = ExtResource("2_p14d7")
 delta_curve = SubResource("Curve_p14d7")
 
-[node name="Camera3D" type="Camera3D" parent="IsoCamera" unique_id=483568025]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
+[node name="Camera3D" type="Camera3D" parent="PivotCamera" unique_id=483568025]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
 current = true
-fov = 35.0
+fov = 52.0
 size = 5.0
 
 [node name="FreeCamera" type="Node3D" parent="." unique_id=231351705]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.88, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 3)
 visible = false
 script = ExtResource("2_20j0k")
 delta_curve = SubResource("Curve_20j0k")
 
 [node name="Camera3D" type="Camera3D" parent="FreeCamera" unique_id=1884994013]
 physics_interpolation_mode = 1
-fov = 32.0
+fov = 52.0

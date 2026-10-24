@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dy2fy10bg51nl" path="res://assets/furnitures/sofas/sofa_1/textures/sofa_02_diff_4k.jpg" id="5_eto3q"]
 [ext_resource type="Texture2D" uid="uid://clmljfub7g15x" path="res://assets/furnitures/sofas/sofa_1/textures/sofa_02_metallic-sofa_02_roughness.png" id="6_wr3il"]
 [ext_resource type="Texture2D" uid="uid://dfm4ocdyahd36" path="res://assets/furnitures/sofas/sofa_1/textures/sofa_02_nor_gl.png" id="7_0yfnd"]
+[ext_resource type="Script" uid="uid://d38knte807kiv" path="res://modules/scene_manager/clickables/floor.gd" id="9_wr3il"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bkipq"]
 resource_name = "sofa_02"
@@ -240,6 +241,7 @@ omni_attenuation = 0.25
 [node name="Physics" type="Node3D" parent="." index="2" unique_id=2007222106]
 
 [node name="Floor" type="StaticBody3D" parent="Physics" index="0" unique_id=827667415]
+script = ExtResource("9_wr3il")
 
 [node name="Shape" type="CollisionShape3D" parent="Physics/Floor" index="0" unique_id=1057717530]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14310122, 0)
