@@ -1,7 +1,9 @@
 extends Control
 
+@onready var _container := $Container
 @onready var _selection := $Selection
-@onready var _main_panel := $Main/Panels/MainPanel
+@onready var _main_panel := $Container/UI/Main/Panels/MainPanel
+@onready var _world_view : SubViewport = $Container/WorldView/SubViewport
 
 var _library := LibraryManager.new()
 var _scene_manager : SceneManager
@@ -35,6 +37,14 @@ func set_main_panel(_panel: String):
 	
 	_selection.add_child(_person_selection)
 	_main_panel.add_child(_looks_selection)
+
+
+func show_ui(show_panels: bool,to_reparent: Node3D):
+	_container.visible = show_panels
+	if _person_selection:
+		_person_selection.show_add_button = show_panels
+	if to_reparent and show_panels:
+		to_reparent.reparent(_world_view)
 
 
 func person_clicked(person_id: int):

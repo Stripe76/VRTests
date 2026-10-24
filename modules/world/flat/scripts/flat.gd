@@ -1,9 +1,6 @@
 extends Node3D
 
-@onready var ui := $UIContainer/UI
-@onready var ui_container := $UIContainer
-@onready var ui_world_view : SubViewport = $UIContainer/WorldView/SubViewport
-
+@onready var ui := $UI
 @onready var world  = $World
 @onready var player := $Player
 @onready var scene_manager : SceneManager = $SceneManager
@@ -40,20 +37,15 @@ func switch_ui():
 	else:
 		player.process_mode = Node.PROCESS_MODE_ALWAYS
 	
-	ui_container.visible = ui_active
+	ui.show_ui(ui_active,player)
 	
-	if ui_active:
-		player.reparent(ui_world_view)
-	else:
+	if not ui_active:
 		player.reparent(self)
 
 
 func generate_action_map():
-	#add_action("SwitchMode",[MouseButton.MOUSE_BUTTON_RIGHT,KEY_ESCAPE])
 	add_action("SwitchMode",[KEY_ESCAPE])
 	
-	add_action("NextMesh",[Key.KEY_2])
-	add_action("NextMaterial",[Key.KEY_1])
 	add_action("StartAnimation",[Key.KEY_SPACE])
 
 

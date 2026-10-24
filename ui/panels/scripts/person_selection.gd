@@ -1,7 +1,15 @@
 extends Control
 
+@export var show_add_button : bool:
+	set(value):
+		_add_button.visible = value
+	get:
+		return _add_button.visible
+
 var _scene_manager : SceneManager
 var _person_button : PackedScene = load("res://ui/panels/person_button.tscn")
+
+var _add_button : PersonButton
 
 
 func set_scene_manager(scene_manager: SceneManager):
@@ -34,7 +42,7 @@ func persons_list_changed(scene_manager: SceneManager,persons: Array):
 			button.theme_type_variation = "SelectedButton" if i == scene_manager.current_person else ""
 			
 			add_child(button)
-	var add_button : PersonButton = _person_button.instantiate().with_data(scene_manager.get_library(),-1,-1)
-	add_button.theme_type_variation = "SelectedButton" if scene_manager.current_person < 0 else ""
+	_add_button = _person_button.instantiate().with_data(scene_manager.get_library(),-1,-1)
+	_add_button.theme_type_variation = "SelectedButton" if scene_manager.current_person < 0 else ""
 	
-	add_child(add_button)
+	add_child(_add_button)
