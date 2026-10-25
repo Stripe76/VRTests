@@ -1,5 +1,4 @@
-class_name LooksButton
-extends Button
+class_name LooksButton extends Button
 
 @onready var _notifier : VisibleOnScreenNotifier2D = $Notifier
 

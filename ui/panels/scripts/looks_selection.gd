@@ -1,6 +1,6 @@
 extends Control
 
-@onready var items := $ScrollContainer/Items
+@onready var items := $Items
 
 var library : LibraryManager
 var looks_button : PackedScene = load("res://ui/panels/looks_button.tscn")
