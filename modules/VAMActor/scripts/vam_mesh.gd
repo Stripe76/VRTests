@@ -100,14 +100,14 @@ func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: St
 	
 	#print("Meshes creation")
 	var meshes : Array = create_meshes(base_model,
-									model_vertices,
-									model_normals,
-									model_indices,
-									model_uvs,
-									model_weights,
-									model_vertex_groups,
-									bones_to_include,
-									treshold)
+										model_vertices,
+										model_normals,
+										model_indices,
+										model_uvs,
+										model_weights,
+										model_vertex_groups,
+										bones_to_include,
+										treshold)
 	
 	#print("Materials settings")
 	set_materials(meshes[MESH_BODY])
@@ -230,7 +230,7 @@ const BONES_NUMBER := 8
 func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model_normals: PackedVector3Array,model_indices: Array,model_uvs: PackedVector2Array,model_weights: Array,model_vertex_groups: Dictionary,bones_to_include: Array,treshold: float) -> Array:
 	# Head vertices are used for hair grooming
 	var head_materials = [11,15] # 15 e 11
-	var head_vertices := []
+	var head_vertices := PackedVector3Array()
 	
 	var surfaces := create_surfaces(daz_model,
 									model_vertices,
@@ -345,48 +345,21 @@ func create_surfaces(daz_model: Daz3DMesh,
 					tris += 3
 					continue
 			
-			var index = model_indices[tris]
-			
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in BONES_NUMBER:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if not to_extract.is_empty() and to_extract.has(material):
-				extracted_vertices.push_back(model_vertices[index])
-			tris += 1
-		
-			index = model_indices[tris]
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in BONES_NUMBER:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if material == 15 or material == 11 or material == 18:
-				extracted_vertices.push_back(model_vertices[index])
-			tris += 1
-			
-			index = model_indices[tris]
-			#mesh_indices.push_back(mesh_vertices.size())
-			mesh_vertices.push_back(model_vertices[index])
-			mesh_uvs.push_back(model_uvs[index])
-			mesh_normals.push_back(model_normals[index])
-			for c in BONES_NUMBER:
-				mesh_bones.push_back(model_weights[index]["s"][c*2])
-				mesh_weights.push_back(model_weights[index]["s"][c*2+1])
-			mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
-			
-			if material == 15 or material == 11:
-				extracted_vertices.push_back(model_vertices[index])
-			tris += 1
+			for i in 3:
+				var index = model_indices[tris]
+				
+				#mesh_indices.push_back(mesh_vertices.size())
+				mesh_vertices.push_back(model_vertices[index])
+				mesh_uvs.push_back(model_uvs[index])
+				mesh_normals.push_back(model_normals[index])
+				for c in BONES_NUMBER:
+					mesh_bones.push_back(model_weights[index]["s"][c*2])
+					mesh_weights.push_back(model_weights[index]["s"][c*2+1])
+				mesh_colors.push_back(get_vertex_color(model_vertex_groups,map,index))
+				
+				if not to_extract.is_empty() and to_extract.has(material):
+					extracted_vertices.push_back(model_vertices[index])
+				tris += 1
 		else:
 			tris += 3
 	return surfaces
@@ -492,7 +465,7 @@ func add_morphs(vertices: PackedVector3Array,linked_vertices: Dictionary,scene_d
 							#apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value,24759)
 							continue
 						else:
-							print("Applying body deltas: ",path)
+							#print("Applying body deltas: ",path)
 							apply_deltas(vertices,linked_vertices,read_binary_file(path.replace(".vmi",".vmb")),value)
 
 
@@ -500,7 +473,7 @@ func add_morphs_new(vertices: PackedVector3Array,linked_vertices: Dictionary,lib
 	var morphs : Array = library.Looks_GetMorphs(looksID)
 	for morph in morphs:
 		if morph["type"] != "genitalia":
-			print("Applying body deltas: ",morph["meshFile"])
+			#print("Applying body deltas: ",morph["meshFile"])
 			var value : float =  morph["value"]
 			apply_deltas_new(vertices,linked_vertices,morph["meshData"],value)
 
@@ -546,7 +519,7 @@ func apply_deltas_new(vertices: PackedVector3Array, linked_vertices: Dictionary,
 				for c in linked_vertices[deltaID]:
 					vertices[c] += d["delta"] * value
 		else:
-			#push_warning("Delta ID too high: ",delta.id)
+			#push_warning("Delta ID too high: ",deltaID)
 			continue
 
 

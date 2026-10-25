@@ -52,6 +52,5 @@
     <Content Include="modules\VAMActor\scripts\vam_skeleton.gd.uid" />
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd" />
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd.uid" />
-    <Content Include="PROXYAI.md" />
   </ItemGroup>
 </Project>

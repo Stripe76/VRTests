@@ -9,6 +9,7 @@
 script = ExtResource("1_0shs7")
 
 [node name="World" parent="." unique_id=2127073411 groups=["WallsVisibility"] instance=ExtResource("1_02e27")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
 
 [node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
 

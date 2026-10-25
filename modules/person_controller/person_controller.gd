@@ -11,11 +11,26 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export var enable_Y : bool
 @export var enable_Z : bool
 @export var enable_rotation : bool
+@export var person_position : Vector3:
+	get:
+		return _skeleton.global_position
+@export var person_rotation : Vector3:
+	get:
+		return _skeleton.rotation
+@export var person_forward : Vector3:
+	get:
+		return _skeleton.global_transform.basis.z
 
 @export_group("Ragdoll")
 @export var enable_ragdoll : bool:
 	set(value):
 		enable_ragdoll = value
+		
+		_head.pinned_on = false
+		_left_arm.ik_on = false
+		_right_arm.ik_on = false
+		_left_leg.ik_on = false
+		_right_leg.ik_on = false
 		
 		var simulator : PhysicalBoneSimulator3D = _skeleton.get_node("Ragdoll")
 		if simulator:
@@ -120,13 +135,17 @@ func _on_skeleton_updated():
 func random_push(bone: PhysicalBone3D,forward: float):
 	if bone:
 		var angle := randf_range(0.0,2.0 * PI)
-		var push_direction := Vector3(cos(angle),0.0,forward)
+		var push_direction := person_forward.normalized()
+		if forward > 0:
+			push_direction = push_direction.rotated(Vector3.UP,randf_range(-PI/4,PI/4))
+		else:
+			push_direction = push_direction.rotated(Vector3.UP,PI+randf_range(-PI/4,PI/4))
 		var push_force := 2500.0 * absf(forward)
 		
 		bone.apply_central_impulse(push_direction * push_force)
 		
-		var random_spin := Vector3(randf_range(-2.0, 2.0), randf_range(-5.0, 5.0), randf_range(-2.0, 2.0))
-		bone.angular_velocity = random_spin
+		#var random_spin := Vector3(randf_range(-2.0, 2.0), randf_range(-5.0, 5.0), randf_range(-2.0, 2.0))
+		#bone.angular_velocity = random_spin
 
 
 func root_on_changed(limb: PersonLimb, root_on: bool):
@@ -315,8 +334,8 @@ func create_joints(skeleton: Skeleton3D) -> void:
 
 
 func create_springs(skeleton: Skeleton3D) -> void:
-	add_head_spring("head_spring",skeleton,Bones.NECK_BONE)
-	add_torso_spring("torso",skeleton,Bones.ABDOMEN_BONE_1)
+	#add_head_spring("head_spring",skeleton,Bones.NECK_BONE)
+	#add_torso_spring("torso",skeleton,Bones.ABDOMEN_BONE_1)
 
 	add_breast_spring("left",skeleton,Bones.BREAST_LEFT_BONE,0.8)
 	add_breast_spring("right",skeleton,Bones.BREAST_RIGHT_BONE,1.2)
@@ -335,7 +354,7 @@ func create_iks(skeleton: Skeleton3D,parent: Node3D)-> void:
 		container.name = "IKControllers"
 		skeleton.add_child(container)
 		container.owner = parent
-		container.visible = false
+		container.visible = not Engine.is_editor_hint()
 
 	add_head_ik(skeleton,parent,container,_head,Bones.HEAD_BONE,Bones.EYE_LEFT_BONE,Bones.EYE_RIGHT_BONE)
 	
@@ -420,6 +439,10 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controll
 	ik_head.name = "HeadIK"
 	ik_head.bone = head_bone
 	ik_head.active = false
+	ik_head.use_angle_limitation = true
+	ik_head.symmetry_limitation = true
+	ik_head.primary_limit_angle = deg_to_rad(90)
+	ik_head.secondary_limit_angle = deg_to_rad(90)
 	
 	var ik_left_eye := LookAtModifier3D.new()
 	ik_left_eye.name = "LeftEyeIK"
@@ -442,18 +465,22 @@ func add_head_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,controll
 	var target_origin := Node3D.new()
 	target_origin.name = "LookAtOrigin"
 	target_origin.position = Vector3(0,1.65,0)
+	target_origin.top_level = true
 	container.add_child(target_origin)
 	target_origin.owner = parent
 	
 	var target_head := MeshInstance3D.new()
 	target_head.name = "LookAtHead"
-	target_head.position = Vector3(0,0,1)
-	add_placeholder(target_head,Color(0,0,1),0.025)
+	target_head.position = Vector3(0,0,0)
+	if Engine.is_editor_hint():
+		add_placeholder(target_head,Color(0,0,1),0.025)
 	
 	var target_eyes := MeshInstance3D.new()
 	target_eyes.name = "LookAtEyes"
 	target_eyes.position = Vector3(0,1.65,1)
-	add_placeholder(target_eyes,Color(0,0,1),0.025)
+	if Engine.is_editor_hint():
+		add_placeholder(target_eyes,Color(0,0,1),0.025)
+	
 	var target_left_eye := Node3D.new()
 	target_left_eye.name = "LeftEye"
 	target_left_eye.position = Vector3(0.025,0,0)
@@ -531,8 +558,9 @@ func add_limb_ik(skeleton: Skeleton3D,parent: Node3D,container : Node3D,side: St
 	container.add_child(pole_node)
 	pole_node.owner = parent
 	
-	add_placeholder(pole_node,Color(0,1,0))
-	add_placeholder(target_node,Color(1,0,0))
+	if Engine.is_editor_hint():
+		add_placeholder(pole_node,Color(0,1,0))
+		add_placeholder(target_node,Color(1,0,0))
 	
 	ik_node.set_pole_node(0,pole_node.get_path())
 	ik_node.set_target_node(0,target_node.get_path())
@@ -563,7 +591,7 @@ func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) ->
 	sphere.material = material
 	
 	mesh.mesh = sphere
-	mesh.visible = Engine.is_editor_hint()
+	#mesh.visible = Engine.is_editor_hint()
 
 
 func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
@@ -613,9 +641,10 @@ func add_physical_bone(bone_idx: int,
 						no_collision: bool = false,
 						limb : PersonLimb = null) -> void:
 	var bone_name := skeleton.get_bone_name(bone_idx)
-	var bone = BoneAttachment3D.new()
+	var bone = ModifierBoneTarget3D.new()
 	bone.name = bone_name
-	bone.bone_idx = bone_idx
+	bone.bone_name = bone_name
+	#bone.bone = bone_idx
 
 	var mesh = Area3D.new()
 	mesh.name = "Mesh"
@@ -757,7 +786,7 @@ func add_breast_spring(spring:String,skeleton: Skeleton3D,bone: int,_variance: f
 
 
 func add_arm_spring(spring:String,skeleton: Skeleton3D,bone: int):
-	add_spring(spring+"_collar",skeleton,bone,1,3.5,0.5)
+	add_spring(spring+"_collar",skeleton,bone,1,3.5,0.1)
 	add_spring(spring+"_shoulder",skeleton,bone+1,1,1.0,0.2)
 	add_spring(spring+"_elbow",skeleton,bone+2,1,1.0,0.2)
 	add_spring(spring+"_wrist",skeleton,bone+3,1,1.0,0.2)

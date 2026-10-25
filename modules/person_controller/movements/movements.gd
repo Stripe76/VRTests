@@ -16,6 +16,15 @@ func set_person_controller(person_controller: PersonController) -> void:
 	if not person_controller:
 		return
 	for n : Node in person_controller.get_children():
+		if n.name.ends_with("Head"):
+			for r in n.get_children():
+				n.remove_child(r)
+				r.free()
+			for c : Node in $Head.get_children():
+				var copy = c.duplicate()
+				n.add_child(copy)
+				copy.owner = get_parent()
+	
 		if n.name.ends_with("Arm"):
 			for r in n.get_children():
 				n.remove_child(r)

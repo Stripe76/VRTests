@@ -19,7 +19,8 @@ func _init() -> void:
 func _ready() -> void:
 	$UI.theme = load("res://resources/theme.tres")
 	
-	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	#_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	_library.LoadData("/mnt/data/Projects/Godot/library/")
 	
 	scene_manager.set_world(world)
 	scene_manager.set_library(_library)

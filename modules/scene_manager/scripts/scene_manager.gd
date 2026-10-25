@@ -68,6 +68,11 @@ func set_person_position(origin: Vector3,position: Vector3):
 		_current_person.look_at(origin,Vector3.UP,true)
 
 
+func walk_person_to(glb_position: Vector3):
+	if _current_person:
+		_current_person.walk_to(glb_position)
+
+
 func looks_loaded():
 	start_animation("RESET")
 

@@ -19,6 +19,9 @@ class_name PersonMove extends Node
 	get:
 		return speed
 @export var duration : float
+@export_range(-1,1) var width : float
+@export_range(-1,1) var height : float
+@export_range(-1,1) var length : float
 
 signal move_ended
 

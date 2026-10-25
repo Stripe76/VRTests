@@ -142,7 +142,7 @@ public partial class LibraryManager : Node
 				}
 				//GD.Print(archive + " " + textureFile);
 			}
-			return LoadImage( archive,textureFile );
+			return LoadImage( archive,textureFile,true );
 		}
 		return new Image( );
 	}
@@ -320,7 +320,7 @@ public partial class LibraryManager : Node
 		}
 	}
 
-	private Image LoadImage( string archiveFile,string filename )
+	private Image LoadImage( string archiveFile,string filename,bool trace = false )
 	{
 		var image = new Image( );
 		try
@@ -328,7 +328,9 @@ public partial class LibraryManager : Node
 			//GD.Print( "archiveFile: " + archiveFile );
 			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
 			{
-				//GD.Print( "filename: " + filename );
+				if( trace )
+					TraceArchiveFile( archiveFile,filename );
+				
 				var entry = archive.GetEntry( filename );
 				if( entry != null )
 				{
@@ -367,6 +369,8 @@ public partial class LibraryManager : Node
 		{
 			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
 			{
+				TraceArchiveFile( archiveFile,filename );
+				
 				var entry = archive.GetEntry( filename );
 				if( entry != null )
 				{
@@ -543,5 +547,19 @@ public partial class LibraryManager : Node
 		elements = [];
 			
 		return false;
+	}
+
+	private static List<string> __files = [];
+	private void TraceArchiveFile( string archiveFile,string filename )
+	{
+#if DEBUG && false
+		string s = archiveFile;
+		if( !__files.Contains( s ) )
+		{
+			__files.Add( s );
+			
+			GD.PrintS( "Loaded from archive:",archiveFile );
+		}
+#endif
 	}
 }

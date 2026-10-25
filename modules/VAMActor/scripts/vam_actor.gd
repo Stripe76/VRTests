@@ -21,19 +21,21 @@ class_name VAMActor extends Node3D
 @onready var target := $Target
 @onready var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 
-var _person_id : int = -1
-
-var _look_id : int = -1
 var _library : LibraryManager
+var _person_id : int = -1
+var _look_id : int = -1
 
 var _mesh : VAMMesh
 var _hair : VAMHair
 var _skeleton : VAMSkeleton
 var _person_controller : PersonController
 
+var _cloth : VAMCloth
+
 var _mesh_thread : Thread
 var _materials_thread : Thread
 var _load_hair := false
+var _load_cloth := true
 
 var _mutex = Mutex.new()
 var _loading_scene := false
@@ -94,7 +96,7 @@ func reset():
 func debug_generate_model():
 	if not _library:
 		_library = LibraryManager.new()
-		_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+		_library.LoadData("/mnt/data/Projects/Godot/library/")
 	if _library:
 		load_look(_library,test_look_id,Vector3())
 
@@ -112,6 +114,16 @@ func debug_set_ragdoll():
 		$PhysicsToggle.activate_physics = true
 		
 		_person_controller.enable_ragdoll = ragdoll_active
+
+
+func walk_to(glb_position: Vector3):
+	_person_controller.enable_X = true
+	_person_controller.enable_Y = true
+	_person_controller.enable_Z = true
+	_person_controller.enable_rotation = true
+	
+	$Target.global_position = glb_position
+	$Movements/Walking.start()
 
 
 func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
@@ -171,6 +183,25 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	$Movements.person_controller = _person_controller
 	
 	#eyes_color = randf_range(0,5)
+	
+	if _load_cloth:
+		_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
+		_cloth.name = "VAMCloth1"
+		_cloth.file_name = "_sweater.vab"
+		_cloth.generate_mesh(library,_look_id)
+		_cloth.skeleton = _skeleton.get_path()
+			
+		_skeleton.add_child(_cloth)
+		_cloth.owner = self
+		
+		#_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
+		#_cloth.name = "VAMCloth2"
+		#_cloth.file_name = "_skirt.vab"
+		#_cloth.generate_mesh(library,_look_id)
+		#_cloth.skeleton = _skeleton.get_path()
+			#
+		#_skeleton.add_child(_cloth)
+		#_cloth.owner = self
 	
 	if _load_hair:
 		_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )
