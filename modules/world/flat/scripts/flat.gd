@@ -1,11 +1,15 @@
 extends Node3D
 
-@onready var ui := $UI
 @onready var world  = $World
 @onready var player := $Player
+@onready var container := $UI/Container
+@onready var world_view := $UI/Container/WorldView/SubViewport
 @onready var scene_manager : SceneManager = $SceneManager
 
+var ui : UI
 var ui_active := false
+
+var _library := LibraryManager.new()
 
 
 func _init() -> void:
@@ -13,10 +17,19 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	scene_manager.set_world(world)
-	scene_manager.set_library(ui.get_library( ))
+	$UI.theme = load("res://resources/theme.tres")
 	
-	ui.set_scene_manager(scene_manager)
+	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	
+	scene_manager.set_world(world)
+	scene_manager.set_library(_library)
+	
+	ui = UI.new(_library,
+				scene_manager,
+				%MainMenu,
+				%MainPanel,
+				%Persons)
+	add_child(ui)
 	
 	switch_ui()
 
@@ -32,14 +45,17 @@ func _input(event: InputEvent) -> void:
 func switch_ui():
 	ui_active = not ui_active
 	
+	#if ui_active:
+		#player.process_mode = Node.PROCESS_MODE_DISABLED
+	#else:
+		#player.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	container.visible = ui_active
+	ui.show_add_button = ui_active
+	
 	if ui_active:
-		player.process_mode = Node.PROCESS_MODE_DISABLED
+		player.reparent(world_view)
 	else:
-		player.process_mode = Node.PROCESS_MODE_ALWAYS
-	
-	ui.show_ui(ui_active,player)
-	
-	if not ui_active:
 		player.reparent(self)
 
 

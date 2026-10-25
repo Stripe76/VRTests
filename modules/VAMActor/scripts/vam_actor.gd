@@ -170,9 +170,7 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	$Movements.person_controller = _person_controller
 	
-	#_skeleton.owner = self
-	#_mesh.owner = self
-	#_person_controller.owner = self
+	#eyes_color = randf_range(0,5)
 	
 	if _load_hair:
 		_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )

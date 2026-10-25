@@ -35,4 +35,5 @@ delta_curve = SubResource("Curve_20j0k")
 
 [node name="Camera3D" type="Camera3D" parent="FreeCamera" unique_id=1884994013]
 physics_interpolation_mode = 1
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 0, 0)
 fov = 52.0
