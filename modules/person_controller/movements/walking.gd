@@ -55,7 +55,8 @@ func start():
 	go = true
 	last_distance = 1_000_000
 	
-	var spd := randf_range(1.0,1.5)
+	#var spd := randf_range(1.3,2.0)
+	var spd := 1.35
 	
 	ll_push.speed = 1
 	rl_push.speed = 1
@@ -150,7 +151,7 @@ func ll_push_ended():
 		
 		ts_left.start()
 		hd_left.start()
-	elif false:
+	elif true:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()
@@ -202,7 +203,7 @@ func rl_push_ended():
 		
 		ts_right.start()
 		hd_right.start()
-	elif false:
+	elif true:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()

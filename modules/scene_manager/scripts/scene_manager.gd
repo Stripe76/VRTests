@@ -68,6 +68,11 @@ func set_person_position(origin: Vector3,position: Vector3):
 		_current_person.look_at(origin,Vector3.UP,true)
 
 
+func set_person_cloth(cloth_id: int):
+	if _current_person:
+		_current_person.add_cloth(_library,cloth_id,true)
+
+
 func walk_person_to(glb_position: Vector3):
 	if _current_person:
 		_current_person.walk_to(glb_position)

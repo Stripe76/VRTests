@@ -15,8 +15,11 @@ public partial class LibraryManager : Node
 	private readonly string _sceneFolder = Path.Combine( "Saves","scene" ); 
 	private readonly string _appearanceFolder = Path.Combine( "Saves","Person","appearance" ); 
 	private readonly string _appearanceVAPFolder = Path.Combine( "Custom","Atom","Person","Appearance" ); 
+
+	private readonly string _clothesFolder = Path.Combine( "Custom","Clothing","Female" ); 
 	
 	private readonly LooksList _looks = [];
+	private readonly ClothList _clothes = [];
 	
 	private string _libraryFolder;
 	
@@ -36,10 +39,10 @@ public partial class LibraryManager : Node
 						foreach( var entry in archive.Entries )
 						{
 							//GD.Print( entry.FullName );
-							if ( ( entry.FullName.StartsWith( _sceneFolder,StringComparison.OrdinalIgnoreCase ) &&
-								   entry.FullName.EndsWith( ".json",StringComparison.OrdinalIgnoreCase ) ) ||
-								 ( entry.FullName.StartsWith( _appearanceFolder,StringComparison.OrdinalIgnoreCase ) &&
-								   entry.FullName.EndsWith( ".json",StringComparison.OrdinalIgnoreCase ) ) )
+							if( (entry.FullName.StartsWith( _sceneFolder,StringComparison.OrdinalIgnoreCase ) &&
+							     entry.FullName.EndsWith( ".json",StringComparison.OrdinalIgnoreCase )) ||
+							    (entry.FullName.StartsWith( _appearanceFolder,StringComparison.OrdinalIgnoreCase ) &&
+							     entry.FullName.EndsWith( ".json",StringComparison.OrdinalIgnoreCase )) )
 							{
 								AddScene( file,entry );
 
@@ -56,7 +59,12 @@ public partial class LibraryManager : Node
 								AddSceneVAP( file,entry );
 							}
 							*/
-							
+							if( (entry.FullName.StartsWith( _clothesFolder,StringComparison.OrdinalIgnoreCase ) &&
+							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
+							{
+								AddClothes( file,entry );
+							}
+
 						}
 					}
 				}
@@ -73,6 +81,7 @@ public partial class LibraryManager : Node
 		Task.Run( ( ) => LoadData( folder ) );
 	}
 
+	#region Looks
 	public int Looks_GetCount( )
 	{
 		return _looks.Count;
@@ -220,6 +229,268 @@ public partial class LibraryManager : Node
 		}
 		return null;
 	}
+	#endregion
+	
+	#region Clothes
+	public int Clothes_GetCount( )
+	{
+		return _clothes.Count;
+	}
+
+	public Texture2D Clothes_GetPreviewImage( int clothID )
+	{
+		if( clothID >= 0 && clothID < _clothes.Count )
+		{
+			var cloth = _clothes[clothID];
+			try
+			{
+				var image = LoadImage( cloth.Archive,cloth.PreviewImageFile );
+
+				return ImageTexture.CreateFromImage( image );
+			}
+			catch( Exception e )
+			{
+				GD.PushError( e.Message );
+			}
+		}
+		return null;
+	}
+	public Dictionary Clothes_GetClothMeshData( int clothID )
+	{
+		if( clothID >= 0 && clothID < _clothes.Count )
+		{
+			var cloth = _clothes[clothID];
+
+			string binaryFile = cloth.ClothFile.Replace( ".vaj",".vab" );  
+			var data = new Dictionary
+			{
+				{ "meshFile",binaryFile },
+				{ "meshData",LoadClothMeshData( cloth.Archive,binaryFile ) },
+				{ "materials",LoadClothMaterials( cloth.Archive,cloth.ClothFile,cloth.Folder )}
+			};
+			return data;
+		}
+		return new Dictionary( );
+	}
+	
+	public Image Clothes_GetTextureImage( int clothID,string textureFile )
+	{
+		if( clothID >= 0 && clothID < _clothes.Count )
+		{
+			var look = _clothes[clothID];
+			string archive = look.Archive;
+
+			return LoadImage( archive,textureFile,true );
+		}
+		return new Image( );
+	}
+
+	private void AddClothes( string archive,ZipArchiveEntry entry )
+	{
+		_clothes.Add( new Cloth(  )
+		{
+			ID = _clothes.Count,
+			Archive = archive,
+			Title = entry.Name.Replace( ".vaj","" ),
+			Folder = entry.FullName.Replace( entry.Name,"" ),
+			ClothFile = entry.FullName,
+			PreviewImageFile = entry.FullName.Replace( ".vaj",".jpg" )
+		} );
+	}
+
+	private Dictionary LoadClothMeshData(string archiveFile,string filename)
+	{
+		var data = new Dictionary( );
+		try
+		{
+			GD.Print( filename );
+			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
+			{
+				TraceArchiveFile( archiveFile,filename );
+				
+				var entry = archive.GetEntry( filename );
+				if( entry != null )
+				{
+#if DEBUG
+					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current.vab",true );
+#endif
+					using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
+					{
+						SkipStrings( reader,8 );
+
+						var verticesCount = reader.ReadInt32( );
+						var vertices = new Vector3[verticesCount];
+
+						if( verticesCount is < 0 or > 65535 )
+						{
+							GD.PrintErr( "LoadClothMeshData: too many vertices" );
+							return data;
+						}
+						for( int i = 0; i < verticesCount; i++ )
+						{
+							vertices[i] = new Vector3( -reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
+						}
+						data.Add( "vertices",vertices );
+
+						SkipStrings( reader );
+
+						var indicesCount = reader.ReadInt32( );
+						if( indicesCount is < 0 or > 65535 )
+						{
+							GD.PrintErr( "LoadClothMeshData: too many indices" );
+							return data;
+						}
+						var indices = new int[indicesCount*6];
+						for( int i = 0; i < indicesCount; i++ )
+						{
+							var material = reader.ReadInt32( );
+							var idxs = reader.ReadInt32( );
+							
+							var c = reader.ReadInt32( );
+							var d = reader.ReadInt32( );
+							var e = reader.ReadInt32( );
+							int f = 0;
+
+							if ( idxs == 4 )
+								f = reader.ReadInt32( );
+							if ( idxs == 5 )
+								reader.ReadInt32( );
+
+							var start = i * 6;
+							indices[start] = c;
+							indices[start+1] = e;
+							indices[start+2] = d;
+
+							if( idxs == 4 )
+							{
+								indices[start + 3] = f;
+								indices[start + 4] = e;
+								indices[start + 5] = c;
+							}
+						}
+						for( int i = 0; i < indicesCount; i++ )
+						{
+							reader.ReadInt32( );
+							var idxs = reader.ReadInt32( );
+							
+							reader.ReadInt32( );
+							reader.ReadInt32( );
+							reader.ReadInt32( );
+
+							if ( idxs == 4 )
+								reader.ReadInt32( );
+							if ( idxs == 5 )
+								reader.ReadInt32( );
+						}
+						data.Add( "indices",indices );
+						
+						var uvsCount = reader.ReadInt32( );
+						if( uvsCount is < 0 or > 65535 )
+						{
+							GD.PrintErr( "LoadClothMeshData: too many uvs" );
+							return data;
+						}
+						var uvs = new Vector2[indicesCount*6];
+						for( int i = 0; i < verticesCount; i++ )
+						{
+							uvs[i] = new Vector2( reader.ReadSingle( ),1-reader.ReadSingle( ) );
+						}
+						for( int i = verticesCount; i < uvsCount; i++ )
+						{
+							uvs[i] = new Vector2( reader.ReadSingle( ),1-reader.ReadSingle( ) );
+						}
+						data.Add( "uvs",uvs );
+
+						var count = reader.ReadInt32( );
+						for( int i = 0; i < count; i++ )
+						{
+							reader.ReadInt32( ); reader.ReadInt32( ); reader.ReadInt32( );
+						}
+						SkipStrings( reader,5 );
+						
+						var skinsCount = reader.ReadInt32( );
+						var skinIndices = new int[skinsCount*4];
+						for( int i = 0; i < skinsCount; i++ )
+						{
+							var start = i * 4;
+							skinIndices[start] = reader.ReadInt32( );
+							skinIndices[start+1] = reader.ReadInt32( );
+							skinIndices[start+2] = reader.ReadInt32( );
+							skinIndices[start+3] = reader.ReadInt32( );
+
+							reader.ReadSingle( );
+							reader.ReadSingle( );
+							reader.ReadSingle( );
+							reader.ReadSingle( );
+							
+							reader.ReadSingle( );
+							reader.ReadSingle( );
+						}
+						data.Add( "skin_indices",skinIndices );
+					}
+				}
+			}
+		}
+		catch( Exception e )
+		{
+			GD.PushError( e.Message );
+		}
+		return data;
+		
+	}
+	private Dictionary LoadClothMaterials( string archiveFile,string filename,string folder )
+	{
+		using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
+		{
+			var entry = archive.GetEntry( filename );
+			if( entry != null )
+			{
+				using( StreamReader reader = new StreamReader( entry.Open( ) ) )
+				{
+					var json = reader.ReadToEnd( );
+					using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
+					{
+						var root = doc.RootElement;
+
+						//GD.Print( "JsonDocument" );
+						if( root.TryGetProperty( "storables",out JsonElement storables ) )
+						{
+							var dictionary = new Dictionary( );
+							
+							//GD.Print( "storables" );
+							foreach( JsonElement storable in storables.EnumerateArray( ) )
+							{
+								//GD.Print( "storable" );
+								if( storable.TryGetProperty( "hideMaterial",out JsonElement hideMaterial ) )
+								{
+									if( storable.TryGetProperty( "id",out JsonElement id ) )
+									{
+										var data = new Dictionary( );
+
+										if( storable.TryGetProperty( "customTexture_MainTex",out JsonElement mainTex ) )
+											data.Add( "main_tex",folder + mainTex );
+
+										/*
+										"customTexture_MainTex"
+										"customTexture_SpecTex"
+										"customTexture_GlossTex"
+										"customTexture_AlphaTex"
+										"customTexture_BumpMap"
+										"customTexture_DecalTex"
+										*/
+										dictionary.Add( id.ToString( ),data );
+									}
+								}
+							}
+							return dictionary;
+						}
+					}
+				}
+			}
+		}
+		return new Dictionary( );
+	}
+	#endregion
 	
 	private void AddScene( string archive,ZipArchiveEntry entry )
 	{
@@ -548,11 +819,25 @@ public partial class LibraryManager : Node
 			
 		return false;
 	}
-
+	
+	#region Helpers
+	private void SkipStrings( BinaryReader reader,int howMany = 0 )
+	{
+		if( howMany == 0 )
+			howMany = reader.ReadInt32( );
+		for( int i = 0; i < howMany; i++ )
+		{
+			//byte l = reader.ReadByte( );
+			var s = reader.ReadString( );
+			//GD.Print( s );
+		}
+	}
+	#endregion 
+	
 	private static List<string> __files = [];
 	private void TraceArchiveFile( string archiveFile,string filename )
 	{
-#if DEBUG && false
+#if DEBUG
 		string s = archiveFile;
 		if( !__files.Contains( s ) )
 		{

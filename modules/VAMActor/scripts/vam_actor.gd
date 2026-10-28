@@ -21,7 +21,6 @@ class_name VAMActor extends Node3D
 @onready var target := $Target
 @onready var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 
-var _library : LibraryManager
 var _person_id : int = -1
 var _look_id : int = -1
 
@@ -30,16 +29,18 @@ var _hair : VAMHair
 var _skeleton : VAMSkeleton
 var _person_controller : PersonController
 
-var _cloth : VAMCloth
-
 var _mesh_thread : Thread
 var _materials_thread : Thread
-var _load_hair := false
-var _load_cloth := true
 
 var _mutex = Mutex.new()
 var _loading_scene := false
 var _loading_material := false
+
+# Debug
+var _library : LibraryManager
+var _load_hair := false
+var _load_cloth := true
+var _ragdoll_active := false
 
 
 func with(person_id: int) -> VAMActor:
@@ -55,24 +56,10 @@ func _ready() -> void:
 		$Floor.queue_free()
 
 
-func _process(delta: float) -> void:
-	if _skeleton and false:
-		var distance = (target.position - _skeleton.position).length()
-		#print(distance)
-		var ap : AnimationPlayer = $Actor
-		if distance > 1.5 and not ap.is_playing():
-			_skeleton.look_at(target.position)
-			_skeleton.rotate(Vector3.UP,-PI)
-			
-			ap.play("walking_ik")
-		if distance < 1.0 and ap.is_playing():
-			ap.stop()
-
-
 func _exit_tree():
-	if _mesh_thread:
+	if _mesh_thread and _mesh_thread.is_alive():
 		_mesh_thread.wait_to_finish()
-	if _materials_thread:
+	if _materials_thread and _materials_thread.is_alive():
 		_materials_thread.wait_to_finish()
 
 
@@ -106,14 +93,13 @@ func debug_set_textures():
 		load_materials_async(_library,texture_id)
 
 
-var ragdoll_active := false
 func debug_set_ragdoll():
 	if _person_controller:
-		ragdoll_active = not ragdoll_active
+		_ragdoll_active = not _ragdoll_active
 		
 		$PhysicsToggle.activate_physics = true
 		
-		_person_controller.enable_ragdoll = ragdoll_active
+		_person_controller.enable_ragdoll = _ragdoll_active
 
 
 func walk_to(glb_position: Vector3):
@@ -124,6 +110,26 @@ func walk_to(glb_position: Vector3):
 	
 	$Target.global_position = glb_position
 	$Movements/Walking.start()
+
+
+func add_cloth(library: LibraryManager,cloth_id: int,clear: bool):
+	var cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
+	cloth.name = "VAMCloth"
+	cloth.load_cloth(library,_look_id,cloth_id)
+	cloth.skeleton = _skeleton.get_path()
+	
+	if clear:
+		var remove = []
+		for c in _skeleton.get_children():
+			if c.name.substr(0,8) == "VAMCloth":
+				remove.push_back(c)
+		for c in remove:
+			_skeleton.remove_child(c)
+	
+	_skeleton.add_child(cloth)
+	cloth.owner = self
+	
+	pass
 
 
 func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
@@ -184,15 +190,15 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	
 	#eyes_color = randf_range(0,5)
 	
-	if _load_cloth:
-		_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
-		_cloth.name = "VAMCloth1"
-		_cloth.file_name = "_sweater.vab"
-		_cloth.generate_mesh(library,_look_id)
-		_cloth.skeleton = _skeleton.get_path()
-			
-		_skeleton.add_child(_cloth)
-		_cloth.owner = self
+	#if _load_cloth:
+		#_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
+		#_cloth.name = "VAMCloth1"
+		#_cloth.file_name = "_skirt.vab"
+		#_cloth.generate_mesh(library,_look_id)
+		#_cloth.skeleton = _skeleton.get_path()
+			#
+		#_skeleton.add_child(_cloth)
+		#_cloth.owner = self
 		
 		#_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
 		#_cloth.name = "VAMCloth2"
@@ -202,6 +208,7 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 			#
 		#_skeleton.add_child(_cloth)
 		#_cloth.owner = self
+		
 	
 	if _load_hair:
 		_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )

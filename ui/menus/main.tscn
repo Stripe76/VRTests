@@ -40,38 +40,95 @@ size_flags_horizontal = 3
 script = ExtResource("2_taq5d")
 
 [node name="Menu" parent="." unique_id=809672406 instance=ExtResource("3_k44pi")]
+name_override = null
+sub_parameter = null
 
 [node name="Person" type="Node" parent="Menu" unique_id=1814442686]
 script = ExtResource("4_qmvml")
-title = "Person"
+name_override = null
+sub_parameter = null
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
 [node name="Looks" type="Node" parent="Menu/Person" unique_id=891386259]
 script = ExtResource("4_qmvml")
-title = "Looks"
+name_override = null
 command = "set_main_panel"
 parameter = "person_looks"
+sub_parameter = null
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
 [node name="Skin" type="Node" parent="Menu/Person" unique_id=1595303149]
 script = ExtResource("4_qmvml")
-title = "Skin"
+name_override = null
 command = "set_main_panel"
 parameter = "person_skins"
+sub_parameter = null
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AB" type="Node" parent="Menu" unique_id=884066021]
+[node name="Clothes" type="Node" parent="Menu" unique_id=884066021]
 script = ExtResource("4_qmvml")
+name_override = null
+sub_parameter = null
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AE" type="Node" parent="Menu/AB" unique_id=1183026014]
+[node name="All" type="Node" parent="Menu/Clothes" unique_id=2140515168]
 script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "all"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="AD" type="Node" parent="Menu/AB" unique_id=389441516]
+[node name="Head" type="Node" parent="Menu/Clothes" unique_id=2043164769]
 script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "head"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Bras" type="Node" parent="Menu/Clothes" unique_id=420690806]
+script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "bras"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Panties" type="Node" parent="Menu/Clothes" unique_id=1096824606]
+script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "panties"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Feet" type="Node" parent="Menu/Clothes" unique_id=267182842]
+script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "feet"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Upper body" type="Node" parent="Menu/Clothes" unique_id=537823551]
+script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "upper_body"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Lower body" type="Node" parent="Menu/Clothes" unique_id=102672954]
+script = ExtResource("4_qmvml")
+name_override = null
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "lower_body"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
 [node name="AC" type="Node" parent="Menu" unique_id=1591394219]
 script = ExtResource("4_qmvml")
+name_override = null
+sub_parameter = null
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"

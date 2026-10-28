@@ -44,7 +44,16 @@ func _ready() -> void:
 	add_to_group("UI")
 
 
-func set_main_panel(panel: String):
+func set_main_panel(panel: String,sub_panel: String):
+	if _main_panel:
+		while _main_panel.get_child_count() > 0:
+			_main_panel.remove_child(_main_panel.get_child(0))
+	
+	if panel != "person_looks":
+		var scene = load("res://ui/panels/"+panel+"/"+panel+".tscn").instantiate().with(_library,_scene_manager,_main_panel)
+		add_child(scene)
+		return
+	
 	if not _looks_selection:
 		_looks_selection = load("res://ui/panels/looks_selection.tscn").instantiate()
 		_looks_selection.library = _library

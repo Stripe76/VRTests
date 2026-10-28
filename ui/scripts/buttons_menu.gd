@@ -7,7 +7,7 @@ func set_buttons(menuItem: MenuItem,clear : bool = false):
 		clear_buttons()
 	for i : MenuItem in menuItem.get_children():
 		var b = Button.new()
-		b.text = i.title
+		b.text = i.name_override if not i.name_override.is_empty() else i.name
 		b.anchor_right = 1
 		b.size_flags_horizontal = Control.SIZE_EXPAND
 		b.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -16,7 +16,7 @@ func set_buttons(menuItem: MenuItem,clear : bool = false):
 			if i.command != "":
 				if sub_menu:
 					sub_menu.clear_buttons()
-				get_tree().call_group("UI",i.command,i.parameter)
+				get_tree().call_group("UI",i.command,i.parameter,i.sub_parameter)
 			elif sub_menu:
 				sub_menu.set_buttons(i,true)
 		)

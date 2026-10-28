@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://ljc8lg8fbv7p"]
+
+[ext_resource type="Script" uid="uid://bmw2firlx1fdl" path="res://ui/panels/clothes/clothes.gd" id="1_u3851"]
+[ext_resource type="Script" uid="uid://c63lm4ly0dscl" path="res://ui/panels/clothes/controls/clothes_selection.gd" id="2_tsf37"]
+
+[node name="Clothes" type="Control" unique_id=1206320979]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u3851")
+
+[node name="AllClothes" type="ScrollContainer" parent="." unique_id=1937301326]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_tsf37")
+
+[node name="Items" type="HFlowContainer" parent="AllClothes" unique_id=64166035]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="item_selected" from="AllClothes" to="." method="_all_clothes_item_selected"]

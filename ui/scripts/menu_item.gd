@@ -3,15 +3,10 @@ extends Node
 
 class_name MenuItem
 
-@export var title : String:
-	set(value):
-		title = value
-		name = title
-	get:
-		return title
-	
+@export var name_override : String
 @export var command : String
 @export var parameter : String
+@export var sub_parameter : String
 
 static func create(title: String, command: String) -> MenuItem:
 	var instance = MenuItem.new()
