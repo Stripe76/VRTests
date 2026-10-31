@@ -16,9 +16,11 @@ public partial class LibraryManager : Node
 	private readonly string _appearanceFolder = Path.Combine( "Saves","Person","appearance" ); 
 	private readonly string _appearanceVAPFolder = Path.Combine( "Custom","Atom","Person","Appearance" ); 
 
+	private readonly string _hairsFolder = Path.Combine( "Custom","Hair","Female" ); 
 	private readonly string _clothesFolder = Path.Combine( "Custom","Clothing","Female" ); 
 	
 	private readonly LooksList _looks = [];
+	private readonly HairList _hairs = [];
 	private readonly ClothList _clothes = [];
 	
 	private string _libraryFolder;
@@ -59,10 +61,21 @@ public partial class LibraryManager : Node
 								AddSceneVAP( file,entry );
 							}
 							*/
+							/*
+							 * Clothes
+							 */
 							if( (entry.FullName.StartsWith( _clothesFolder,StringComparison.OrdinalIgnoreCase ) &&
 							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
 							{
 								AddClothes( file,entry );
+							}
+							/*
+							 * Hairs
+							 */
+							if( (entry.FullName.StartsWith( _hairsFolder,StringComparison.OrdinalIgnoreCase ) &&
+							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
+							{
+								AddHair( file,entry );
 							}
 
 						}
@@ -231,6 +244,197 @@ public partial class LibraryManager : Node
 	}
 	#endregion
 	
+	#region Hair
+	public int Hairs_GetCount( )
+	{
+		return _hairs.Count;
+	}
+
+	public Texture2D Hairs_GetPreviewImage( int hairID )
+	{
+		if( hairID >= 0 && hairID < _hairs.Count )
+		{
+			var hair = _hairs[hairID];
+			try
+			{
+				var image = LoadImage( hair.Archive,hair.PreviewImageFile );
+
+				return ImageTexture.CreateFromImage( image );
+			}
+			catch( Exception e )
+			{
+				GD.PushError( e.Message );
+			}
+		}
+		return null;
+	}
+	public Dictionary Hairs_GetHairMeshData( int hairID )
+	{
+		if( hairID >= 0 && hairID < _hairs.Count )
+		{
+			var hair = _hairs[hairID];
+
+			string binaryFile = hair.HairFile.Replace( ".vaj",".vab" );  
+			var data = new Dictionary
+			{
+				{ "meshFile",binaryFile },
+				{ "meshData",LoadHairMeshData( hair.Archive,binaryFile ) },
+				//{ "materials",LoadHairMaterials( hair.Archive,hair.HairFile,hair.Folder )}
+			};
+			return data;
+		}
+		return new Dictionary( );
+	}
+	
+	public Image Hairs_GetTextureImage( int hairID,string textureFile )
+	{
+		if( hairID >= 0 && hairID < _hairs.Count )
+		{
+			var hair = _hairs[hairID];
+			string archive = hair.Archive;
+
+			return LoadImage( archive,textureFile,true );
+		}
+		return new Image( );
+	}
+
+	private void AddHair( string archive,ZipArchiveEntry entry )
+	{
+		_hairs.Add( new Hair(  )
+		{
+			ID = _clothes.Count,
+			Archive = archive,
+			Title = entry.Name.Replace( ".vaj","" ),
+			Folder = entry.FullName.Replace( entry.Name,"" ),
+			HairFile = entry.FullName,
+			PreviewImageFile = entry.FullName.Replace( ".vaj",".jpg" )
+		} );
+	}
+
+	private Dictionary LoadHairMeshData(string archiveFile,string filename)
+	{
+		var data = new Dictionary( );
+		try
+		{
+			GD.Print( filename );
+			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
+			{
+				TraceArchiveFile( archiveFile,filename );
+				
+				var entry = archive.GetEntry( filename );
+				if( entry != null )
+				{
+#if DEBUG
+					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current_hair.vab",true );
+#endif
+					using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
+					{
+						SkipStrings( reader,2 );
+
+						var meshCount = reader.ReadByte( );
+
+						if( meshCount != 1 )
+							GD.PushWarning( "LoadHairMeshData meash count > 1" );
+
+						SkipStrings( reader,3 );
+
+						reader.ReadInt32( );
+						reader.ReadInt32( );
+						reader.ReadByte( );
+
+						var dataCount = reader.ReadInt32( );
+						for( int i = 0; i < dataCount; i++ )
+							reader.ReadByte( );
+
+						var strandsCount = reader.ReadInt32( );
+						var strands = new Array( );
+						for( int i = 0; i < strandsCount; i++ )
+						{
+							var strandID = reader.ReadInt32( );
+							var verticesCount = reader.ReadInt32( );
+							var vertices = new Vector3[verticesCount];
+
+							if( verticesCount is < 0 or > 255 )
+							{
+								GD.PrintErr( "LoadHairMeshData: too many vertices" );
+								return data;
+							}
+							if( verticesCount > 0 )
+							{
+								for( int v = 0; v < verticesCount; v++ )
+								{
+									vertices[v] = new Vector3( reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
+								}
+								strands.Add( vertices );
+							}
+						}
+						data.Add( "strands",strands );
+					}
+				}
+			}
+		}
+		catch( Exception e )
+		{
+			GD.PushError( e.Message );
+		}
+		return data;
+		
+	}
+	private Dictionary LoadHairMaterials( string archiveFile,string filename,string folder )
+	{
+		return new Dictionary( );
+		using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
+		{
+			var entry = archive.GetEntry( filename );
+			if( entry != null )
+			{
+				using( StreamReader reader = new StreamReader( entry.Open( ) ) )
+				{
+					var json = reader.ReadToEnd( );
+					using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
+					{
+						var root = doc.RootElement;
+
+						//GD.Print( "JsonDocument" );
+						if( root.TryGetProperty( "storables",out JsonElement storables ) )
+						{
+							var dictionary = new Dictionary( );
+							
+							//GD.Print( "storables" );
+							foreach( JsonElement storable in storables.EnumerateArray( ) )
+							{
+								//GD.Print( "storable" );
+								if( storable.TryGetProperty( "hideMaterial",out JsonElement hideMaterial ) )
+								{
+									if( storable.TryGetProperty( "id",out JsonElement id ) )
+									{
+										var data = new Dictionary( );
+
+										if( storable.TryGetProperty( "customTexture_MainTex",out JsonElement mainTex ) )
+											data.Add( "main_tex",folder + mainTex );
+
+										/*
+										"customTexture_MainTex"
+										"customTexture_SpecTex"
+										"customTexture_GlossTex"
+										"customTexture_AlphaTex"
+										"customTexture_BumpMap"
+										"customTexture_DecalTex"
+										*/
+										dictionary.Add( id.ToString( ),data );
+									}
+								}
+							}
+							return dictionary;
+						}
+					}
+				}
+			}
+		}
+		return new Dictionary( );
+	}
+	#endregion
+
 	#region Clothes
 	public int Clothes_GetCount( )
 	{
@@ -277,8 +481,8 @@ public partial class LibraryManager : Node
 	{
 		if( clothID >= 0 && clothID < _clothes.Count )
 		{
-			var look = _clothes[clothID];
-			string archive = look.Archive;
+			var cloth = _clothes[clothID];
+			string archive = cloth.Archive;
 
 			return LoadImage( archive,textureFile,true );
 		}
@@ -312,7 +516,7 @@ public partial class LibraryManager : Node
 				if( entry != null )
 				{
 #if DEBUG
-					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current.vab",true );
+					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current_cloth.vab",true );
 #endif
 					using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
 					{

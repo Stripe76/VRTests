@@ -1,8 +1,11 @@
 @tool
-class_name VAMHair extends Node3D
+class_name VAMHair extends MeshInstanceEx
 
-@export_tool_button("Generate","Reload") var generate = create_hair_editor
+@export_category("Debug")
+@export_tool_button("Generate","Reload") var generate = debug_generate_hair
+@export var _debug_hair_id : int = 8
 
+@export_category("")
 @export var hair_material : ShaderMaterial
 
 @export var force : Vector3:
@@ -30,7 +33,9 @@ class_name VAMHair extends Node3D
 @export_range(0,30) var _how_many : int = 1:
 	set(value):
 		_how_many = value
-		create_hair_editor()
+		
+		if Engine.is_editor_hint():
+			debug_generate_hair()
 	get:
 		return _how_many
 
@@ -52,9 +57,8 @@ class_name VAMHair extends Node3D
 @export_range(0,10) var b_weight_tip: int = 10
 @export_range(-1.5,1.5) var b_variation: float = -0.2
 
-
-var _head_tris: Dictionary
-var _hair_mesh : MeshInstance3D
+# Debug
+var _library : LibraryManager
 var _hair_debug : MeshInstance3D
 
 
@@ -64,11 +68,11 @@ func _notification(what: int) -> void:
 		NOTIFICATION_EDITOR_PRE_SAVE:
 			_editor_owner = owner
 			owner = null
-			_hair_mesh.owner = null
+			#_hair_mesh.owner = null
 			_hair_debug.owner = null
 		NOTIFICATION_EDITOR_POST_SAVE:
 			owner = _editor_owner
-			_hair_mesh.owner = _editor_owner
+			#_hair_mesh.owner = _editor_owner
 			_hair_debug.owner = self
 func _validate_property(property: Dictionary):
 	if ["HairMesh"].has(property["name"]):
@@ -80,14 +84,14 @@ func _ready() -> void:
 	hair_material.shader = load("res://modules/VAMActor/shaders/hair.gdshader")
 	
 	if Engine.is_editor_hint():
-		create_hair_editor()
+		debug_generate_hair()
 
 
 var _last_position : Vector3
 var _last_rotation : Quaternion
 func _physics_process(delta: float) -> void:
 	#if Engine.is_editor_hint():
-	#return
+		#return
 	
 	var head_inv_transform = global_transform.affine_inverse()
 	var gravity = head_inv_transform.basis * Vector3(0, -9.8, 0)
@@ -101,16 +105,13 @@ func _physics_process(delta: float) -> void:
 	var inv_delta_rot = current_rot.inverse() * _last_rotation
 	
 	var head_up = global_transform.basis.y
-	var world_up = Vector3.UP
 	# dot_alignment is 1.0 (upright), 0.0 (horizontal), -1.0 (upside down)
-	var dot_alignment = head_up.dot(world_up)
+	var dot_alignment = head_up.dot(Vector3.UP)
 	# This version hits 0.0 stiffness exactly at the horizontal (90 degrees)
 	# Anything below horizontal remains 0.0
-	var style_strength = clamp(dot_alignment, 0.0, 1.0)
+	var style_strength = clamp(dot_alignment,0.0,1.0)
 	
-	style_strength = pow(style_strength, 2.0)
-	
-	#force_lerp = style_strength
+	force_lerp = pow(style_strength,2.0)
 	
 	_render_process.call_deferred(true,true,shift,inv_delta_rot,gravity,delta,force_lerp,1,0.60)
 	
@@ -120,51 +121,49 @@ func _physics_process(delta: float) -> void:
 	global_position = global_position
 
 
-func create_hair_editor():
-	var filename := "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
+func load_hair(library: LibraryManager,hair_id: int,head_tris: Dictionary):
+	#if not _hair_debug and Engine.is_editor_hint():
+		#_hair_debug = MeshInstance3D.new()
+		#_hair_debug.name = "HairDebug"
+		#add_child(_hair_debug)
+		#_hair_debug.owner = self
 	
-	generate_hair(filename,{})
+	mesh = generate_hair_from_library(library,hair_id,head_tris,_how_many)
+	if mesh:
+		for i in mesh.get_surface_count():
+			set_surface_override_material(i,hair_material)
+	
+	#if _hair_debug and Engine.is_editor_hint():
+		#generate_hair_debug(file,head_tris)
 
 
-func generate_hair(filename: String,head_tris: Dictionary):
-	_head_tris = head_tris
-	var file := FileAccess.open(filename,FileAccess.READ)
-	if not file:
-		return
-	
-	if not _hair_mesh:
-		_hair_mesh = MeshInstance3D.new()
-		_hair_mesh.name = "HairMesh"
-		add_child(_hair_mesh)
-		if owner:
-			_hair_mesh.owner = owner
-		else:
-			_hair_mesh.owner = self
-		
-	if not _hair_debug and Engine.is_editor_hint():
-		_hair_debug = MeshInstance3D.new()
-		_hair_debug.name = "HairDebug"
-		add_child(_hair_debug)
-		_hair_debug.owner = self
-	
-	_hair_mesh.mesh = generate_hair_from_file(file,head_tris,_how_many)
-	for i in _hair_mesh.mesh.get_surface_count():
-		_hair_mesh.set_surface_override_material(i,hair_material)
-	
-	if _hair_debug and Engine.is_editor_hint():
-		generate_hair_debug(file,head_tris)
+func debug_generate_hair():
+	if not _library:
+		_library = LibraryManager.new()
+		_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+		#_library.LoadData("/mnt/data/Projects/Godot/library/")
+	if _library:
+		load_hair(_library,_debug_hair_id,{})
 
 
-func generate_hair_from_file(file: FileAccess,head_tris: Dictionary,how_many: int) -> ArrayMesh:
-	var loaded_strands = load_hair_strands(file)
-	if loaded_strands.size() <= 0:
-		return
-	
-	var arrays_data := generate_hair_strands(loaded_strands,head_tris,how_many,0.015)	
-	if not _process_shader: 
-		create_verlet_shader( arrays_data )
-	
-	return create_mesh( arrays_data )
+func generate_hair_from_library(library: LibraryManager,hair_id: int,head_tris: Dictionary,how_many: int) -> ArrayMesh:
+	var data : Dictionary = library.Hairs_GetHairMeshData(hair_id);
+	if data and data.has("meshData"):
+		var meshData : Dictionary = data["meshData"]
+		if meshData and meshData.has("strands"):
+			var strands : Array = meshData["strands"]
+			if strands.size() <= 0:
+				return null
+			
+			# Da rimuovere perché non funziona per i genitali
+			find_origin(strands,true,Vector3(0,-0.06,-0.01))
+			
+			var arrays_data := generate_hair_strands(strands,head_tris,how_many,0.015)
+			if not _process_shader: 
+				create_verlet_shader( arrays_data )
+			
+			return create_mesh( arrays_data )
+	return null
 
 
 func create_verlet_shader(arrays_data: Dictionary):
@@ -185,58 +184,9 @@ func verlet_shader_initialized():
 		hair_material.set_shader_parameter("data_points",image)
 
 
-func create_mesh(arrays_data: Dictionary) -> ArrayMesh:
-	var surface_tool := SurfaceTool.new()
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_INDEX] = arrays_data["Indices"]
-	arrays[Mesh.ARRAY_VERTEX] = arrays_data["Vertices"]
-	arrays[Mesh.ARRAY_NORMAL] = arrays_data["Normals"]
-	arrays[Mesh.ARRAY_COLOR] = arrays_data["Colors"]
-	arrays[Mesh.ARRAY_CUSTOM0] = arrays_data["Customs0"]
-	arrays[Mesh.ARRAY_CUSTOM1] = arrays_data["Customs1"]
-	arrays[Mesh.ARRAY_TEX_UV] = arrays_data["UVs"]
-	
-	surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_LINES)
-	return surface_tool.commit()
-
 ####################################
 # Hair generation
 ###################################
-
-
-func load_hair_strands(file: FileAccess)-> Array:
-	var strands := []
-
-	file.seek(996)
-
-	var how_many := file.get_32()
-	file.get_32()
-	
-	for s in how_many:
-		var vertices : PackedVector3Array = []
-		var count := file.get_32()
-		file.get_32()
-		
-		for c in range(count):
-			var x = file.get_float()
-			var z = file.get_float()
-			var y = file.get_float()
-			
-			vertices.push_back(Vector3(y,x,z))
-		
-		if vertices.size() > 1:
-			vertices.remove_at(vertices.size()-1)
-			#vertices.remove_at(vertices.size()-1)
-			strands.push_back(vertices)
-	
-	var origin = find_origin(strands) + Vector3(0,-0.06,-0.01)
-	
-	for s : PackedVector3Array in strands:
-		for i in s.size():
-			s[i] = s[i] - origin
-	
-	return strands
 
 
 func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,spacing: float) -> Dictionary:
@@ -319,7 +269,7 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 				for i in parts:
 					var vertex : Vector3 = s[i] - strand_origin + offset
 					var vertex_offset := (inc + Vector3(randf_range(-0.001,0.001),0.0,randf_range(-0.001,0.001))) * (1.0-(i as float / (size-1)))
-					#vertex += vertex_offset
+					vertex += vertex_offset
 					length += (vertex-last_vertex).length()
 					
 					vertices.push_back(vertex)
@@ -383,12 +333,17 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 		}
 
 
-func find_origin(strands: Array)-> Vector3:
+func find_origin(strands: Array,apply_offset: bool = false,offset: Vector3 = Vector3())-> Vector3:
 	var roots := PackedVector3Array()
 	for s : PackedVector3Array in strands:
 		if s.size() > 0:
 			roots.append(s[0])
-	return _points_aabb(roots).get_center()
+	var origin : Vector3 = _points_aabb(roots).get_center() + offset
+	if apply_offset:
+		for s : PackedVector3Array in strands:
+			for i in s.size():
+				s[i] = s[i] - origin
+	return origin
 
 
 func find_offset(head_origin: Vector3,head_tris: Dictionary,root: Vector3)-> Vector3:
@@ -441,60 +396,60 @@ func _points_aabb(points: PackedVector3Array) -> AABB:
 	return AABB(minp, maxp - minp)
 
 
-func generate_hair_debug(file: FileAccess,head_tris: Dictionary):
-	var strands := load_hair_strands(file)
-	if strands.size() <= 0:
-		return
-	
-	var head_origin : Vector3
-	var normalized : PackedVector3Array
-	if head_tris:
-		head_origin = head_tris["Origin"]
-		normalized = PackedVector3Array()
-		
-		for v : Vector3 in head_tris["Vertices"]:
-			normalized.push_back((v-head_origin).normalized())
-		head_tris["Normalized"] = normalized
-	
-	var vertices := PackedVector3Array()
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-		
-	for s : PackedVector3Array in strands:
-		if s.size() > 0:
-			var offset : Vector3
-			
-			var strand_origin = s[0]
-			if head_tris:
-				offset = find_offset(head_origin,head_tris,strand_origin)
-				vertices.push_back(offset)
-			else:
-				vertices.push_back(s[0])
-	
-	var surface_tool := SurfaceTool.new()
-	surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_POINTS)	
-	_hair_debug.mesh = surface_tool.commit()
-	
-	if head_tris:
-		vertices.clear()
-		for v in head_tris["Vertices"]:
-			vertices.push_back(v-head_origin)
-		surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_POINTS)
-	
-		_hair_debug.mesh = surface_tool.commit(_hair_debug.mesh)
-
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(1,1,1)
-	_hair_debug.set_surface_override_material(0,mat)
-	_hair_debug.visible = false
-	
-	if _hair_debug.get_surface_override_material_count() > 1:
-		mat = StandardMaterial3D.new()
-		mat.albedo_color = Color(1,0,0)
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_hair_debug.set_surface_override_material(1,mat)
+#func generate_hair_debug(file: FileAccess,head_tris: Dictionary):
+	#var strands := load_hair_strands(file)
+	#if strands.size() <= 0:
+		#return
+	#
+	#var head_origin : Vector3
+	#var normalized : PackedVector3Array
+	#if head_tris:
+		#head_origin = head_tris["Origin"]
+		#normalized = PackedVector3Array()
+		#
+		#for v : Vector3 in head_tris["Vertices"]:
+			#normalized.push_back((v-head_origin).normalized())
+		#head_tris["Normalized"] = normalized
+	#
+	#var vertices := PackedVector3Array()
+	#var arrays := []
+	#arrays.resize(Mesh.ARRAY_MAX)
+	#arrays[Mesh.ARRAY_VERTEX] = vertices
+		#
+	#for s : PackedVector3Array in strands:
+		#if s.size() > 0:
+			#var offset : Vector3
+			#
+			#var strand_origin = s[0]
+			#if head_tris:
+				#offset = find_offset(head_origin,head_tris,strand_origin)
+				#vertices.push_back(offset)
+			#else:
+				#vertices.push_back(s[0])
+	#
+	#var surface_tool := SurfaceTool.new()
+	#surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_POINTS)	
+	#_hair_debug.mesh = surface_tool.commit()
+	#
+	#if head_tris:
+		#vertices.clear()
+		#for v in head_tris["Vertices"]:
+			#vertices.push_back(v-head_origin)
+		#surface_tool.create_from_arrays(arrays,Mesh.PRIMITIVE_POINTS)
+	#
+		#_hair_debug.mesh = surface_tool.commit(_hair_debug.mesh)
+#
+	#var mat := StandardMaterial3D.new()
+	#mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	#mat.albedo_color = Color(1,1,1)
+	#_hair_debug.set_surface_override_material(0,mat)
+	#_hair_debug.visible = false
+	#
+	#if _hair_debug.get_surface_override_material_count() > 1:
+		#mat = StandardMaterial3D.new()
+		#mat.albedo_color = Color(1,0,0)
+		#mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		#_hair_debug.set_surface_override_material(1,mat)
 
 
 ###############################################################################

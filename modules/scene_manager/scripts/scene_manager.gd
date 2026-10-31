@@ -68,6 +68,11 @@ func set_person_position(origin: Vector3,position: Vector3):
 		_current_person.look_at(origin,Vector3.UP,true)
 
 
+func set_person_hair(hair_id: int):
+	if _current_person:
+		_current_person.add_hair(_library,hair_id,true)
+
+
 func set_person_cloth(cloth_id: int):
 	if _current_person:
 		_current_person.add_cloth(_library,cloth_id,true)

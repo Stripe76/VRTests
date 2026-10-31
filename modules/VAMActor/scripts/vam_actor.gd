@@ -25,7 +25,6 @@ var _person_id : int = -1
 var _look_id : int = -1
 
 var _mesh : VAMMesh
-var _hair : VAMHair
 var _skeleton : VAMSkeleton
 var _person_controller : PersonController
 
@@ -38,8 +37,6 @@ var _loading_material := false
 
 # Debug
 var _library : LibraryManager
-var _load_hair := false
-var _load_cloth := true
 var _ragdoll_active := false
 
 
@@ -110,6 +107,31 @@ func walk_to(glb_position: Vector3):
 	
 	$Target.global_position = glb_position
 	$Movements/Walking.start()
+
+
+func add_hair(library: LibraryManager,hair_id: int,clear: bool):
+	var parent : Node3D = _skeleton.find_child("head")
+	if not parent:
+		parent = self
+	_mesh.head_tris["Origin"] = parent.position
+	
+	if clear:
+		var remove = []
+		for c in parent.get_children():
+			if c.name.substr(0,7) == "VAMHair":
+				remove.push_back(c)
+		for c in remove:
+			parent.remove_child(c)
+	
+	var hair : VAMHair = load("res://modules/VAMActor/vam_hair.tscn").instantiate()
+	hair.name = "VAMHair"
+	hair._how_many = 4
+	hair.force_lerp = 0.51
+	
+	parent.add_child(hair)
+	hair.owner = self
+	
+	hair.load_hair(library,hair_id,_mesh.head_tris)
 
 
 func add_cloth(library: LibraryManager,cloth_id: int,clear: bool):
@@ -189,53 +211,6 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	$Movements.person_controller = _person_controller
 	
 	#eyes_color = randf_range(0,5)
-	
-	#if _load_cloth:
-		#_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
-		#_cloth.name = "VAMCloth1"
-		#_cloth.file_name = "_skirt.vab"
-		#_cloth.generate_mesh(library,_look_id)
-		#_cloth.skeleton = _skeleton.get_path()
-			#
-		#_skeleton.add_child(_cloth)
-		#_cloth.owner = self
-		
-		#_cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
-		#_cloth.name = "VAMCloth2"
-		#_cloth.file_name = "_skirt.vab"
-		#_cloth.generate_mesh(library,_look_id)
-		#_cloth.skeleton = _skeleton.get_path()
-			#
-		#_skeleton.add_child(_cloth)
-		#_cloth.owner = self
-		
-	
-	if _load_hair:
-		_hair = load("res://modules/VAMActor/vam_hair.tscn").instantiate( )
-		_hair.name = "Hair"
-		_hair._how_many = 4
-		_hair.force_lerp = 0.5
-		
-		_hair.a_root = Color(0.326, 0.165, 0.0, 1.0)
-		_hair.a_middle = Color(0.451, 0.214, 0.0, 1.0)
-		_hair.a_tip = Color(0.808, 0.425, 0.0, 1.0)
-		
-		_hair.b_root = Color(0.0, 0.0, 0.0, 1.0)
-		_hair.b_middle = Color(0.0, 0.0, 0.0, 1.0)
-		_hair.b_tip = Color(0.0, 0.0, 0.0, 1.0)
-		
-		_hair.a_weight_root = 1
-		_hair.a_weight_middle = 1
-		_hair.a_weight_tip = 1
-		
-		_hair.b_weight_root = 1
-		_hair.b_weight_middle = 1
-		_hair.b_weight_tip = 1
-		
-		_hair.AB_distribution = -0.5
-	
-		var hair_file = "/mnt/data/Projects/Godot/library/Barbie/Custom/Hair/Female/RenVR/Barbie.vab"
-		load_hair(hair_file,_mesh.head_tris)
 	
 	position = spawn_position
 	
@@ -318,17 +293,3 @@ func load_mesh(daz_model: Daz3DMesh,library: LibraryManager,lookID: int,left_eye
 	vam_mesh.mesh = vam_mesh.full_body
 	
 	return vam_mesh
-
-
-func load_hair(hair_file: String,head_tris: Dictionary):
-	var parent : Node3D = _skeleton.find_child("head")
-	if not parent:
-		parent = self
-	
-	parent.add_child(_hair)
-	_hair.owner = self
-	
-	head_tris["Origin"] = parent.position
-	print("Parent position: ",parent.position)
-	
-	_hair.generate_hair(hair_file,head_tris)

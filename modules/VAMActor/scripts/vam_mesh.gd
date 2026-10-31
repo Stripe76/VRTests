@@ -243,12 +243,7 @@ func create_meshes(daz_model: Daz3DMesh,model_vertices: PackedVector3Array,model
 									head_vertices,
 									bones_to_include,
 									treshold)
-	var head_normalized := []
-	for h in head_vertices:
-		head_normalized.push_back(h.normalized())
-	
 	head_tris["Vertices"] = head_vertices
-	head_tris["Normalized"] = head_normalized
 	
 	var arrays = []
 	arrays.resize(Mesh.ARRAY_MAX)

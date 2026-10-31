@@ -41,6 +41,8 @@ func _ready() -> void:
 			
 		_persons_list.add_child(_person_selection)
 	
+	_scene_manager.current_person_changed.connect(current_person_changed)
+	
 	add_to_group("UI")
 
 
@@ -65,8 +67,11 @@ func set_main_panel(panel: String,sub_panel: String):
 	if panel == "person_looks":
 		_persons_list.add_child(_person_selection)
 		_main_panel.add_child(_looks_selection)
-	elif panel == "person_skin":
-		pass
+
+
+func current_person_changed(scene_manager: SceneManager):
+	if scene_manager and scene_manager.current_person < 0:
+		set_main_panel("person_looks","look");
 
 
 func person_clicked(person_id: int):

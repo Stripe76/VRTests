@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://wau2mq1hx30n"]
+
+[ext_resource type="Script" uid="uid://cd0wt4htcuvdj" path="res://ui/panels/hair/hair.gd" id="1_hmfnw"]
+[ext_resource type="Script" uid="uid://dhejctsf0f4yf" path="res://ui/panels/hair/controls/hair_selection.gd" id="2_4jqsy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4jqsy"]
+bg_color = Color(9.529888e-06, 0.66059685, 0.8418555, 1)
+
+[node name="Hair" type="Control" unique_id=689717904]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hmfnw")
+
+[node name="AllHairs" type="ScrollContainer" parent="." unique_id=1136883495]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4jqsy")
+script = ExtResource("2_4jqsy")
+
+[node name="Items" type="HFlowContainer" parent="AllHairs" unique_id=841353596]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="item_selected" from="AllHairs" to="." method="_all_hairs_item_selected"]
