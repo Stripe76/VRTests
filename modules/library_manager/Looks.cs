@@ -1,19 +1,15 @@
-using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using Godot.Collections;
 
-namespace VRMate.modules.library_manager;
-
-public class Looks
+public class Looks : VAMObjects
 {
-    public int ID { get; init; }
-    public string Archive  { get; init; }
-    public string PersonJSON  { get; init; }
-    
-    public string Title  { get; init; }
-    public string SceneFile  { get; init; }
-    public string PreviewImageFile  { get; init; }
-}
-
-public class LooksList : List<Looks>
-{
-    
+    protected override void LoadMeshData( BinaryReader reader,Dictionary data )
+    {
+        throw new System.NotImplementedException( );
+    }
+    protected override void LoadMaterials( JsonElement root,string folder,Dictionary data )
+    {
+        throw new System.NotImplementedException( );
+    }
 }

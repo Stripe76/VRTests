@@ -1,3 +1,5 @@
+#nullable enable
+
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,8 @@ using Array = Godot.Collections.Array;
 [GlobalClass]
 public partial class LibraryManager : Node
 {
+	private string _libraryFolder;
+	
 	private readonly string _sceneFolder = Path.Combine( "Saves","scene" ); 
 	private readonly string _appearanceFolder = Path.Combine( "Saves","Person","appearance" ); 
 	private readonly string _appearanceVAPFolder = Path.Combine( "Custom","Atom","Person","Appearance" ); 
@@ -19,11 +23,9 @@ public partial class LibraryManager : Node
 	private readonly string _hairsFolder = Path.Combine( "Custom","Hair","Female" ); 
 	private readonly string _clothesFolder = Path.Combine( "Custom","Clothing","Female" ); 
 	
-	private readonly LooksList _looks = [];
-	private readonly HairList _hairs = [];
-	private readonly ClothList _clothes = [];
-	
-	private string _libraryFolder;
+	private readonly Looks _looks = new Looks( );
+	private readonly Hairs _hairs = new Hairs( );
+	private readonly Clothes _clothes = new Clothes( );
 	
 	public void LoadData( string folder )
 	{
@@ -67,7 +69,7 @@ public partial class LibraryManager : Node
 							if( (entry.FullName.StartsWith( _clothesFolder,StringComparison.OrdinalIgnoreCase ) &&
 							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
 							{
-								AddClothes( file,entry );
+								_clothes.AddEntry( file,entry );
 							}
 							/*
 							 * Hairs
@@ -75,9 +77,8 @@ public partial class LibraryManager : Node
 							if( (entry.FullName.StartsWith( _hairsFolder,StringComparison.OrdinalIgnoreCase ) &&
 							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
 							{
-								AddHair( file,entry );
+								_hairs.AddEntry( file,entry );
 							}
-
 						}
 					}
 				}
@@ -97,43 +98,23 @@ public partial class LibraryManager : Node
 	#region Looks
 	public int Looks_GetCount( )
 	{
-		return _looks.Count;
+		return _looks.GetCount( );
 	}
-
 	public string Looks_GetTitle( int lookID )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
-			return _looks[lookID].Title;
-		return string.Empty;
+		return _looks.GetTitle( lookID );
 	}
-	
-	/*
-	public string Looks_GetScene( int lookID )
-	{
-		if( lookID >= 0 && lookID < _looks.Count )
-		{
-			var look = _looks[lookID];
-
-			//GD.Print( "Scene file: "+look.SceneFile );
-			return LoadJSONFile( look.Archive,look.SceneFile );
-		}
-		return string.Empty;
-	}
-	*/
 	public string Looks_GetPerson( int lookID )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
-			return _looks[lookID].PersonJSON;
-		return string.Empty;
+		return _looks.GetJSON( lookID );
 	}
 
 	public Dictionary Looks_GetTextures( int lookID )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
+		VAMItem? look = _looks.GetItem( lookID );
+		if( look != null )
 		{
-			var look = _looks[lookID];
-
-			using JsonDocument doc = JsonDocument.Parse( look.PersonJSON,new JsonDocumentOptions( ) { AllowTrailingCommas = true } );
+			using JsonDocument doc = JsonDocument.Parse( look.BaseJSON,new JsonDocumentOptions( ) { AllowTrailingCommas = true } );
 			
 			return GetTextures( doc.RootElement );
 		}
@@ -141,9 +122,9 @@ public partial class LibraryManager : Node
 	}
 	public Image Looks_GetTextureImage( int lookID,string textureFile )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
+		VAMItem? look = _looks.GetItem( lookID );
+		if( look != null )
 		{
-			var look = _looks[lookID];
 			string archive = look.Archive;
 
 			//"RenVR.Samantha_(HUB)_.latest:/Custom/Atom/Person/Textures/Samantha (REN)/FaceD (C).jpg",
@@ -171,11 +152,10 @@ public partial class LibraryManager : Node
 
 	public Array Looks_GetMorphs( int lookID )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
+		VAMItem? look = _looks.GetItem( lookID );
+		if( look != null )
 		{
-			var look = _looks[lookID];
-
-			using( JsonDocument doc = JsonDocument.Parse( look.PersonJSON,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
+			using( JsonDocument doc = JsonDocument.Parse( look.BaseJSON,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
 			{
 				//GD.Print( "JsonDocument" );
 				if( doc.RootElement.TryGetProperty( "storables",out JsonElement storables ) )
@@ -226,473 +206,49 @@ public partial class LibraryManager : Node
 	
 	public Texture2D Looks_GetPreviewImage( int lookID )
 	{
-		if( lookID >= 0 && lookID < _looks.Count )
-		{
-			var look = _looks[lookID];
-			try
-			{
-				var image = LoadImage( look.Archive,look.PreviewImageFile );
-
-				return ImageTexture.CreateFromImage( image );
-			}
-			catch( Exception e )
-			{
-				GD.PushError( e.Message );
-			}
-		}
-		return null;
+		return _looks.GetPreviewImage( lookID );
 	}
 	#endregion
 	
 	#region Hair
 	public int Hairs_GetCount( )
 	{
-		return _hairs.Count;
+		return _hairs.GetCount( );
 	}
 
 	public Texture2D Hairs_GetPreviewImage( int hairID )
 	{
-		if( hairID >= 0 && hairID < _hairs.Count )
-		{
-			var hair = _hairs[hairID];
-			try
-			{
-				var image = LoadImage( hair.Archive,hair.PreviewImageFile );
-
-				return ImageTexture.CreateFromImage( image );
-			}
-			catch( Exception e )
-			{
-				GD.PushError( e.Message );
-			}
-		}
-		return null;
+		return _hairs.GetPreviewImage( hairID );
 	}
 	public Dictionary Hairs_GetHairMeshData( int hairID )
 	{
-		if( hairID >= 0 && hairID < _hairs.Count )
-		{
-			var hair = _hairs[hairID];
-
-			string binaryFile = hair.HairFile.Replace( ".vaj",".vab" );  
-			var data = new Dictionary
-			{
-				{ "meshFile",binaryFile },
-				{ "meshData",LoadHairMeshData( hair.Archive,binaryFile ) },
-				//{ "materials",LoadHairMaterials( hair.Archive,hair.HairFile,hair.Folder )}
-			};
-			return data;
-		}
-		return new Dictionary( );
+		return _hairs.GetMeshData( hairID );
 	}
 	
 	public Image Hairs_GetTextureImage( int hairID,string textureFile )
 	{
-		if( hairID >= 0 && hairID < _hairs.Count )
-		{
-			var hair = _hairs[hairID];
-			string archive = hair.Archive;
-
-			return LoadImage( archive,textureFile,true );
-		}
-		return new Image( );
-	}
-
-	private void AddHair( string archive,ZipArchiveEntry entry )
-	{
-		_hairs.Add( new Hair(  )
-		{
-			ID = _clothes.Count,
-			Archive = archive,
-			Title = entry.Name.Replace( ".vaj","" ),
-			Folder = entry.FullName.Replace( entry.Name,"" ),
-			HairFile = entry.FullName,
-			PreviewImageFile = entry.FullName.Replace( ".vaj",".jpg" )
-		} );
-	}
-
-	private Dictionary LoadHairMeshData(string archiveFile,string filename)
-	{
-		var data = new Dictionary( );
-		try
-		{
-			GD.Print( filename );
-			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
-			{
-				TraceArchiveFile( archiveFile,filename );
-				
-				var entry = archive.GetEntry( filename );
-				if( entry != null )
-				{
-#if DEBUG
-					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current_hair.vab",true );
-#endif
-					using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
-					{
-						SkipStrings( reader,2 );
-
-						var meshCount = reader.ReadByte( );
-
-						if( meshCount != 1 )
-							GD.PushWarning( "LoadHairMeshData meash count > 1" );
-
-						SkipStrings( reader,3 );
-
-						reader.ReadInt32( );
-						reader.ReadInt32( );
-						reader.ReadByte( );
-
-						var dataCount = reader.ReadInt32( );
-						for( int i = 0; i < dataCount; i++ )
-							reader.ReadByte( );
-
-						var strandsCount = reader.ReadInt32( );
-						var strands = new Array( );
-						for( int i = 0; i < strandsCount; i++ )
-						{
-							var strandID = reader.ReadInt32( );
-							var verticesCount = reader.ReadInt32( );
-							var vertices = new Vector3[verticesCount];
-
-							if( verticesCount is < 0 or > 255 )
-							{
-								GD.PrintErr( "LoadHairMeshData: too many vertices" );
-								return data;
-							}
-							if( verticesCount > 0 )
-							{
-								for( int v = 0; v < verticesCount; v++ )
-								{
-									vertices[v] = new Vector3( reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
-								}
-								strands.Add( vertices );
-							}
-						}
-						data.Add( "strands",strands );
-					}
-				}
-			}
-		}
-		catch( Exception e )
-		{
-			GD.PushError( e.Message );
-		}
-		return data;
-		
-	}
-	private Dictionary LoadHairMaterials( string archiveFile,string filename,string folder )
-	{
-		return new Dictionary( );
-		using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
-		{
-			var entry = archive.GetEntry( filename );
-			if( entry != null )
-			{
-				using( StreamReader reader = new StreamReader( entry.Open( ) ) )
-				{
-					var json = reader.ReadToEnd( );
-					using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
-					{
-						var root = doc.RootElement;
-
-						//GD.Print( "JsonDocument" );
-						if( root.TryGetProperty( "storables",out JsonElement storables ) )
-						{
-							var dictionary = new Dictionary( );
-							
-							//GD.Print( "storables" );
-							foreach( JsonElement storable in storables.EnumerateArray( ) )
-							{
-								//GD.Print( "storable" );
-								if( storable.TryGetProperty( "hideMaterial",out JsonElement hideMaterial ) )
-								{
-									if( storable.TryGetProperty( "id",out JsonElement id ) )
-									{
-										var data = new Dictionary( );
-
-										if( storable.TryGetProperty( "customTexture_MainTex",out JsonElement mainTex ) )
-											data.Add( "main_tex",folder + mainTex );
-
-										/*
-										"customTexture_MainTex"
-										"customTexture_SpecTex"
-										"customTexture_GlossTex"
-										"customTexture_AlphaTex"
-										"customTexture_BumpMap"
-										"customTexture_DecalTex"
-										*/
-										dictionary.Add( id.ToString( ),data );
-									}
-								}
-							}
-							return dictionary;
-						}
-					}
-				}
-			}
-		}
-		return new Dictionary( );
+		return _hairs.GetTextureImage( hairID,textureFile );
 	}
 	#endregion
 
 	#region Clothes
 	public int Clothes_GetCount( )
 	{
-		return _clothes.Count;
+		return _clothes.GetCount( );
 	}
 
 	public Texture2D Clothes_GetPreviewImage( int clothID )
 	{
-		if( clothID >= 0 && clothID < _clothes.Count )
-		{
-			var cloth = _clothes[clothID];
-			try
-			{
-				var image = LoadImage( cloth.Archive,cloth.PreviewImageFile );
-
-				return ImageTexture.CreateFromImage( image );
-			}
-			catch( Exception e )
-			{
-				GD.PushError( e.Message );
-			}
-		}
-		return null;
+		return _clothes.GetPreviewImage( clothID );
 	}
 	public Dictionary Clothes_GetClothMeshData( int clothID )
 	{
-		if( clothID >= 0 && clothID < _clothes.Count )
-		{
-			var cloth = _clothes[clothID];
-
-			string binaryFile = cloth.ClothFile.Replace( ".vaj",".vab" );  
-			var data = new Dictionary
-			{
-				{ "meshFile",binaryFile },
-				{ "meshData",LoadClothMeshData( cloth.Archive,binaryFile ) },
-				{ "materials",LoadClothMaterials( cloth.Archive,cloth.ClothFile,cloth.Folder )}
-			};
-			return data;
-		}
-		return new Dictionary( );
+		return _clothes.GetMeshData( clothID );
 	}
 	
 	public Image Clothes_GetTextureImage( int clothID,string textureFile )
 	{
-		if( clothID >= 0 && clothID < _clothes.Count )
-		{
-			var cloth = _clothes[clothID];
-			string archive = cloth.Archive;
-
-			return LoadImage( archive,textureFile,true );
-		}
-		return new Image( );
-	}
-
-	private void AddClothes( string archive,ZipArchiveEntry entry )
-	{
-		_clothes.Add( new Cloth(  )
-		{
-			ID = _clothes.Count,
-			Archive = archive,
-			Title = entry.Name.Replace( ".vaj","" ),
-			Folder = entry.FullName.Replace( entry.Name,"" ),
-			ClothFile = entry.FullName,
-			PreviewImageFile = entry.FullName.Replace( ".vaj",".jpg" )
-		} );
-	}
-
-	private Dictionary LoadClothMeshData(string archiveFile,string filename)
-	{
-		var data = new Dictionary( );
-		try
-		{
-			GD.Print( filename );
-			using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
-			{
-				TraceArchiveFile( archiveFile,filename );
-				
-				var entry = archive.GetEntry( filename );
-				if( entry != null )
-				{
-#if DEBUG
-					entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current_cloth.vab",true );
-#endif
-					using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
-					{
-						SkipStrings( reader,8 );
-
-						var verticesCount = reader.ReadInt32( );
-						var vertices = new Vector3[verticesCount];
-
-						if( verticesCount is < 0 or > 65535 )
-						{
-							GD.PrintErr( "LoadClothMeshData: too many vertices" );
-							return data;
-						}
-						for( int i = 0; i < verticesCount; i++ )
-						{
-							vertices[i] = new Vector3( -reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
-						}
-						data.Add( "vertices",vertices );
-
-						SkipStrings( reader );
-
-						var indicesCount = reader.ReadInt32( );
-						if( indicesCount is < 0 or > 65535 )
-						{
-							GD.PrintErr( "LoadClothMeshData: too many indices" );
-							return data;
-						}
-						var indices = new int[indicesCount*6];
-						for( int i = 0; i < indicesCount; i++ )
-						{
-							var material = reader.ReadInt32( );
-							var idxs = reader.ReadInt32( );
-							
-							var c = reader.ReadInt32( );
-							var d = reader.ReadInt32( );
-							var e = reader.ReadInt32( );
-							int f = 0;
-
-							if ( idxs == 4 )
-								f = reader.ReadInt32( );
-							if ( idxs == 5 )
-								reader.ReadInt32( );
-
-							var start = i * 6;
-							indices[start] = c;
-							indices[start+1] = e;
-							indices[start+2] = d;
-
-							if( idxs == 4 )
-							{
-								indices[start + 3] = f;
-								indices[start + 4] = e;
-								indices[start + 5] = c;
-							}
-						}
-						for( int i = 0; i < indicesCount; i++ )
-						{
-							reader.ReadInt32( );
-							var idxs = reader.ReadInt32( );
-							
-							reader.ReadInt32( );
-							reader.ReadInt32( );
-							reader.ReadInt32( );
-
-							if ( idxs == 4 )
-								reader.ReadInt32( );
-							if ( idxs == 5 )
-								reader.ReadInt32( );
-						}
-						data.Add( "indices",indices );
-						
-						var uvsCount = reader.ReadInt32( );
-						if( uvsCount is < 0 or > 65535 )
-						{
-							GD.PrintErr( "LoadClothMeshData: too many uvs" );
-							return data;
-						}
-						var uvs = new Vector2[indicesCount*6];
-						for( int i = 0; i < verticesCount; i++ )
-						{
-							uvs[i] = new Vector2( reader.ReadSingle( ),1-reader.ReadSingle( ) );
-						}
-						for( int i = verticesCount; i < uvsCount; i++ )
-						{
-							uvs[i] = new Vector2( reader.ReadSingle( ),1-reader.ReadSingle( ) );
-						}
-						data.Add( "uvs",uvs );
-
-						var count = reader.ReadInt32( );
-						for( int i = 0; i < count; i++ )
-						{
-							reader.ReadInt32( ); reader.ReadInt32( ); reader.ReadInt32( );
-						}
-						SkipStrings( reader,5 );
-						
-						var skinsCount = reader.ReadInt32( );
-						var skinIndices = new int[skinsCount*4];
-						for( int i = 0; i < skinsCount; i++ )
-						{
-							var start = i * 4;
-							skinIndices[start] = reader.ReadInt32( );
-							skinIndices[start+1] = reader.ReadInt32( );
-							skinIndices[start+2] = reader.ReadInt32( );
-							skinIndices[start+3] = reader.ReadInt32( );
-
-							reader.ReadSingle( );
-							reader.ReadSingle( );
-							reader.ReadSingle( );
-							reader.ReadSingle( );
-							
-							reader.ReadSingle( );
-							reader.ReadSingle( );
-						}
-						data.Add( "skin_indices",skinIndices );
-					}
-				}
-			}
-		}
-		catch( Exception e )
-		{
-			GD.PushError( e.Message );
-		}
-		return data;
-		
-	}
-	private Dictionary LoadClothMaterials( string archiveFile,string filename,string folder )
-	{
-		using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
-		{
-			var entry = archive.GetEntry( filename );
-			if( entry != null )
-			{
-				using( StreamReader reader = new StreamReader( entry.Open( ) ) )
-				{
-					var json = reader.ReadToEnd( );
-					using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
-					{
-						var root = doc.RootElement;
-
-						//GD.Print( "JsonDocument" );
-						if( root.TryGetProperty( "storables",out JsonElement storables ) )
-						{
-							var dictionary = new Dictionary( );
-							
-							//GD.Print( "storables" );
-							foreach( JsonElement storable in storables.EnumerateArray( ) )
-							{
-								//GD.Print( "storable" );
-								if( storable.TryGetProperty( "hideMaterial",out JsonElement hideMaterial ) )
-								{
-									if( storable.TryGetProperty( "id",out JsonElement id ) )
-									{
-										var data = new Dictionary( );
-
-										if( storable.TryGetProperty( "customTexture_MainTex",out JsonElement mainTex ) )
-											data.Add( "main_tex",folder + mainTex );
-
-										/*
-										"customTexture_MainTex"
-										"customTexture_SpecTex"
-										"customTexture_GlossTex"
-										"customTexture_AlphaTex"
-										"customTexture_BumpMap"
-										"customTexture_DecalTex"
-										*/
-										dictionary.Add( id.ToString( ),data );
-									}
-								}
-							}
-							return dictionary;
-						}
-					}
-				}
-			}
-		}
-		return new Dictionary( );
+		return _clothes.GetTextureImage( clothID,textureFile );
 	}
 	#endregion
 	
@@ -737,13 +293,13 @@ public partial class LibraryManager : Node
 									if( add )
 									{
 										//GD.Print( "-- Person: " + name );
-										_looks.Add( new Looks
+										_looks.AddItem( new VAMItem( )
 										{
-											ID = _looks.Count,
+											ID = _looks.GetCount(  ),
 											Archive = archive,
-											PersonJSON = atom.ToString( ),
+											BaseJSON = atom.ToString( ),
 											Title = entry.Name.Replace( ".json","" ),
-											SceneFile = entry.FullName,
+											BaseFile = entry.FullName,
 											PreviewImageFile = entry.FullName.Replace( ".json",".jpg" )
 										} );
 									}
@@ -775,13 +331,13 @@ public partial class LibraryManager : Node
 						if( storable.TryGetProperty( "id",out JsonElement idElement ) && idElement.ValueEquals( "geometry" ) )
 						{
 							//GD.Print( "-- Person: " + name );
-							_looks.Add( new Looks
+							_looks.AddItem( new VAMItem(  )
 							{
-								ID = _looks.Count,
+								ID = _looks.GetCount(  ),
 								Archive = archive,
-								PersonJSON = root.ToString( ), 
+								BaseJSON = root.ToString( ), 
 								Title = entry.Name.Replace( ".vap","" ),
-								SceneFile = entry.FullName,
+								BaseFile = entry.FullName,
 								PreviewImageFile = entry.FullName.Replace( ".json",".jpg" )
 							} );
 						}
@@ -938,7 +494,7 @@ public partial class LibraryManager : Node
 		return new Dictionary( );
 	}
 
-	private JsonDocument LoadJSONFile( string archiveFile,string filename )
+	private static JsonDocument LoadJSONFile( string archiveFile,string filename )
 	{
 		try
 		{
@@ -960,8 +516,7 @@ public partial class LibraryManager : Node
 		}
 		return JsonDocument.Parse( "{\"Error\":\"\"}" );
 	}
-
-	private string GetLatestPackage( string libraryFolder,string packageName )
+	private static string GetLatestPackage( string libraryFolder,string packageName )
 	{
 		packageName = packageName + ".";
 		string filter = packageName + "*.var";
