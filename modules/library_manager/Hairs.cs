@@ -49,7 +49,7 @@ public class Hairs : VAMObjects
         }
         data.Add( "strands",strands );
     }
-    protected override void LoadMaterials( JsonElement root,string folder,Dictionary data )
+    protected override void LoadMaterials( JsonElement root,string folder,string UID,Dictionary data )
     {
     }
 }

@@ -67,7 +67,7 @@ public partial class LibraryManager : Node
 							 * Clothes
 							 */
 							if( (entry.FullName.StartsWith( _clothesFolder,StringComparison.OrdinalIgnoreCase ) &&
-							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
+							     entry.FullName.EndsWith( ".vam",StringComparison.OrdinalIgnoreCase )) )
 							{
 								_clothes.AddEntry( file,entry );
 							}
@@ -75,7 +75,7 @@ public partial class LibraryManager : Node
 							 * Hairs
 							 */
 							if( (entry.FullName.StartsWith( _hairsFolder,StringComparison.OrdinalIgnoreCase ) &&
-							     entry.FullName.EndsWith( ".vaj",StringComparison.OrdinalIgnoreCase )) )
+							     entry.FullName.EndsWith( ".vam",StringComparison.OrdinalIgnoreCase )) )
 							{
 								_hairs.AddEntry( file,entry );
 							}

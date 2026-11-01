@@ -7,10 +7,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Text.Json;
+using Array = Godot.Collections.Array;
 
 public abstract class VAMObjects
 {
     private readonly VAMItemList _items = [];
+
+    protected string? _debug_file = null; 
 
     public void AddItem( VAMItem item )
     {
@@ -24,10 +27,12 @@ public abstract class VAMObjects
         {
             ID = _items.Count,
             Archive = archive,
-            Title = entry.Name.Replace( ".vaj","" ),
+            Title = entry.Name.Replace( ".vam","" ),
             Folder = entry.FullName.Replace( entry.Name,"" ),
             BaseFile = entry.FullName,
-            PreviewImageFile = entry.FullName.Replace( ".vaj",".jpg" )
+            BinaryFile = entry.FullName.Replace( ".vam",".vab" ),
+            DetailsFile = entry.FullName.Replace( ".vam",".vaj" ),
+            PreviewImageFile = entry.FullName.Replace( ".vam",".jpg" ),
         } );
     }
 
@@ -48,7 +53,6 @@ public abstract class VAMObjects
             return _items[itemID].Title;
         return string.Empty;
     }
-
     public string GetJSON( int itemID )
     {
         if( itemID >= 0 && itemID < _items.Count )
@@ -92,12 +96,31 @@ public abstract class VAMObjects
         {
             var item = _items[itemID];
 
-            string binaryFile = item.BaseFile.Replace( ".vaj",".vab" );  
+            string UID = "";
+            using( ZipArchive archive = ZipFile.OpenRead( item.Archive ) )
+            {
+                var entry = archive.GetEntry( item.BaseFile );
+                if( entry != null )
+                {
+                    using( StreamReader reader = new StreamReader( entry.Open( ) ) )
+                    {
+                        var json = reader.ReadToEnd( );
+                        using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
+                        {
+                            var root = doc.RootElement;
+                            
+                            if( root.TryGetProperty( "uid",out var uid ) )
+                                UID = uid.ToString( );
+                        }
+                    }
+                }
+            }
+            string binaryFile = item.BinaryFile;  
             var data = new Dictionary
             {
                 { "meshFile",binaryFile },
                 { "meshData",LoadMeshData( item.Archive,binaryFile ) },
-                { "materials",LoadMaterials( item.Archive,item.BaseFile,item.Folder )}
+                { "materials",LoadMaterials( item.Archive,item.DetailsFile,item.Folder,UID )}
             };
             return data;
         }
@@ -118,8 +141,8 @@ public abstract class VAMObjects
                 if( entry != null )
                 {
 #if DEBUG
-
-                    //entry.ExtractToFile( "/mnt/data/Projects/Godot/library/_current_hair.vab",true );
+                    if( _debug_file != null )
+                        entry.ExtractToFile( $"/mnt/data/Projects/Godot/library/{_debug_file}.vab",true );
 #endif
                     using( BinaryReader reader = new BinaryReader( entry.Open( ) ) )
                     {
@@ -135,7 +158,7 @@ public abstract class VAMObjects
         return data;
 
     }
-    private Dictionary LoadMaterials( string archiveFile,string filename,string folder )
+    private Dictionary LoadMaterials( string archiveFile,string filename,string folder,string UID )
     {
         var data = new Dictionary( );
         using( ZipArchive archive = ZipFile.OpenRead( archiveFile ) )
@@ -148,7 +171,7 @@ public abstract class VAMObjects
                     var json = reader.ReadToEnd( );
                     using( JsonDocument doc = JsonDocument.Parse( json,new JsonDocumentOptions( ) { AllowTrailingCommas = true } ) )
                     {
-                        LoadMaterials( doc.RootElement,folder,data );
+                        LoadMaterials( doc.RootElement,folder,UID,data );
                     }
                 }
             }
@@ -157,7 +180,7 @@ public abstract class VAMObjects
     }
 
     protected abstract void LoadMeshData( BinaryReader reader,Dictionary data );
-    protected abstract void LoadMaterials( JsonElement root,string folder,Dictionary data );
+    protected abstract void LoadMaterials( JsonElement root,string folder,string UID,Dictionary data );
     
     #region Helpers
     protected Image LoadImage( string archiveFile,string filename,bool trace = false )
@@ -213,6 +236,107 @@ public abstract class VAMObjects
             //GD.Print( s );
         }
     }
+    protected void SkipInts( BinaryReader reader,int record_length )
+    {
+        var count = reader.ReadInt32( );
+        for( int i = 0; i < count; i++ )
+        {
+            for( int n = 0; n < record_length; n++ )
+                reader.ReadInt32( );
+        }
+    }
+
+    protected string LoadString( BinaryReader reader )
+    {
+        return reader.ReadString( );
+    }
+    protected void LoadVertices( BinaryReader reader,Dictionary data,string name )
+    {
+        var verticesCount = reader.ReadInt32( );
+        var vertices = new Vector3[verticesCount];
+
+        if( verticesCount is < 0 or > 65535 )
+        {
+            GD.PrintErr( "LoadClothMeshData: too many vertices" );
+            return;
+        }
+        for( int i = 0; i < verticesCount; i++ )
+        {
+            vertices[i] = new Vector3( -reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
+        }
+        data[name] = vertices;
+    }
+    protected void LoadSurfaces( BinaryReader reader,Dictionary data,string name )
+    {
+        var indicesCount = reader.ReadInt32( );
+        if( indicesCount is < 0 or > 65535 )
+        {
+            GD.PrintErr( "LoadClothMeshData: too many indices" );
+            return;
+        }
+        var surfaces = new Surfaces( );
+        for( int i = 0; i < indicesCount; i++ )
+        {
+            var material = reader.ReadInt32( );
+            var idxs = reader.ReadInt32( );
+
+            var c = reader.ReadInt32( );
+            var d = reader.ReadInt32( );
+            var e = reader.ReadInt32( );
+            int f = 0;
+
+            switch( idxs )
+            {
+                case 4:
+                    f = reader.ReadInt32( );
+                    break;
+                case 5:
+                    reader.ReadInt32( );
+                    break;
+            }
+            surfaces.AddVector( material,new Vector3I( c,e,d ) );
+
+            if( idxs == 4 )
+                surfaces.AddVector( material,new Vector3I( f,e,c ) );
+        }
+        for( int i = 0; i < indicesCount; i++ )
+        {
+            reader.ReadInt32( );
+            var idxs = reader.ReadInt32( );
+
+            reader.ReadInt32( );
+            reader.ReadInt32( );
+            reader.ReadInt32( );
+
+            switch( idxs )
+            {
+                case 4:
+                case 5:
+                    reader.ReadInt32( );
+                    break;
+            }
+        }
+        data[name] = surfaces.GetSurfaces( );
+    }
+    protected void LoadUVs( BinaryReader reader,int verticesCount,Dictionary data,string name )
+    {
+        var uvsCount = reader.ReadInt32( );
+        if( uvsCount is < 0 or > 65535 )
+        {
+            GD.PrintErr( "LoadClothMeshData: too many uvs" );
+            return;
+        }
+        var uvs = new Vector2[uvsCount];
+        for( int i = 0; i < verticesCount; i++ )
+        {
+            uvs[i] = new Vector2( reader.ReadSingle( ),1 - reader.ReadSingle( ) );
+        }
+        for( int i = verticesCount; i < uvsCount; i++ )
+        {
+            uvs[i] = new Vector2( reader.ReadSingle( ),1 - reader.ReadSingle( ) );
+        }
+        data[name] = uvs;
+    }
     #endregion
 
     #region Debug
@@ -241,6 +365,8 @@ public class VAMItem
     public string Title  { get; init; }
     public string Folder  { get; init; }
     public string BaseFile  { get; init; }
+    public string BinaryFile  { get; init; }
+    public string DetailsFile  { get; init; }
     public string BaseJSON  { get; init; }
     public string PreviewImageFile  { get; init; }
 }
@@ -248,4 +374,33 @@ public class VAMItem
 public class VAMItemList : List<VAMItem>
 {
     
+}
+
+public class Surfaces
+{
+    private readonly List<List<Vector3I>> _surfaces = [];
+
+    public void AddVector( int surface,Vector3I vector )
+    {
+        for( int i = _surfaces.Count; i <= surface; i++ )
+            _surfaces.Add( [] );
+        _surfaces[surface].Add( vector );
+    }
+
+    public Array GetSurfaces( )
+    {
+        var surfs = new Array( );
+        foreach( var surf in _surfaces )
+        {
+            var data = new int[surf.Count*3];
+            for( int i = 0; i < surf.Count; i++ )
+            {
+                data[i*3] = surf[i].X;
+                data[i*3+1] = surf[i].Y;
+                data[i*3+2] = surf[i].Z;
+            }
+            surfs.Add( data );
+        }
+        return surfs;
+    }
 }
