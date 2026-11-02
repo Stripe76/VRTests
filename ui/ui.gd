@@ -52,8 +52,8 @@ func set_main_panel(panel: String,sub_panel: String):
 			_main_panel.remove_child(_main_panel.get_child(0))
 	
 	if panel != "person_looks":
-		var scene = load("res://ui/panels/"+panel+"/"+panel+".tscn").instantiate().with(_library,_scene_manager,_main_panel)
-		add_child(scene)
+		var scene = load("res://ui/panels/"+panel+"/"+panel+".tscn").instantiate().with(_library,_scene_manager,)
+		_main_panel.add_child(scene)
 		return
 	
 	if not _looks_selection:
@@ -70,7 +70,7 @@ func set_main_panel(panel: String,sub_panel: String):
 
 
 func current_person_changed(scene_manager: SceneManager):
-	if scene_manager and scene_manager.current_person < 0:
+	if scene_manager and scene_manager.current_person_id < 0:
 		set_main_panel("person_looks","look");
 
 

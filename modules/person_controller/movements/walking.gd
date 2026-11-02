@@ -38,7 +38,8 @@ var rl_push : PersonMove
 var rl_turn_in : PersonMove
 var rl_turn_out : PersonMove
 
-var go = false
+var go := false
+var debug_random_walk := false
 
 var c := 0
 func start():
@@ -151,7 +152,7 @@ func ll_push_ended():
 		
 		ts_left.start()
 		hd_left.start()
-	elif true:
+	elif debug_random_walk:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()
@@ -203,7 +204,7 @@ func rl_push_ended():
 		
 		ts_right.start()
 		hd_right.start()
-	elif true:
+	elif debug_random_walk:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()

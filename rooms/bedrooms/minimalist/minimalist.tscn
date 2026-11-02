@@ -228,6 +228,22 @@ shadow_enabled = true
 spot_attenuation = 2.0
 spot_angle = 75.0
 
+[node name="Spot9" type="SpotLight3D" parent="Ligths/Ceiling" index="8" unique_id=1872709035]
+transform = Transform3D(1, 0, 0, 0, 0.95083517, 0.30969748, 0, -0.30969748, 0.95083517, 1.5209851, 1.2542511, 3.2941966)
+light_energy = 2.592
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot10" type="SpotLight3D" parent="Ligths/Ceiling" index="9" unique_id=911537417]
+transform = Transform3D(1, 0, 0, 0, 0.95083517, 0.30969748, 0, -0.30969748, 0.95083517, -1.4386432, 1.2542511, 3.2941966)
+light_energy = 2.592
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
 [node name="Lamps" type="Node3D" parent="Ligths" index="1" unique_id=261258372]
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Ligths/Lamps" index="0" unique_id=423147006]

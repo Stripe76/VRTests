@@ -1,6 +1,5 @@
 class_name ItemsSelection extends ScrollContainer
 
-
 var _library : LibraryManager
 var _button_script : Script
 
@@ -35,9 +34,9 @@ func update_items() -> void:
 
 
 func _get_count() -> int:
-	return _library.Looks_GetCount()
+	return 0
 
 
-func button_selected(item_id: int):
+func button_selected(_button: ItemButton,item_id: int):
 	if item_selected:
 		item_selected.emit(item_id)

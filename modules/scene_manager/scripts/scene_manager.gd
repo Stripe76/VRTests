@@ -4,7 +4,10 @@ extends Node
 signal persons_list_changed
 signal current_person_changed
 
-var current_person : int:
+var current_person : VAMActor:
+	get:
+		return _current_person
+var current_person_id : int:
 	get:
 		return _current_person_index
 
@@ -51,6 +54,8 @@ func select_looks(id: int):
 		_persons.push_back(_current_person)
 		
 		_world.add_person(_current_person)
+		
+		current_person_changed.emit(self)
 	
 	if _library and _current_person:
 		#animation_was_playing = $AnimationPlayer.is_playing()
@@ -68,12 +73,12 @@ func set_person_position(origin: Vector3,position: Vector3):
 		_current_person.look_at(origin,Vector3.UP,true)
 
 
-func set_person_hair(hair_id: int):
+func add_person_hair(hair_id: int):
 	if _current_person:
 		_current_person.add_hair(_library,hair_id,true)
 
 
-func set_person_cloth(cloth_id: int):
+func add_person_cloth(cloth_id: int):
 	if _current_person:
 		_current_person.add_cloth(_library,cloth_id,true)
 

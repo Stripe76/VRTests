@@ -35,6 +35,10 @@ var _mutex = Mutex.new()
 var _loading_scene := false
 var _loading_material := false
 
+var _clothes : Array = []
+
+signal clothes_list_changed
+
 # Debug
 var _library : LibraryManager
 var _ragdoll_active := false
@@ -134,24 +138,32 @@ func add_hair(library: LibraryManager,hair_id: int,clear: bool):
 	hair.load_hair(library,hair_id,_mesh.head_tris)
 
 
-func add_cloth(library: LibraryManager,cloth_id: int,clear: bool):
+func get_clothes() -> Array:
+	return _clothes
+func add_cloth(library: LibraryManager,cloth_id: int,remove_if_present: bool):
+	if remove_if_present:
+		for c in _clothes:
+			if c.id == cloth_id:
+				remove_cloth(cloth_id)
+				return
+			
 	var cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
 	cloth.name = "VAMCloth"
 	cloth.load_cloth(library,_look_id,cloth_id)
 	cloth.skeleton = _skeleton.get_path()
 	
-	if clear:
-		var remove = []
-		for c in _skeleton.get_children():
-			if c.name.substr(0,8) == "VAMCloth":
-				remove.push_back(c)
-		for c in remove:
-			_skeleton.remove_child(c)
+	_clothes.push_back(PersonItem.new(cloth_id,cloth))
 	
 	_skeleton.add_child(cloth)
-	cloth.owner = self
 	
-	pass
+	clothes_list_changed.emit(self)
+func remove_cloth(cloth_id: int):
+	for i in _clothes.size():
+		if _clothes[i].id == cloth_id:
+			_skeleton.remove_child(_clothes[i].node)
+			_clothes.remove_at(i)
+			break
+	clothes_list_changed.emit(self)
 
 
 func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
@@ -293,3 +305,20 @@ func load_mesh(daz_model: Daz3DMesh,library: LibraryManager,lookID: int,left_eye
 	vam_mesh.mesh = vam_mesh.full_body
 	
 	return vam_mesh
+
+
+class PersonItem:
+	var id: int
+	var node: Node3D
+	var visible : bool:
+		set(value):
+			if node:
+				node.visible = value
+		get:
+			if node:
+				return node.visible
+			return false
+	
+	func _init(item_id: int,item_node: Node3D) -> void:
+		id = item_id
+		node = item_node

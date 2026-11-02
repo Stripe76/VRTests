@@ -3,9 +3,6 @@ class_name VAMCloth extends MeshInstanceEx
 
 @export_tool_button("Generate","Reload") var generate = debug_generate_mesh
 
-@export var path : String = "/mnt/data/Projects/Godot/library/"
-@export var file_name : String = "_sweater.vab"
-
 @export var material : StandardMaterial3D
 
 var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
