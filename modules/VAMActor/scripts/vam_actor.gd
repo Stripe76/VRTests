@@ -35,8 +35,10 @@ var _mutex = Mutex.new()
 var _loading_scene := false
 var _loading_material := false
 
+var _hairs : Array = []
 var _clothes : Array = []
 
+signal hairs_list_changed
 signal clothes_list_changed
 
 # Debug
@@ -113,29 +115,41 @@ func walk_to(glb_position: Vector3):
 	$Movements/Walking.start()
 
 
-func add_hair(library: LibraryManager,hair_id: int,clear: bool):
+func get_hairs() -> Array:
+	return _hairs
+func add_hair(library: LibraryManager,hair_id: int,remove_if_present: bool):
 	var parent : Node3D = _skeleton.find_child("head")
 	if not parent:
 		parent = self
 	_mesh.head_tris["Origin"] = parent.position
 	
-	if clear:
-		var remove = []
-		for c in parent.get_children():
-			if c.name.substr(0,7) == "VAMHair":
-				remove.push_back(c)
-		for c in remove:
-			parent.remove_child(c)
+	if remove_if_present:
+		for c in _hairs:
+			if c.id == hair_id:
+				remove_hair(hair_id)
+				return
 	
 	var hair : VAMHair = load("res://modules/VAMActor/vam_hair.tscn").instantiate()
 	hair.name = "VAMHair"
 	hair._how_many = 4
 	hair.force_lerp = 0.51
 	
+	_hairs.push_back(PersonItem.new(hair_id,hair))
+	
 	parent.add_child(hair)
-	hair.owner = self
 	
 	hair.load_hair(library,hair_id,_mesh.head_tris)
+	
+	hairs_list_changed.emit(self)
+func remove_hair(hair_id: int):
+	for i in _hairs.size():
+		if _hairs[i].id == hair_id:
+			var parent = _hairs[i].node.get_parent()
+			if parent:
+				parent.remove_child(_hairs[i].node)
+			_hairs.remove_at(i)
+			break
+	hairs_list_changed.emit(self)
 
 
 func get_clothes() -> Array:
@@ -146,7 +160,7 @@ func add_cloth(library: LibraryManager,cloth_id: int,remove_if_present: bool):
 			if c.id == cloth_id:
 				remove_cloth(cloth_id)
 				return
-			
+	
 	var cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
 	cloth.name = "VAMCloth"
 	cloth.load_cloth(library,_look_id,cloth_id)

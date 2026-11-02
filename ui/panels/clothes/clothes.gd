@@ -20,6 +20,7 @@ func _ready() -> void:
 	offset_bottom = 0
 	
 	%AllClothes.set_library(_library)
+	%AllClothes.item_selected.connect(_all_clothes_item_selected)
 	%PersonClothes.set_scene_manager(_scene_manager)
 
 

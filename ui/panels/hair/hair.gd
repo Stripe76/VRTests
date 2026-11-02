@@ -19,7 +19,9 @@ func _ready() -> void:
 	offset_right = 0
 	offset_bottom = 0
 	
-	$AllHairs.set_library(_library)
+	%AllHairs.set_library(_library)
+	%AllHairs.item_selected.connect(_all_hairs_item_selected)
+	%PersonHairs.set_scene_manager(_scene_manager)
 
 
 func _all_hairs_item_selected(item_id: int) -> void:

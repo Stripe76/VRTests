@@ -40,5 +40,3 @@ script = ExtResource("2_tsf37")
 [node name="Items" type="HFlowContainer" parent="VBoxContainer/AllClothes" unique_id=64166035]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[connection signal="item_selected" from="VBoxContainer/AllClothes" to="." method="_all_clothes_item_selected"]

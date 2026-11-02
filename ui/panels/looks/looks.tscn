@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dngtkoi2kofpu"]
+
+[ext_resource type="Script" uid="uid://cea7ktheqg05g" path="res://ui/panels/looks/looks.gd" id="1_pd4yj"]
+[ext_resource type="Script" uid="uid://coy87kakwwail" path="res://ui/panels/looks/controls/looks_selection.gd" id="2_6hslp"]
+
+[node name="Looks" type="Control" unique_id=2141187385]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pd4yj")
+
+[node name="AllLooks" type="ScrollContainer" parent="." unique_id=1032136206]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_6hslp")
+
+[node name="Items" type="HFlowContainer" parent="AllLooks" unique_id=1455529228]
+layout_mode = 2
+size_flags_horizontal = 3
