@@ -144,7 +144,8 @@ func add_hair(library: LibraryManager,hair_id: int,remove_if_present: bool):
 	
 	parent.add_child(hair)
 	
-	hair.load_hair(library,hair_id,_mesh.head_tris)
+	#hair.load_hair(library,hair_id,_mesh.head_tris)
+	hair.load_hair_async(library,hair_id,_mesh.head_tris)
 	
 	hairs_list_changed.emit(self)
 func remove_hair(hair_id: int):
@@ -169,7 +170,8 @@ func add_cloth(library: LibraryManager,cloth_id: int,remove_if_present: bool):
 	
 	var cloth = load("res://modules/VAMActor/vam_cloth.tscn").instantiate()
 	cloth.name = "VAMCloth"
-	cloth.load_cloth(library,_look_id,cloth_id)
+	#cloth.load_cloth(library,_look_id,cloth_id)
+	cloth.load_cloth_async(library,_look_id,cloth_id)
 	cloth.skeleton = _skeleton.get_path()
 	
 	_clothes.push_back(PersonItem.new(cloth_id,cloth))

@@ -6,6 +6,7 @@ class_name VAMCloth extends MeshInstanceEx
 @export var material : StandardMaterial3D
 
 var _daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
+var _cloth_thread : Thread
 
 const BONES_NUMBER := 8
 
@@ -33,6 +34,14 @@ func debug_generate_mesh():
 
 func load_cloth(library: LibraryManager,look_id: int,cloth_id: int):
 	load_mesh(library,look_id,cloth_id)
+
+
+func load_cloth_async(library: LibraryManager,look_id: int,cloth_id: int):
+	if _cloth_thread:
+		_cloth_thread.wait_to_finish()
+	else:
+		_cloth_thread = Thread.new()
+	_cloth_thread.start(load_cloth.bind(library,look_id,cloth_id))
 
 
 func load_mesh(library: LibraryManager,morph_id: int,cloth_id: int):

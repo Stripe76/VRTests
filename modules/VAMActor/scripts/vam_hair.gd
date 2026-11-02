@@ -57,6 +57,8 @@ class_name VAMHair extends MeshInstanceEx
 @export_range(0,10) var b_weight_tip: int = 10
 @export_range(-1.5,1.5) var b_variation: float = -0.2
 
+var _hair_thread : Thread
+
 # Debug
 var _library : LibraryManager
 var _hair_debug : MeshInstance3D
@@ -135,6 +137,14 @@ func load_hair(library: LibraryManager,hair_id: int,head_tris: Dictionary):
 	
 	#if _hair_debug and Engine.is_editor_hint():
 		#generate_hair_debug(file,head_tris)
+
+
+func load_hair_async(library: LibraryManager,hair_id: int,head_tris: Dictionary):
+	if _hair_thread:
+		_hair_thread.wait_to_finish()
+	else:
+		_hair_thread = Thread.new()
+	_hair_thread.start(load_hair.bind(library,hair_id,head_tris))
 
 
 func debug_generate_hair():
