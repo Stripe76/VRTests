@@ -43,6 +43,18 @@ func select_person(id: int):
 	current_person_changed.emit(self)
 
 
+func select_next_person():
+	if _persons.size() == 0:
+		return
+	var index : int = _current_person_index + 1
+	if index >= _persons.size():
+		index = 0
+	_current_person_index = index
+	_current_person = _persons[_current_person_index]
+	
+	current_person_changed.emit(self)
+
+
 func select_looks(id: int):
 	if _current_person_index < 0:
 		var person_id = _persons.size()
@@ -50,6 +62,7 @@ func select_looks(id: int):
 		_current_person = VAM_ACTOR_SCENE.instantiate().with(person_id)
 		_current_person_index = person_id
 		_current_person.name = "Person_%s" % person_id
+		_current_person.process_mode = Node.PROCESS_MODE_ALWAYS
 		
 		_persons.push_back(_current_person)
 		

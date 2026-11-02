@@ -105,6 +105,12 @@ func debug_set_ragdoll():
 		_person_controller.enable_ragdoll = _ragdoll_active
 
 
+func get_focus_camera_parent():
+	if _skeleton:
+		return _skeleton.find_child("hip")
+	return null
+
+
 func walk_to(glb_position: Vector3):
 	_person_controller.enable_X = true
 	_person_controller.enable_Y = true

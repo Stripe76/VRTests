@@ -3,30 +3,39 @@
 [ext_resource type="Script" uid="uid://di76cnhy8ttbk" path="res://modules/world/flat/scripts/flat.gd" id="1_0shs7"]
 [ext_resource type="PackedScene" uid="uid://nlslyrqr3wit" path="res://modules/world/world.tscn" id="1_02e27"]
 [ext_resource type="PackedScene" uid="uid://bt32yf15w0a6n" path="res://modules/world/flat/player.tscn" id="2_d76gn"]
+[ext_resource type="Script" uid="uid://t83u5wbquq42" path="res://modules/world/flat/scripts/iso_camera.gd" id="4_kvpox"]
 [ext_resource type="PackedScene" uid="uid://eyie3gn8t3ll" path="res://modules/scene_manager/scene_manager.tscn" id="6_hw5o8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kvpox"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="Flat" type="Node3D" unique_id=571182130]
 script = ExtResource("1_0shs7")
 
 [node name="World" parent="." unique_id=2127073411 groups=["WallsVisibility"] instance=ExtResource("1_02e27")]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
 
 [node name="Player" parent="." unique_id=829102050 instance=ExtResource("2_d76gn")]
+unique_name_in_owner = true
 
-[node name="UI" type="VBoxContainer" parent="." unique_id=894125788]
+[node name="UI" type="Panel" parent="." unique_id=1646373514]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Persons" type="Control" parent="UI" unique_id=618002716]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
-layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kvpox")
 
 [node name="Container" type="HBoxContainer" parent="UI" unique_id=2011401312]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 110.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 
 [node name="UI" type="HBoxContainer" parent="UI/Container" unique_id=1065891151]
@@ -54,7 +63,26 @@ mouse_target = true
 
 [node name="SubViewport" type="SubViewport" parent="UI/Container/WorldView" unique_id=2100921644]
 handle_input_locally = false
-size = Vector2i(712, 674)
+size = Vector2i(712, 678)
 render_target_update_mode = 4
+
+[node name="FocusCamera" type="Node3D" parent="UI/Container/WorldView/SubViewport" unique_id=1422861674]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+script = ExtResource("4_kvpox")
+
+[node name="Camera3D" type="Camera3D" parent="UI/Container/WorldView/SubViewport/FocusCamera" unique_id=887669681]
+transform = Transform3D(1, 0, 0, 0, 0.9659259, 0.25881904, 0, -0.25881904, 0.9659259, 0, 0.42109847, 1.5715611)
+current = true
+fov = 72.0
+size = 5.0
+
+[node name="Persons" type="Control" parent="." unique_id=618002716]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1428.0
+offset_bottom = 100.0
 
 [node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("6_hw5o8")]

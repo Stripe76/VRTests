@@ -1,8 +1,8 @@
 extends Node3D
 
-@onready var world  = $World
-@onready var player := $Player
-@onready var container := $UI/Container
+@onready var world  = %World
+@onready var player := %Player
+@onready var container := $UI
 @onready var world_view := $UI/Container/WorldView/SubViewport
 @onready var scene_manager : SceneManager = $SceneManager
 
@@ -17,8 +17,6 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	$UI.theme = load("res://resources/theme.tres")
-	
 	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
 	#_library.LoadData("/mnt/data/Projects/Godot/library/")
 	
@@ -29,7 +27,8 @@ func _ready() -> void:
 				scene_manager,
 				%MainMenu,
 				%MainPanel,
-				%Persons)
+				%Persons,
+				%FocusCamera)
 	add_child(ui)
 	
 	switch_ui()
@@ -41,27 +40,27 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_released("StartAnimation"):
 		#scene_manager.toggle_animation("walking_ik")
 		scene_manager.toggle_ragdoll()
+	elif event.is_action_released("NextPerson"):
+		scene_manager.select_next_person()
 
 
 func switch_ui():
 	ui_active = not ui_active
 	
-	#if ui_active:
-		#player.process_mode = Node.PROCESS_MODE_DISABLED
-	#else:
-		#player.process_mode = Node.PROCESS_MODE_ALWAYS
+	if ui_active:
+		player.visible = false
+		player.process_mode = Node.PROCESS_MODE_DISABLED
+	else:
+		player.visible = true
+		player.process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	container.visible = ui_active
 	ui.show_add_button = ui_active
-	
-	if ui_active:
-		player.reparent(world_view)
-	else:
-		player.reparent(self)
 
 
 func generate_action_map():
 	add_action("SwitchMode",[KEY_ESCAPE])
+	add_action("NextPerson",[KEY_TAB])
 	
 	add_action("StartAnimation",[Key.KEY_SPACE])
 
