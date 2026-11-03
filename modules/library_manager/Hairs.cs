@@ -13,7 +13,7 @@ public class Hairs : VAMObjects
         var meshCount = reader.ReadByte( );
 
         if( meshCount != 1 )
-            GD.PushWarning( "LoadHairMeshData meash count > 1" );
+            GD.PushWarning( "LoadHairMeshData mesh count > 1" );
 
         SkipStrings( reader,3 );
 
@@ -42,7 +42,7 @@ public class Hairs : VAMObjects
             {
                 for( int v = 0; v < verticesCount; v++ )
                 {
-                    vertices[v] = new Vector3( reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
+                    vertices[v] = new Vector3( -reader.ReadSingle( ),reader.ReadSingle( ),reader.ReadSingle( ) );
                 }
                 strands.Add( vertices );
             }
@@ -51,5 +51,37 @@ public class Hairs : VAMObjects
     }
     protected override void LoadMaterials( JsonElement root,string folder,string UID,Dictionary data )
     {
+	    if( root.TryGetProperty( "storables",out JsonElement storables ) )
+	    {
+		    foreach( JsonElement storable in storables.EnumerateArray( ) )
+		    {
+			    if( storable.TryGetProperty( "rootColor",out JsonElement rootColor ) )
+			    {
+				    if( storable.TryGetProperty( "id",out JsonElement id ) )
+				    {
+					    var material = new Dictionary( );
+
+					    {
+						    if( rootColor.TryGetProperty( "h",out JsonElement h ) &&
+						        rootColor.TryGetProperty( "s",out JsonElement s ) &&
+						        rootColor.TryGetProperty( "v",out JsonElement v ) )
+						    {
+							    material.Add( "root_color",Color.FromHsv( float.Parse( h.ToString( ) ),float.Parse( s.ToString( ) ),float.Parse( v.ToString( ) ) ) );
+						    }
+					    }
+					    if( storable.TryGetProperty( "tipColor",out JsonElement tipColor ) )
+					    {
+						    if( tipColor.TryGetProperty( "h",out JsonElement h ) &&
+						        tipColor.TryGetProperty( "s",out JsonElement s ) &&
+						        tipColor.TryGetProperty( "v",out JsonElement v ) )
+						    {
+							    material.Add( "tip_color",Color.FromHsv( float.Parse( h.ToString( ) ),float.Parse( s.ToString( ) ),float.Parse( v.ToString( ) ) ) );
+						    }
+					    }
+					    data.Add( id.ToString( ).Replace( UID,"" ),material );
+				    }
+			    }
+		    }
+	    }
     }
 }

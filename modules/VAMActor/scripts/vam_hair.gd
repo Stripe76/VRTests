@@ -7,6 +7,7 @@ class_name VAMHair extends MeshInstanceEx
 
 @export_category("")
 @export var hair_material : ShaderMaterial
+@export var debug_hair_material : StandardMaterial3D
 
 @export var force : Vector3:
 	set(value):
@@ -39,19 +40,19 @@ class_name VAMHair extends MeshInstanceEx
 	get:
 		return _how_many
 
-@export_range(-0.5,0.5) var AB_distribution: float = .5
+@export_range(-0.5,0.5) var AB_distribution: float = -.5
 @export_group("Hair colors A","a_")
-@export var a_root: Color = Color(0.066, 0.034, 0.01, 1.0)
-@export var a_middle: Color = Color(0.02, 0.015, 0.01, 1.0)
-@export var a_tip: Color = Color(0.066, 0.034, 0.01, 1.0)
+@export var a_root: Color = Color(0.288, 0.001, 0.723, 1.0)
+@export var a_middle: Color = Color(0.288, 0.001, 0.723, 1.0)
+@export var a_tip: Color = Color(0.288, 0.001, 0.723, 1.0)
 @export_range(0,10) var a_weight_root: int = 1
 @export_range(0,10) var a_weight_middle: int = 10
 @export_range(0,10) var a_weight_tip: int = 10
 @export_range(-1.5,1.5) var a_variation: float = -0.3
 @export_group("Hair colors B","b_")
-@export var b_root: Color = Color(0.84, 0.755, 0.534, 1.0)
-@export var b_middle: Color = Color(0.84, 0.755, 0.534, 1.0)
-@export var b_tip: Color = Color(0.83, 0.736, 0.576, 1.0)
+@export var b_root: Color = Color(0.839, 0.0, 0.533, 1.0)
+@export var b_middle: Color = Color(0.839, 0.0, 0.533, 1.0)
+@export var b_tip: Color = Color(0.831, 0.0, 0.576, 1.0)
 @export_range(0,10) var b_weight_root: int = 1
 @export_range(0,10) var b_weight_middle: int = 10
 @export_range(0,10) var b_weight_tip: int = 10
@@ -134,6 +135,8 @@ func load_hair(library: LibraryManager,hair_id: int,head_tris: Dictionary):
 	if mesh:
 		for i in mesh.get_surface_count():
 			set_surface_override_material(i,hair_material)
+			#mesh.surface_set_material(i,hair_material)
+			#mesh.surface_set_material(i,debug_hair_material)
 	
 	#if _hair_debug and Engine.is_editor_hint():
 		#generate_hair_debug(file,head_tris)
@@ -160,6 +163,20 @@ func generate_hair_from_library(library: LibraryManager,hair_id: int,head_tris: 
 	var data : Dictionary = library.Hairs_GetHairMeshData(hair_id);
 	if data and data.has("meshData"):
 		var meshData : Dictionary = data["meshData"]
+		var materials : Dictionary = data["materials"]
+		
+		if materials and materials.has("Sim"):
+			materials = materials["Sim"]
+			if materials.has("root_color"):
+				a_root = materials["root_color"]
+			if materials.has("tip_color"):
+				a_tip = materials["tip_color"]
+			a_middle = a_tip
+			a_weight_root = 1
+			a_weight_middle = 0
+			a_weight_tip = 1
+			AB_distribution = -0.5
+		
 		if meshData and meshData.has("strands"):
 			var strands : Array = meshData["strands"]
 			if strands.size() <= 0:
@@ -286,15 +303,16 @@ func generate_hair_strands(strands: Array,head_tris: Dictionary,how_many: int,sp
 					normals.push_back((last_vertex-vertex).normalized())
 					uvs.push_back(Vector2(i,col))
 				
-					var v := i / size
-					if v < weight_root:
-						colors.push_back(lerp(root_color,middle_color,v/weight_root))
-					else:
-						v = (i-(weight_root*size)) / (size-(weight_root*size))
-						if v < weight_middle:
-							colors.push_back(middle_color)
-						else:
-							colors.push_back(lerp(middle_color,tip_color,(v-weight_middle)/(1.0-weight_middle)))
+					colors.push_back(lerp(root_color,tip_color,i / size))
+					#var v : float = i / size
+					#if v < weight_root:
+						#colors.push_back(lerp(root_color,middle_color,v/weight_root))
+					#else:
+						#v = (i-(weight_root*size)) / (size-(weight_root*size))
+						#if v < weight_middle:
+							#colors.push_back(middle_color)
+						#else:
+							#colors.push_back(lerp(middle_color,tip_color,(v-weight_middle)/(1.0-weight_middle)))
 					
 					customs0.push_back(vertex_offset.x)
 					customs0.push_back(vertex_offset.y)

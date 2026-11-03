@@ -53,4 +53,10 @@
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd" />
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd.uid" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="re\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="re\**" />
+  </ItemGroup>
 </Project>

@@ -12,11 +12,17 @@ shader_parameter/lerp = 1.0
 shader_parameter/data_points = SubResource("Texture2DRD_5l43d")
 shader_parameter/shininess = 25.0
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_87eex"]
+vertex_color_use_as_albedo = true
+
 [node name="VAMHair" type="MeshInstance3D" unique_id=1767148401]
 script = ExtResource("1_8yvxm")
 hair_material = SubResource("ShaderMaterial_87eex")
-force_lerp = 0.5
-AB_distribution = -0.5
-a_root = Color(0.60176414, 0.24820161, 0, 1)
-a_middle = Color(0.60176414, 0.24820161, 0, 1)
-a_tip = Color(0.60176414, 0.24820161, 0, 1)
+debug_hair_material = SubResource("StandardMaterial3D_87eex")
+a_root = Color(0.08978094, 0.062998265, 0.038650382, 1)
+a_middle = Color(1, 0.67717, 0.3561659, 1)
+a_tip = Color(1, 0.67717, 0.3561659, 1)
+a_weight_middle = 0
+a_weight_tip = 1
+b_root = Color(0, 0, 0.53333336, 1)
+b_tip = Color(1, 1, 1, 1)

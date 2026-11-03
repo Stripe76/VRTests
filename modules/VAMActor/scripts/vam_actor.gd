@@ -107,7 +107,7 @@ func debug_set_ragdoll():
 
 func get_focus_camera_parent():
 	if _skeleton:
-		return _skeleton.find_child("hip")
+		return _skeleton.find_child("head")
 	return null
 
 
@@ -137,7 +137,7 @@ func add_hair(library: LibraryManager,hair_id: int,remove_if_present: bool):
 	
 	var hair : VAMHair = load("res://modules/VAMActor/vam_hair.tscn").instantiate()
 	hair.name = "VAMHair"
-	hair._how_many = 4
+	hair._how_many = 6
 	hair.force_lerp = 0.51
 	
 	_hairs.push_back(PersonItem.new(hair_id,hair))

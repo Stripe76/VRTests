@@ -30,6 +30,18 @@ public class Clothes : VAMObjects
 
 		SkipStrings( reader,5 );
 
+		/*
+		   wrapVertices[i].closestTriangle = binReader.ReadInt32();
+		   wrapVertices[i].Vertex1 = binReader.ReadInt32();
+		   wrapVertices[i].Vertex2 = binReader.ReadInt32();
+		   wrapVertices[i].Vertex3 = binReader.ReadInt32();
+		   wrapVertices[i].surfaceNormalProjection = binReader.ReadSingle();
+		   wrapVertices[i].surfaceTangent1Projection = binReader.ReadSingle();
+		   wrapVertices[i].surfaceTangent2Projection = binReader.ReadSingle();
+		   wrapVertices[i].surfaceNormalWrapNormalDot = binReader.ReadSingle();
+		   wrapVertices[i].surfaceTangent1WrapNormalDot = binReader.ReadSingle();
+		   wrapVertices[i].surfaceTangent2WrapNormalDot = binReader.ReadSingle();
+		 */
 		var skinsCount = reader.ReadInt32( );
 		var skinIndices = new int[skinsCount * 4];
 		for( int i = 0; i < skinsCount; i++ )
