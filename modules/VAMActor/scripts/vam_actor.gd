@@ -105,9 +105,9 @@ func debug_set_ragdoll():
 		_person_controller.enable_ragdoll = _ragdoll_active
 
 
-func get_focus_camera_parent():
+func get_focus_camera_parent(bone: String):
 	if _skeleton:
-		return _skeleton.find_child("head")
+		return _skeleton.find_child(bone)
 	return null
 
 

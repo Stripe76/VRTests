@@ -43,24 +43,28 @@ public class Clothes : VAMObjects
 		   wrapVertices[i].surfaceTangent2WrapNormalDot = binReader.ReadSingle();
 		 */
 		var skinsCount = reader.ReadInt32( );
-		var skinIndices = new int[skinsCount * 4];
+		var skinData = new Array( );
 		for( int i = 0; i < skinsCount; i++ )
 		{
-			var start = i * 4;
-			skinIndices[start] = reader.ReadInt32( );
-			skinIndices[start + 1] = reader.ReadInt32( );
-			skinIndices[start + 2] = reader.ReadInt32( );
-			skinIndices[start + 3] = reader.ReadInt32( );
+			var wrapData = new Dictionary( );
+			
+			wrapData.Add( "tris",reader.ReadInt32( ) );
 
-			reader.ReadSingle( );
-			reader.ReadSingle( );
-			reader.ReadSingle( );
-			reader.ReadSingle( );
+			wrapData.Add( "v1",reader.ReadInt32( ) );
+			wrapData.Add( "v2",reader.ReadInt32( ) );
+			wrapData.Add( "v3",reader.ReadInt32( ) );
 
-			reader.ReadSingle( );
-			reader.ReadSingle( );
+			wrapData.Add( "np",reader.ReadSingle( ) );
+			wrapData.Add( "t1p",reader.ReadSingle( ) );
+			wrapData.Add( "t2p",reader.ReadSingle( ) );
+			
+			wrapData.Add( "nw",reader.ReadSingle( ) );
+			wrapData.Add( "t1w",reader.ReadSingle( ) );
+			wrapData.Add( "t2w",reader.ReadSingle( ) );
+			
+			skinData.Add( wrapData );
 		}
-		data.Add( "skin_indices",skinIndices );
+		data.Add( "skin_wraps",skinData );
 
 		var materialsID = new Array( );
 		int surfacesCount = ((Array)data["surfaces"]).Count;

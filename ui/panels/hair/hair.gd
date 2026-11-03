@@ -26,4 +26,5 @@ func _ready() -> void:
 
 func _all_hairs_item_selected(item_id: int) -> void:
 	if _scene_manager:
+		_scene_manager.set_focus_camera("head")
 		_scene_manager.add_person_hair(item_id)

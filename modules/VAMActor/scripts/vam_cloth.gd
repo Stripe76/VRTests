@@ -20,7 +20,7 @@ func _ready() -> void:
 
 
 func _validate_property(property: Dictionary):
-	if ["mesh",].has(property["name"]):
+	if ["mesh"].has(property["name"]):
 		property["usage"] = PROPERTY_USAGE_EDITOR
 
 
@@ -53,7 +53,7 @@ func load_mesh(library: LibraryManager,morph_id: int,cloth_id: int):
 			var vertices : PackedVector3Array = meshData["vertices"]
 			var surfaces : Array = meshData["surfaces"]
 			var uvs : PackedVector2Array = meshData["uvs"]
-			var skin_indices : PackedInt32Array = meshData["skin_indices"]
+			var skin_wraps : Array = meshData["skin_wraps"]
 			
 			var materials : Dictionary = data["materials"]
 			var materials_id : Array = meshData["materials_id"]
@@ -63,39 +63,69 @@ func load_mesh(library: LibraryManager,morph_id: int,cloth_id: int):
 			var bones := PackedInt32Array()
 			var weights := PackedFloat32Array()
 			
+			var model_vertices = _daz_model.vertices
+			var model_linkeds = _daz_model.linked_vertices
 			var model_weights = _daz_model.weights
+			
 			weights_padding(model_weights)
 			
+			#var linkeds : Dictionary = {}
+			#for k in model_linkeds.keys():
+				#for v in model_linkeds[k]:
+					#linkeds[v] = k
+			
+			var surfaceOffset := 0.0003
 			var morph_vertices := {}
-			for skn in vertices.size():
-				var a := skin_indices[skn*4]
-				var b := skin_indices[skn*4+1]
-				var c := skin_indices[skn*4+2]
-				var d := skin_indices[skn*4+3]
+			for w in vertices.size():
+				var wrap : Dictionary = skin_wraps[w]
 				
-				var index : int = -1
-				if a < max_index:index = a
-				elif b < max_index:index = b
-				elif c < max_index:index = c
-				elif d < max_index:index = d
+				var v1 : int = wrap["v1"]
+				#var v2 : int = wrap["v2"]
+				#var v3 : int = wrap["v3"]
+				#
+				#var p1 = model_vertices[v1]
+				#var p2 = model_vertices[v2]
+				#var p3 = model_vertices[v3]
+				#
+				#var edge1 = p2 - p1
+				#var edge2 = p3 - p1
+				#var body_normal = edge1.cross(edge2).normalized()    # La perpendicolare alla pelle
+				#
+				#var np = wrap["np"] / 100.0
+				#var t1p = wrap["t1p"] / 100.0
+				#var t2p = wrap["t2p"] / 100.0
+#
+				#var nw = wrap["nw"] / 100.0
+				#var t1w = wrap["t1w"] / 100.0
+				#var t2w = wrap["t2w"] / 100.0
+#
+				#var center : Vector3 = (p1 + p2 + p3) * 0.33333;
+				#var vector3 : Vector3 = (center - p1) * 1;
+				#var vector5 : Vector3 = vector3.cross(body_normal)
+				#var offset = p1 + vector3 * (t1p + t1w) + vector5 * (t2p + t2w) + body_normal * (np + surfaceOffset + nw)
 				
-				if index < max_index:
-					for bone in BONES_NUMBER:
-						bones.push_back(model_weights[index]["s"][bone*2])
-						weights.push_back(model_weights[index]["s"][bone*2+1])
-						
-					if not morph_vertices.has(index):
-						morph_vertices[index] = []
-					morph_vertices[index].push_back(skn)
-					
-			#if library and morph_id >= 0:
-				#prints("morph_vertices",morph_vertices.size())
-				#var morphs : Array = library.Looks_GetMorphs(morph_id)
-				#for morph in morphs:
-					#if morph["type"] != "genitalia":
-						##print("Applying body deltas: ",morph["meshFile"])
-						#var value : float =  morph["value"]
-						#apply_deltas(morph_vertices,vertices,{},morph["meshData"],value)
+				#if w < 10:
+					#prints(np,nw)
+				#vertices[w] = vertices[w] + offset
+				
+				# "Temporary" hack
+				if v1 > max_index:
+					v1 = model_vertices.size()-1
+				
+				for bone in BONES_NUMBER:
+					bones.push_back(model_weights[v1]["s"][bone*2])
+					weights.push_back(model_weights[v1]["s"][bone*2+1])
+				
+				if not morph_vertices.has(v1):
+					morph_vertices[v1] = []
+				morph_vertices[v1].push_back(w)
+				
+			if library and morph_id >= 0:
+				var morphs : Array = library.Looks_GetMorphs(morph_id)
+				for morph in morphs:
+					if morph["type"] != "genitalia":
+						var value : float =  morph["value"]
+						apply_deltas(morph_vertices,vertices,{},morph["meshData"],value)
 			
 			mesh = create_mesh_surfaces(vertices,surfaces,uvs,bones,weights,mesh_materials,8)
 
@@ -124,18 +154,12 @@ func apply_deltas(morph_vertices: Dictionary,vertices: PackedVector3Array,linked
 			for i in morph_vertices[deltaID]:
 				#prints(deltaID,":",i)
 				vertices[i] += d["delta"] * value
+		#if linked_vertices.has(deltaID):
+			#for c in linked_vertices[deltaID]:
+				#vertices[c] += deltas[i].delta*value
 		else:
 			#push_warning("Delta ID too high: ",deltaID)
 			continue
-
-
-func skip_strings(file: FileAccess,how_many: int = 0):
-	if how_many == 0:
-		how_many = file.get_32()
-	for i in how_many:
-		#var n = file.get_8()
-		var s = file.get_buffer(file.get_8())
-		prints(" - ",s.get_string_from_ascii())
 
 
 func weights_padding(model_weights: Array):

@@ -2,13 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bqu4dbfns6bkj" path="res://modules/VAMActor/scripts/vam_cloth.gd" id="1_lwwsj"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n1r3q"]
-cull_mode = 2
-
 [node name="VAMCloth" type="MeshInstance3D" unique_id=2019388731]
-surface_material_override/0 = SubResource("StandardMaterial3D_n1r3q")
 script = ExtResource("1_lwwsj")
-material = SubResource("StandardMaterial3D_n1r3q")
 
 [node name="DebugMesh" type="MeshInstance3D" parent="." unique_id=267253672]
 visible = false

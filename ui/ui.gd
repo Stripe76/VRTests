@@ -18,10 +18,8 @@ var _scene_manager : SceneManager
 var _main_menu : Control
 var _main_panel : Control
 var _persons_list : Control
-var _focus_camera : Node3D
 
 var _person_selection
-var _remote_transform : RemoteTransform3D
 
 
 func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Control,main_panel: Control,persons_list:Control,focus_camera: Node3D) -> void:
@@ -31,7 +29,8 @@ func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Contro
 	_main_menu = main_menu
 	_main_panel = main_panel
 	_persons_list = persons_list
-	_focus_camera = focus_camera
+	
+	_scene_manager.focus_camera = focus_camera.get_path()
 
 
 func _ready() -> void:
@@ -66,22 +65,7 @@ func current_person_changed(scene_manager: SceneManager):
 	if scene_manager:
 		if scene_manager.current_person_id < 0:
 			set_main_panel("looks","all");
-	
-	var vam_actor : VAMActor = scene_manager.current_person
-	if vam_actor:
-		if not _remote_transform:
-			_remote_transform = RemoteTransform3D.new()
-			_remote_transform.name = "FocusCameraTransfomr"
-			_remote_transform.update_position = true
-			_remote_transform.update_rotation = false
-			_remote_transform.remote_path = _focus_camera.get_path()
-		
-		var parent_node : Node3D = vam_actor.get_focus_camera_parent()
-		if _remote_transform and parent_node:
-			if _remote_transform.get_parent():
-				_remote_transform.get_parent().remove_child(_remote_transform)
-			_remote_transform.position = Vector3();
-			parent_node.add_child(_remote_transform)
+		scene_manager.set_focus_camera("hip")
 
 
 func person_clicked(person_id: int):
