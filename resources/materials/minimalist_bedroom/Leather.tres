@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bfkdlt1n05mnf"]
+
+[ext_resource type="Texture2D" uid="uid://dbmmb3jlreklx" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_2K-Leather_23_Base Color.jpg" id="1_02xdk"]
+[ext_resource type="Texture2D" uid="uid://d05gj658q2ku7" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_2K-Leather_23_Roughness.png" id="2_fkr5v"]
+[ext_resource type="Texture2D" uid="uid://b6dhqacxjhben" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_2K-Leather_23_Normal.jpg" id="3_4cwbs"]
+
+[resource]
+resource_name = "Leather"
+cull_mode = 2
+albedo_texture = ExtResource("1_02xdk")
+metallic_texture = ExtResource("2_fkr5v")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_fkr5v")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_4cwbs")

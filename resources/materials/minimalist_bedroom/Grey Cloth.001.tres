@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://5vsdjfm0sq7u"]
+
+[ext_resource type="Texture2D" uid="uid://wgel1l6jlflr" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_fabric_181_Albedo.jpg" id="1_bsos3"]
+[ext_resource type="Texture2D" uid="uid://bwfj65ubluido" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_fabric_181_Roughness.png" id="2_ha8ue"]
+[ext_resource type="Texture2D" uid="uid://s3o3wm7b75xr" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_fabric_181_Normal.jpg" id="3_qw0fk"]
+
+[resource]
+resource_name = "Grey Cloth.001"
+cull_mode = 2
+albedo_texture = ExtResource("1_bsos3")
+metallic_texture = ExtResource("2_ha8ue")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_ha8ue")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_qw0fk")
+uv1_scale = Vector3(2.03, 2.03, 1)
+uv1_offset = Vector3(0, -1.03, 0)

@@ -1,0 +1,5 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://brtjc72i0a0hw"]
+
+[resource]
+resource_name = "Procedural Dirt.001"
+cull_mode = 2

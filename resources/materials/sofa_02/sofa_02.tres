@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b33wnk47qy5nk"]
+
+[ext_resource type="Texture2D" uid="uid://dr4t8a4bfqkra" path="res://resources/models/sofa/sofa_02_4k_sofa_02_metallic-sofa_02_roughness.png" id="2_oly12"]
+[ext_resource type="Texture2D" uid="uid://dmov3iai6kix1" path="res://resources/models/sofa/sofa_02_4k_sofa_02_nor_gl.png" id="3_ogei4"]
+
+[resource]
+resource_name = "sofa_02"
+cull_mode = 2
+albedo_color = Color(0.4732325, 0.27382088, 0.19189897, 1)
+metallic = 1.0
+metallic_texture = ExtResource("2_oly12")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_oly12")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_ogei4")

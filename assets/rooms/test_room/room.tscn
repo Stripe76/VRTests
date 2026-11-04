@@ -1,7 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bys6ttbl47v2s"]
+[gd_scene format=3 uid="uid://bys6ttbl47v2s"]
 
-[ext_resource type="Script" uid="uid://dtealedywqmgy" path="res://rooms/room/rotatingZ.gd" id="1_6f2qh"]
-[ext_resource type="Script" uid="uid://bx70y0pu2ufn0" path="res://rooms/room/rotatingX.gd" id="2_fn4fn"]
+[ext_resource type="Script" uid="uid://dtealedywqmgy" path="res://assets/rooms/test_room/rotatingZ.gd" id="1_6f2qh"]
+[ext_resource type="Script" uid="uid://bx70y0pu2ufn0" path="res://assets/rooms/test_room/rotatingX.gd" id="2_fn4fn"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_as8ch"]
 

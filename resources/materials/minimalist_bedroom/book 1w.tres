@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://djrvk0161h8v8"]
+
+[ext_resource type="Texture2D" uid="uid://d8vaiv8bhqbm" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_book (1).jpg" id="1_aeqbt"]
+[ext_resource type="Texture2D" uid="uid://cd56nho47sbp1" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_book (1)000.jpg" id="2_7kvph"]
+
+[resource]
+resource_name = "book 1w"
+cull_mode = 2
+albedo_texture = ExtResource("1_aeqbt")
+roughness = 0.6709091
+normal_enabled = true
+normal_texture = ExtResource("2_7kvph")

@@ -40,13 +40,15 @@ var rl_turn_out : PersonMove
 
 var go := false
 var debug_random_walk := false
+var debug_fainting_count := 0
 
 var c := 0
 func start():
 	_head.pinned_on = true
-
-	c += 1
-	if c > 10:
+	
+	if debug_fainting_count > 0:
+		c += 1
+	if c > debug_fainting_count:
 		c = 0
 		_controller.enable_ragdoll = true
 		return

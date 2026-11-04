@@ -31,7 +31,7 @@ class_name GenerateCollisionShape extends Node3D
 @export var use_capsules: bool = false:
 	set(value):
 		use_capsules = value
-		generate_collision_shapes()
+		#generate_collision_shapes()
 	get:
 		return use_capsules
 

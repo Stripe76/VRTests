@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cps6c6k40bxmi"]
+
+[resource]
+resource_name = "Plastic Cabel"
+cull_mode = 2
+albedo_color = Color(0.18181379, 0.18181379, 0.18181379, 1)
+roughness = 0.5

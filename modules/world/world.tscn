@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://nlslyrqr3wit"]
 
 [ext_resource type="Script" uid="uid://cv8m650d0g7tu" path="res://modules/world/world.gd" id="1_fj7yv"]
-[ext_resource type="PackedScene" uid="uid://bys6ttbl47v2s" path="res://rooms/room/room.tscn" id="2_tlwt5"]
-[ext_resource type="PackedScene" uid="uid://d3k8tbuot2c6g" path="res://rooms/bedrooms/minimalist/minimalist.tscn" id="4_rmlpf"]
+[ext_resource type="PackedScene" uid="uid://bys6ttbl47v2s" path="res://assets/rooms/test_room/room.tscn" id="2_tlwt5"]
+[ext_resource type="PackedScene" uid="uid://dknu6brp88cr6" path="res://assets/rooms/bedrooms/minimalist/minimalist.tscn" id="3_lnoo8"]
 
 [node name="World" type="Node3D" unique_id=2127073411]
 script = ExtResource("1_fj7yv")
@@ -14,8 +14,8 @@ metadata/_edit_lock_ = true
 visible = false
 metadata/_edit_lock_ = true
 
-[node name="Minimalist" parent="Environment" unique_id=814273015 instance=ExtResource("4_rmlpf")]
-metadata/_edit_lock_ = true
+[node name="Minimalist" parent="Environment" unique_id=813597850 instance=ExtResource("3_lnoo8")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="Persons" type="Node3D" parent="." unique_id=1978302120]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)

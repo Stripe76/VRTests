@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c2ugttusstady"]
+
+[ext_resource type="Texture2D" uid="uid://cahrul640q6v0" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_10371-CRUST-WALNUT.jpg" id="1_wgaug"]
+[ext_resource type="Texture2D" uid="uid://dunc5alibgb8h" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_NormalMap.jpg" id="2_niv67"]
+
+[resource]
+resource_name = "Dark_Walnut"
+cull_mode = 2
+albedo_texture = ExtResource("1_wgaug")
+roughness = 0.5
+normal_enabled = true
+normal_scale = 0.2
+normal_texture = ExtResource("2_niv67")

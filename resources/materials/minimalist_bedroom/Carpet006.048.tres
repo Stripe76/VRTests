@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d4mkvj1naaa5d"]
+
+[ext_resource type="Texture2D" uid="uid://yuua5du74vpr" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_Pearl Beige Carpet by AMF Carpet.jpg" id="1_uk000"]
+[ext_resource type="Texture2D" uid="uid://dgtvnov2rfjp4" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_Carpet006_2K-JPG_Roughness.png" id="2_o6wr6"]
+[ext_resource type="Texture2D" uid="uid://bj2rehyphd6hr" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_Carpet006_2K-JPG_NormalGL.jpg" id="3_nchtp"]
+
+[resource]
+resource_name = "Carpet006.048"
+cull_mode = 2
+albedo_texture = ExtResource("1_uk000")
+metallic_texture = ExtResource("2_o6wr6")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_o6wr6")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.75
+normal_texture = ExtResource("3_nchtp")

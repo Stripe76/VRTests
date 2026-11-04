@@ -20,14 +20,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func cycle_camera():
-		current_camera += 1
-		
-		if current_camera % 2 == 0:
-			pivot_camera.visible = true
-			free_camera.visible = false
-		else:
-			free_camera.visible = true
-			pivot_camera.visible = false
+	current_camera += 1
+	
+	if current_camera % 2 == 0:
+		pivot_camera.visible = true
+		free_camera.visible = false
+		WallsHide.is_hiding_enabled = true
+	else:
+		free_camera.visible = true
+		pivot_camera.visible = false
+		WallsHide.is_hiding_enabled = false
+
 
 
 func generate_action_map():

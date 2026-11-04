@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://crl1o8vkqspn0"]
+
+[ext_resource type="Texture2D" uid="uid://dqbibsakqvste" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_4_diffuseOriginal.jpg" id="1_tdq86"]
+[ext_resource type="Texture2D" uid="uid://qw5q0m7j7fn1" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_4_roughness.png" id="2_bects"]
+[ext_resource type="Texture2D" uid="uid://bm7ytamjpbblf" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_4_normal.jpg" id="3_761p3"]
+
+[resource]
+resource_name = "Material.008"
+cull_mode = 2
+albedo_texture = ExtResource("1_tdq86")
+metallic_texture = ExtResource("2_bects")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_bects")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("3_761p3")

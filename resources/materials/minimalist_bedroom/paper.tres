@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dam2g5vym6ocj"]
+
+[ext_resource type="Texture2D" uid="uid://dnrdh3jaag8eb" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_texturs a (2).jpg" id="1_cxln3"]
+
+[resource]
+resource_name = "paper"
+cull_mode = 2
+albedo_texture = ExtResource("1_cxln3")
+roughness = 0.8418182
+normal_enabled = true
+normal_texture = ExtResource("1_cxln3")

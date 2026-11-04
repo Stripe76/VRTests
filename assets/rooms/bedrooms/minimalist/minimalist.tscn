@@ -1,0 +1,155 @@
+[gd_scene format=3 uid="uid://dknu6brp88cr6"]
+
+[ext_resource type="Script" uid="uid://cr6n3xcm7j7p0" path="res://assets/scripts/lights_helper.gd" id="1_dpg6u"]
+[ext_resource type="PackedScene" uid="uid://cmchpaj7chsf5" path="res://resources/models/minimalist_bedroom/minimalist_bedroom.glb" id="1_py7ai"]
+[ext_resource type="Script" uid="uid://d38knte807kiv" path="res://modules/scene_manager/clickables/floor.gd" id="2_py7ai"]
+[ext_resource type="VoxelGIData" uid="uid://xlj8eqoigbat" path="res://assets/rooms/bedrooms/minimalist/resources/VoxelGI.res" id="3_2gqao"]
+[ext_resource type="Environment" uid="uid://p2aqim2f5j77" path="res://assets/rooms/bedrooms/minimalist/resources/Environment.tres" id="5_2gqao"]
+[ext_resource type="PackedScene" uid="uid://bmw3vbjnfei0c" path="res://assets/furnitures/sofa_02_base.scn" id="6_wv8sk"]
+[ext_resource type="PackedScene" uid="uid://cj7c31hhyfwiy" path="res://assets/furnitures/sofa_02_seat.scn" id="7_fpsha"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_noa82"]
+size = Vector3(10, 0.25, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sp703"]
+size = Vector3(1.735, 0.69, 1.34)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dxdio"]
+size = Vector3(1.555, 1.03, 4.2)
+
+[node name="Minimalist" type="Node3D" unique_id=813597850]
+
+[node name="Ligths" type="Node3D" parent="." unique_id=374202205]
+
+[node name="Ceiling" type="Node3D" parent="Ligths" unique_id=2109074223]
+script = ExtResource("1_dpg6u")
+energy = 1.0
+
+[node name="Spot1" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=2053268987]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, 0)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot2" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1857031436]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, 0)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot7" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=261193854]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.2351184, 2.3, -1)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot8" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=2053256682]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.0644467, 2.3, -1)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot3" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1888652921]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, -2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot4" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1506416858]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, -2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot5" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1885735765]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 2.3, 2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot6" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1805029896]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.5, 2.3, 2.5)
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot9" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1079742741]
+transform = Transform3D(1, 0, 0, 0, 0.95083517, 0.30969748, 0, -0.30969748, 0.95083517, 1.5209851, 1.2542511, 3.2941966)
+light_energy = 2.592
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Spot10" type="SpotLight3D" parent="Ligths/Ceiling" unique_id=1925567520]
+transform = Transform3D(1, 0, 0, 0, 0.95083517, 0.30969748, 0, -0.30969748, 0.95083517, -1.4386432, 1.2542511, 3.2941966)
+light_energy = 2.592
+light_bake_mode = 1
+shadow_enabled = true
+spot_attenuation = 2.0
+spot_angle = 75.0
+
+[node name="Lamps" type="Node3D" parent="Ligths" unique_id=1941602614]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Ligths/Lamps" unique_id=139031650]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5351157, 1.3169969, -2.9871855)
+light_energy = 0.195
+light_bake_mode = 1
+shadow_enabled = true
+shadow_blur = 10.0
+omni_attenuation = 0.25
+
+[node name="Physics" type="Node3D" parent="." unique_id=1020401413]
+
+[node name="Floor" type="StaticBody3D" parent="Physics" unique_id=1665616484]
+script = ExtResource("2_py7ai")
+
+[node name="Shape" type="CollisionShape3D" parent="Physics/Floor" unique_id=1357789654]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14310122, 0)
+shape = SubResource("BoxShape3D_noa82")
+
+[node name="VoxelGI" type="VoxelGI" parent="." unique_id=459127186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07836914, 1.2322998, 0.0690918)
+size = Vector3(7.427246, 3.369873, 7.362793)
+data = ExtResource("3_2gqao")
+
+[node name="Environment" type="WorldEnvironment" parent="." unique_id=427738698]
+environment = ExtResource("5_2gqao")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1203536955]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.63725317, 0, -3)
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=205934568]
+visible = false
+shape = SubResource("BoxShape3D_sp703")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="." unique_id=1038272187]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6495756, 0, -3)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2" unique_id=822131068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.23353243, 0, 0)
+shape = SubResource("BoxShape3D_dxdio")
+
+[node name="Room" type="Node3D" parent="." unique_id=954305006]
+
+[node name="minimalist_bedroom" parent="Room" unique_id=898516561 instance=ExtResource("1_py7ai")]
+
+[node name="Sofa" parent="Room/minimalist_bedroom/Furnitures" parent_id_path=PackedInt32Array(898516561, 671486080) index="3" unique_id=45917341]
+visible = false
+
+[node name="sofa_02_Base" parent="Room" unique_id=1060524933 instance=ExtResource("6_wv8sk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8011184, 0.00020578504, -2.8371463)
+
+[node name="sofa_02_Seat" parent="Room" unique_id=521134125 instance=ExtResource("7_fpsha")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8011184, 0.00020578504, -2.8371463)
+
+[editable path="Room/minimalist_bedroom"]

@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c3okj7q8w4bw2"]
+
+[ext_resource type="Texture2D" uid="uid://bh5r3gn14e2cm" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_VenetianPlaster-JPG.jpg" id="1_oa4y4"]
+[ext_resource type="Texture2D" uid="uid://cf7k7mwows3np" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_VenetianPlaster-Roughness.png" id="2_i0bso"]
+[ext_resource type="Texture2D" uid="uid://c58lxwjkn1yqm" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_VenetianPlaster-NormalDX.jpg" id="3_18ctf"]
+
+[resource]
+resource_name = "White Venetian Plaster Wall"
+cull_mode = 2
+albedo_texture = ExtResource("1_oa4y4")
+metallic_texture = ExtResource("2_i0bso")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_i0bso")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_18ctf")
+uv1_scale = Vector3(10, 10, 10)

@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://y41sge7u2rov"]
+
+[ext_resource type="Texture2D" uid="uid://c0q7g3qv8vt6g" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_Monstera_1_dif.jpg" id="1_20l2k"]
+[ext_resource type="Texture2D" uid="uid://big041blrcihw" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_Monstera_1_norm.jpg" id="2_3g0dh"]
+
+[resource]
+resource_name = "Daun"
+cull_mode = 2
+albedo_texture = ExtResource("1_20l2k")
+roughness = 0.2590909
+normal_enabled = true
+normal_texture = ExtResource("2_3g0dh")

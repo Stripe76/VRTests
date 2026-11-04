@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bwadrva8fnk3f"]
+
+[ext_resource type="Texture2D" uid="uid://brv8qrfb8nce7" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_wood04_diffuse.jpg" id="1_7cupd"]
+[ext_resource type="Texture2D" uid="uid://cvok7620hdnu6" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_wood04_roughness.png" id="2_54w2h"]
+[ext_resource type="Texture2D" uid="uid://s1er7rnhdpyy" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_wood04_normal_opengl.jpg" id="3_c0p0w"]
+
+[resource]
+resource_name = "Wood.001"
+cull_mode = 2
+albedo_texture = ExtResource("1_7cupd")
+metallic_texture = ExtResource("2_54w2h")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_54w2h")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_c0p0w")

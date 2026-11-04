@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bpido82n5n8b8"]
+
+[ext_resource type="Texture2D" uid="uid://bfxt8ftumvjs" path="res://resources/models/minimalist_bedroom/minimalist_bedroom_2_2K_Color.jpg" id="1_lfiql"]
+
+[resource]
+resource_name = "Dark Grey Tile"
+cull_mode = 2
+albedo_texture = ExtResource("1_lfiql")
+roughness = 0.2
+uv1_scale = Vector3(4.6, 4.6, 1)
+uv1_offset = Vector3(0, -3.6, 0)
