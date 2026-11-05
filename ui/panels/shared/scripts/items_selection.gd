@@ -1,5 +1,15 @@
 class_name ItemsSelection extends ScrollContainer
 
+@export var items_filter : String:
+	set(value):
+		_filter = value
+		
+		update_items()
+	get:
+		return _filter
+
+var _filter : String = ""
+
 var _library : LibraryManager
 var _button_script : Script
 
@@ -14,6 +24,8 @@ func _init(script: String):
 
 
 func _ready() -> void:
+	_items = get_node("Items")
+	
 	update_items()
 
 
@@ -38,13 +50,22 @@ func set_library(library: LibraryManager,update: bool = true) -> void:
 
 
 func update_items() -> void:
-	_items = get_node("Items")
-	
 	if _library and _items:
-		for i in _get_count():
-			var button : ItemButton = _button_script.new(_library,i)
-			button.button_selected.connect(button_selected)
-			_items.add_child(button)
+		var children := _items.get_children( )
+		var item_count := _get_count(_filter)
+		var child_count := _items.get_child_count()
+		for i in min(child_count,item_count):
+			var button : ItemButton = children[i]
+			button._item_filter = _filter
+			button.change_item_id(i,_map_index_to_id(_filter,i))
+		if child_count > item_count:
+			for i in child_count - item_count:
+				_items.remove_child(children[item_count+i])
+		if child_count < item_count:
+			for i in item_count - child_count:
+				var button : ItemButton = _button_script.new(_library,child_count+i,_map_index_to_id(_filter,child_count+i),_filter,_min_button_size)
+				button.button_selected.connect(button_selected)
+				_items.add_child(button)
 
 
 func resize_buttons(delta: float):
@@ -58,8 +79,12 @@ func resize_buttons(delta: float):
 			c.custom_minimum_size = _min_button_size
 
 
-func _get_count() -> int:
+func _get_count(__filter: String) -> int:
 	return 0
+
+
+func _map_index_to_id(_filter_: String,index: int) -> int:
+	return index
 
 
 func button_selected(_button: ItemButton,item_id: int):

@@ -39,7 +39,7 @@ var rl_turn_in : PersonMove
 var rl_turn_out : PersonMove
 
 var go := false
-var debug_random_walk := false
+var debug_random_walk := true
 var debug_fainting_count := 0
 
 var c := 0

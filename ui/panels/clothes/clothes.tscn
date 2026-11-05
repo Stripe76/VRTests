@@ -31,12 +31,38 @@ unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("2_mv8es")
 
-[node name="AllClothes" type="ScrollContainer" parent="VBoxContainer" unique_id=1937301326]
-unique_name_in_owner = true
+[node name="Clothes" type="Control" parent="VBoxContainer" unique_id=876251906]
 layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="AllClothes" type="ScrollContainer" parent="VBoxContainer/Clothes" unique_id=1937301326]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("2_tsf37")
 
-[node name="Items" type="HFlowContainer" parent="VBoxContainer/AllClothes" unique_id=64166035]
+[node name="Items" type="HFlowContainer" parent="VBoxContainer/Clothes/AllClothes" unique_id=64166035]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FilteredClothes" type="ScrollContainer" parent="VBoxContainer/Clothes" unique_id=264451638]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("2_tsf37")
+
+[node name="Items" type="HFlowContainer" parent="VBoxContainer/Clothes/FilteredClothes" unique_id=1029373566]
 layout_mode = 2
 size_flags_horizontal = 3

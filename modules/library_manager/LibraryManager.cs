@@ -100,6 +100,7 @@ public partial class LibraryManager : Node
 	{
 		return _looks.GetCount( );
 	}
+	
 	public string Looks_GetTitle( int lookID )
 	{
 		return _looks.GetTitle( lookID );
@@ -232,11 +233,24 @@ public partial class LibraryManager : Node
 	#endregion
 
 	#region Clothes
-	public int Clothes_GetCount( )
+	public int Clothes_GetCount( string filter )
 	{
-		return _clothes.GetCount( );
+		return _clothes.GetCount( filter );
+	}
+	public int Clothes_MapIndexToID( string filter,int index )
+	{
+		return _clothes.GetItemID( filter,index );
 	}
 
+	public void Clothes_AddItemToFilter( string filter,int clothID )
+	{
+		_clothes.AddItemToFilter( filter,clothID );
+	}
+	public void Clothes_RemoveItemFromFilter( string filter,int clothID )
+	{
+		_clothes.RemoveItemFromFilter( filter,clothID );
+	}
+	
 	public Texture2D Clothes_GetPreviewImage( int clothID )
 	{
 		return _clothes.GetPreviewImage( clothID );

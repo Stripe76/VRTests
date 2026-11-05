@@ -4,6 +4,11 @@ using Godot.Collections;
 
 public class Looks : VAMObjects
 {
+    public Looks( ) : base( "" )
+    {
+        
+    }
+    
     protected override void LoadMeshData( BinaryReader reader,Dictionary data )
     {
         throw new System.NotImplementedException( );

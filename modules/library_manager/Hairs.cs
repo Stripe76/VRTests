@@ -4,9 +4,14 @@ using Godot.Collections;
 using System.IO;
 using System.Text.Json;
 
-public class Hairs : VAMObjects
+public class Hairs : VAMObjects 
 {
-    protected override void LoadMeshData( BinaryReader reader,Dictionary data )
+	public Hairs( ) : base( "hairs" )
+	{
+		_debug_file = "_current_hair";
+	}
+
+	protected override void LoadMeshData( BinaryReader reader,Dictionary data )
     {
         SkipStrings( reader,2 );
 

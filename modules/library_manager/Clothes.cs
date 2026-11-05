@@ -8,11 +8,11 @@ namespace VRMate.modules.library_manager;
 
 public class Clothes : VAMObjects
 {
-	public Clothes( )
+	public Clothes( ) : base( "clothes" )
 	{
 		_debug_file = "_current_cloth";
 	}
-	
+
 	protected override void LoadMeshData( BinaryReader reader,Dictionary data )
 	{
 		SkipStrings( reader,8 );

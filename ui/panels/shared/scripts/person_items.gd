@@ -38,7 +38,7 @@ func current_person_changed(scene_manager: SceneManager):
 		for i in min(child_count,item_count):
 			var button : ItemButton = children[i]
 			var item = items[i]
-			button.change_item_id(item.id)
+			button.change_item_id(i,item.id)
 			button.theme_type_variation = "SelectedButton" if item.visible else ""
 		if child_count > item_count:
 			for i in child_count - item_count:
@@ -46,9 +46,9 @@ func current_person_changed(scene_manager: SceneManager):
 		if child_count < item_count:
 			for i in item_count - child_count:
 				var item = items[child_count+i]
-				var button : ItemButton = _button_script.new(scene_manager.get_library(),i,Vector2(100,100))
+				var button : ItemButton = _button_script.new(scene_manager.get_library(),i,i,"",Vector2(100,100))
 				button.theme_type_variation = "SelectedButton" if item.visible else ""
-				button.change_item_id(item.id)
+				button.change_item_id(i,item.id)
 				button.button_selected.connect(item_selected)
 				button.button_middle_selected.connect(item_middle_selected)
 				add_child(button)

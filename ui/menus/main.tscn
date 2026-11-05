@@ -58,9 +58,138 @@ command = "set_main_panel"
 parameter = "hair"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
-[node name="Clothes" type="Node" parent="Menu/Person" unique_id=2140515168]
+[node name="Main Clothes" type="Node" parent="Menu" unique_id=1672859486]
+script = ExtResource("4_qmvml")
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="All" type="Node" parent="Menu/Main Clothes" unique_id=530904103]
 script = ExtResource("4_qmvml")
 command = "set_main_panel"
 parameter = "clothes"
-sub_parameter = "all"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Bras" type="Node" parent="Menu/Main Clothes" unique_id=1745986210]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "bras"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Panties" type="Node" parent="Menu/Main Clothes" unique_id=1355100618]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "panties"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Tops" type="Node" parent="Menu/Main Clothes" unique_id=1779719753]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "Tops"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Shirts" type="Node" parent="Menu/Main Clothes" unique_id=1458200494]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "shirts"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Skirts" type="Node" parent="Menu/Main Clothes" unique_id=1461219970]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "skirts"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Pants" type="Node" parent="Menu/Main Clothes" unique_id=1886581655]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "pants"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Shoes" type="Node" parent="Menu/Main Clothes" unique_id=989634404]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "lower_body"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Others" type="Node" parent="Menu/Main Clothes" unique_id=1633567338]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "others"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Other Clothes" type="Node" parent="Menu" unique_id=1086630207]
+script = ExtResource("4_qmvml")
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="All" type="Node" parent="Menu/Other Clothes" unique_id=1098720403]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Dresses" type="Node" parent="Menu/Other Clothes" unique_id=569630935]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "dresses"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Jackets" type="Node" parent="Menu/Other Clothes" unique_id=1004639675]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "jackets"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Socks" type="Node" parent="Menu/Other Clothes" unique_id=983717276]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "socks"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Hats" type="Node" parent="Menu/Other Clothes" unique_id=1921547447]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "hats"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Bracelets" type="Node" parent="Menu/Other Clothes" unique_id=1228392644]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "bracelets"
+drag_data_type = "cloth"
+metadata/_custom_type_script = "uid://bhacmcxoek4dp"
+
+[node name="Necklaces" type="Node" parent="Menu/Other Clothes" unique_id=1129129223]
+script = ExtResource("4_qmvml")
+command = "set_main_panel"
+parameter = "clothes"
+sub_parameter = "necklaces"
+drag_data_type = "cloth"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"

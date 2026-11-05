@@ -49,16 +49,21 @@ func _ready() -> void:
 	set_main_panel("looks","all");
 
 
-func set_main_panel(panel: String,_sub_panel: String):
+func set_main_panel(panel: String,sub_panel: String):
 	var found := _main_panel.find_child(panel)
 	if not found:
-		var scene = load("res://ui/panels/"+panel+"/"+panel+".tscn").instantiate().with(_library,_scene_manager,)
+		var scene = load("res://ui/panels/"+panel+"/"+panel+".tscn").instantiate().with(_library,_scene_manager)
 		scene.name = panel
 		
 		_main_panel.add_child(scene)
 	
 	for c : Control in _main_panel.get_children():
-		c.visible = c.name == panel
+		if c.name == panel:
+			if c.has_method("set_sub_panel"):
+				c.set_sub_panel(sub_panel)
+			c.visible = true
+		else:
+			c.visible = false
 
 
 func current_person_changed(scene_manager: SceneManager):
@@ -68,10 +73,19 @@ func current_person_changed(scene_manager: SceneManager):
 		scene_manager.set_focus_camera("hip")
 
 
+func item_dropped(type: String,source_filter: String,dest_filter: String,item_id: int):
+	#prints("Item dropped:",type,source_filter if not source_filter.is_empty() else "-","->",dest_filter,item_id)
+	if type == "cloth":
+		if dest_filter == "":
+			_library.Clothes_RemoveItemFromFilter(source_filter,item_id)
+		else:
+			_library.Clothes_AddItemToFilter(dest_filter,item_id)
+
+
 func person_clicked(person_id: int):
 	_scene_manager.select_person(person_id)
 
 
-func floor_clicked(event_position: Vector3,camera_position: Vector3):
+func floor_clicked(event_position: Vector3,_camera_position: Vector3):
 	#_scene_manager.set_person_position(camera_position,event_position)
 	_scene_manager.walk_person_to(event_position)

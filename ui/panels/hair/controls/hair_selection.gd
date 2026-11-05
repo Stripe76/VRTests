@@ -4,5 +4,5 @@ func _init() -> void:
 	super("res://ui/panels/hair/controls/hair_button.gd")
 
 
-func _get_count() -> int:
+func _get_count(filter: String) -> int:
 	return _library.Hairs_GetCount()

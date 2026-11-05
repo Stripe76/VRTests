@@ -12,20 +12,63 @@ using Array = Godot.Collections.Array;
 public abstract class VAMObjects
 {
     private readonly VAMItemList _items = [];
+    private readonly SortedList<string,List<int>> _filters = [];
+    private readonly VAMCategoryManager _categoryManager;
+        
+    protected string? _debug_file = null;
 
-    protected string? _debug_file = null; 
+    protected VAMObjects( string categoriesSubFolder )
+    {
+        _categoryManager = new VAMCategoryManager( categoriesSubFolder );
+        
+        _categoryManager.LoadAll( );
+    }
 
     public void AddItem( VAMItem item )
     {
         _items.Add( item );
         
     }
+    public void AddItemToFilter( string filter,int itemID )
+    {
+        if( string.IsNullOrEmpty( filter ) )
+            return;
+        if( !_filters.ContainsKey( filter ))
+            _filters.Add( filter,[] );
+        var filterItems = _filters[filter];
+        if( !filterItems.Contains( itemID  ))
+            filterItems.Add( itemID );
+
+        SortedList<string,List<string>> categories = [];
+        foreach( string key in _filters.Keys )
+        {
+            var ids = _filters[key];
+
+            foreach( var id in ids )
+            {
+                string uid = _items[id].UID;
+
+                categories.TryAdd( key,[] );
+                categories[key].Add( uid );
+            }
+        }
+        _categoryManager.SaveAll( categories );
+    }
+    public void RemoveItemFromFilter( string filter,int itemID )
+    {
+        if( _filters.TryGetValue( filter,out var ids ) )
+        {
+            if( ids.Contains( itemID ) )
+                ids.Remove( itemID );
+        }
+    }
 
     public void AddEntry( string archive,ZipArchiveEntry entry )
     {
-        _items.Add( new VAMItem( )
+        var new_item = new VAMItem( )
         {
             ID = _items.Count,
+            UID = GenerateUID( archive,entry ),
             Archive = archive,
             Title = entry.Name.Replace( ".vam","" ),
             Folder = entry.FullName.Replace( entry.Name,"" ),
@@ -33,7 +76,14 @@ public abstract class VAMObjects
             BinaryFile = entry.FullName.Replace( ".vam",".vab" ),
             DetailsFile = entry.FullName.Replace( ".vam",".vaj" ),
             PreviewImageFile = entry.FullName.Replace( ".vam",".jpg" ),
-        } );
+        }; 
+        _items.Add( new_item );
+
+        List<string> categories = _categoryManager.GetUIDCategories( new_item.UID );
+        foreach( var category in categories )
+        {
+            AddItemToFilter( category,new_item.ID );
+        }
     }
 
     public VAMItem? GetItem( int itemID )
@@ -42,11 +92,23 @@ public abstract class VAMObjects
             return _items[itemID];
         return null;
     }
-    
-    public int GetCount( )
+
+    public int GetItemID( string filter,int index )
     {
-        return _items.Count;
+        if( string.IsNullOrEmpty( filter ))
+            return index;
+        if( _filters.TryGetValue( filter,out var filterItems ) && index >= 0 && index < filterItems.Count )
+            return filterItems[index];
+        return -1;
     }
+    
+    public int GetCount( string filter = "" )
+    {
+        if( string.IsNullOrEmpty( filter ))
+            return _items.Count;
+        return _filters.TryGetValue( filter,out var filterItems ) ? filterItems.Count : 0;
+    }
+
     public string GetTitle( int itemID )
     {
         if( itemID >= 0 && itemID < _items.Count )
@@ -183,6 +245,14 @@ public abstract class VAMObjects
     protected abstract void LoadMaterials( JsonElement root,string folder,string UID,Dictionary data );
     
     #region Helpers
+    protected string GenerateUID( string archive,ZipArchiveEntry entry )
+    {
+        var folders = entry.FullName.Split( "/" );
+        if( folders.Length > 2 )
+            return $"{folders[^2]}:{folders[^1]}".Replace( ".vam","" );
+        return string.Empty;;
+    }
+
     protected Image LoadImage( string archiveFile,string filename,bool trace = false )
     {
         var image = new Image( );
@@ -360,6 +430,7 @@ public abstract class VAMObjects
 public class VAMItem
 {
     public int ID { get; init; }
+    public string UID  { get; init; }
     public string Archive  { get; init; }
     
     public string Title  { get; init; }

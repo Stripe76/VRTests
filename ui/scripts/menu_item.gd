@@ -7,6 +7,8 @@ class_name MenuItem
 @export var command : String
 @export var parameter : String
 @export var sub_parameter : String
+@export var drag_data_type : String
+
 
 static func create(title: String, command: String) -> MenuItem:
 	var instance = MenuItem.new()
