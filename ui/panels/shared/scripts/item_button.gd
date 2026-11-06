@@ -1,5 +1,13 @@
 class_name ItemButton extends Button
 
+@export var is_selected : bool:
+	set(value):
+		is_selected = value
+		
+		theme_type_variation = "SelectedButton" if is_selected else ""
+	get:
+		return is_selected
+
 var _item_id : int
 var _item_index : int
 var _item_filter : String

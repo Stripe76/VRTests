@@ -9,9 +9,11 @@ class_name MenuItem
 @export var sub_parameter : String
 @export var drag_data_type : String
 
+var button : Control
 
-static func create(title: String, command: String) -> MenuItem:
+
+static func create(title: String,item_command: String) -> MenuItem:
 	var instance = MenuItem.new()
 	instance.title = title
-	instance.command = command
+	instance.command = item_command
 	return instance

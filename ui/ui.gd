@@ -19,6 +19,7 @@ var _main_menu : Control
 var _main_panel : Control
 var _persons_list : Control
 
+var _menu
 var _person_selection
 
 
@@ -35,7 +36,8 @@ func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Contro
 
 func _ready() -> void:
 	if _main_menu:
-		_main_menu.add_child(MAIN_MENU_SCENE.instantiate())
+		_menu = MAIN_MENU_SCENE.instantiate()
+		_main_menu.add_child(_menu)
 	if _persons_list:
 		if not _person_selection:
 			_person_selection = PERSON_SELECTION_SCENE.instantiate()
@@ -56,6 +58,9 @@ func set_main_panel(panel: String,sub_panel: String):
 		scene.name = panel
 		
 		_main_panel.add_child(scene)
+	
+	if _menu:
+		_menu.set_selected_item(panel,sub_panel)
 	
 	for c : Control in _main_panel.get_children():
 		if c.name == panel:

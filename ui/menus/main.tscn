@@ -67,6 +67,7 @@ metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 script = ExtResource("4_qmvml")
 command = "set_main_panel"
 parameter = "clothes"
+sub_parameter = "all_1"
 drag_data_type = "cloth"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
@@ -143,6 +144,7 @@ metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 script = ExtResource("4_qmvml")
 command = "set_main_panel"
 parameter = "clothes"
+sub_parameter = "all_2"
 drag_data_type = "cloth"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 

@@ -38,7 +38,7 @@ func _all_clothes_item_selected(item_id: int) -> void:
 
 
 func set_sub_panel(sub_panel: String):
-	if sub_panel.is_empty():
+	if sub_panel.is_empty() or sub_panel.begins_with("all_"):
 		all_clothes.visible = true
 		filtered_clothes.visible = false
 	else:

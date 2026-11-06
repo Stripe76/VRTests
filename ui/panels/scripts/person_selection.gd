@@ -25,9 +25,9 @@ func current_person_changed(scene_manager: SceneManager):
 	var selected := scene_manager.current_person_id
 	for button : PersonButton in get_children():
 		if i == selected or (selected < 0 and i == get_child_count()-1 ):
-			button.theme_type_variation = "SelectedButton"
+			button.is_selected = true
 		else:
-			button.theme_type_variation = ""
+			button.is_selected = false
 		i += 1
 
 
@@ -39,10 +39,10 @@ func persons_list_changed(scene_manager: SceneManager,persons: Array):
 		for i in persons.size():
 			var person : VAMActor = persons[i]
 			var button : PersonButton = _person_button.instantiate().with_data(scene_manager.get_library(),i,person.get_look_id())
-			button.theme_type_variation = "SelectedButton" if i == scene_manager.current_person_id else ""
+			button.is_selected = i == scene_manager.current_person_id
 			
 			add_child(button)
 	_add_button = _person_button.instantiate().with_data(scene_manager.get_library(),-1,-1)
-	_add_button.theme_type_variation = "SelectedButton" if scene_manager.current_person_id < 0 else ""
+	_add_button.is_selected = scene_manager.current_person_id < 0
 	
 	add_child(_add_button)

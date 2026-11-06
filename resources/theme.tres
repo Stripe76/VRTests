@@ -5,14 +5,14 @@ content_margin_left = 5.0
 content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
-bg_color = Color(0.6, 0.12185205, 0.54077667, 1)
+bg_color = Color(0.16754988, 0.40555593, 0.53338236, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d4nwg"]
 content_margin_left = 5.0
 content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
-bg_color = Color(0.6, 0.12185205, 0.54077667, 1)
+bg_color = Color(0.16754988, 0.40555593, 0.53338236, 1)
 
 [resource]
 SelectedButton/base_type = &"Button"

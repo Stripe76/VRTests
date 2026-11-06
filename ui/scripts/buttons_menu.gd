@@ -29,9 +29,11 @@ func set_buttons(menuItem: MenuItem,clear: bool = false):
 			if sub_menu and i.command == "":
 				sub_menu.set_buttons(i,true)
 		)
+		i.button = b
+		
 		add_child(b)
 
 
 func clear_buttons():
 	for c in get_children():
-		c.free()
+		c.queue_free()

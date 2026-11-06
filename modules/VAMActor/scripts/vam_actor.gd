@@ -138,7 +138,7 @@ func add_hair(library: LibraryManager,hair_id: int,remove_if_present: bool):
 	var hair : VAMHair = load("res://modules/VAMActor/vam_hair.tscn").instantiate()
 	hair.name = "VAMHair"
 	hair._how_many = 6
-	hair.force_lerp = 0.51
+	hair.force_lerp = 0.5
 	
 	_hairs.push_back(PersonItem.new(hair_id,hair))
 	

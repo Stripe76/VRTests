@@ -1,5 +1,12 @@
 class_name MenuItemButton extends Button
 
+@export var is_selected : bool:
+	set(value):
+		is_selected = value
+		
+		theme_type_variation = "SelectedButton" if is_selected else ""
+	get:
+		return is_selected
 @export var drag_data : String = ""
 @export var drag_filter : String = ""
 

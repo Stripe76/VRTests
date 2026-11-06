@@ -1,5 +1,13 @@
 class_name PersonButton extends Button
 
+@export var is_selected : bool:
+	set(value):
+		is_selected = value
+		
+		theme_type_variation = "SelectedButton" if is_selected else ""
+	get:
+		return is_selected
+
 @onready var _notifier : VisibleOnScreenNotifier2D = $Notifier
 
 var _personID : int

@@ -112,7 +112,7 @@ func _physics_process(delta: float) -> void:
 	var dot_alignment = head_up.dot(Vector3.UP)
 	# This version hits 0.0 stiffness exactly at the horizontal (90 degrees)
 	# Anything below horizontal remains 0.0
-	var style_strength = clamp(dot_alignment,0.0,1.0)
+	var style_strength = clamp(dot_alignment,0.0,.5)
 	
 	force_lerp = pow(style_strength,2.0)
 	
