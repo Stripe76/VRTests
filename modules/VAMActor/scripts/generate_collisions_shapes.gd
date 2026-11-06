@@ -228,8 +228,8 @@ func _unique_points(points: Array, eps: float) -> Array:
 	var unique = {}
 	for p in points:
 	# Quantize the vector to snap nearby points together
-		var snapped = p.snapped(Vector3(eps, eps, eps))
-		unique[snapped] = p
+		var snapped_point = p.snapped(Vector3(eps, eps, eps))
+		unique[snapped_point] = p
 	return unique.values()
 
 

@@ -34,6 +34,7 @@ func _ready() -> void:
 
 func _all_clothes_item_selected(item_id: int) -> void:
 	if _scene_manager:
+		_scene_manager.set_focus_camera("hip")
 		_scene_manager.add_person_cloth(item_id)
 
 

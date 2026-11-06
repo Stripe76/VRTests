@@ -23,7 +23,7 @@ func let_go(node: XRToolsFunctionPickup,_linearVel,_angularVel):
 		remote.remote_path = NodePath()
 
 
-func can_pick_up(node) -> bool:
+func can_pick_up(_node) -> bool:
 	#print("can_pick_up")
 	return true
 
@@ -32,5 +32,5 @@ func is_picked_up():
 	return false
 
 
-func request_highlight(node,higjlight):
+func request_highlight(_node,_highlight):
 	pass

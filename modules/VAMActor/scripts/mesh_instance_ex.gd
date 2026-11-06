@@ -1,6 +1,10 @@
 class_name MeshInstanceEx extends MeshInstance3D
 
 
+func set_mesh_safe(new_mesh: Mesh):
+	mesh = new_mesh
+
+
 func create_mesh(data: Dictionary) -> ArrayMesh:
 	var arrays := []
 	var surface_tool := SurfaceTool.new()

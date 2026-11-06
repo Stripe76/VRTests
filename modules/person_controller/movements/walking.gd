@@ -39,6 +39,8 @@ var rl_turn_in : PersonMove
 var rl_turn_out : PersonMove
 
 var go := false
+var auto_stopped := false
+
 var debug_random_walk := true
 var debug_fainting_count := 0
 
@@ -108,6 +110,11 @@ func start():
 		rl_push_ended()
 
 
+func stop():
+	go = false
+	auto_stopped = false
+
+
 var last_distance : float
 func ll_push_ended():
 	if go:
@@ -120,6 +127,7 @@ func ll_push_ended():
 				la_back.length = 0
 				ra_front.length = 0
 				go = false
+				auto_stopped = true
 			if go and distance < 1.0:
 				ll_step.length = distance / 1.0
 				rl_push.length = distance / 1.0
@@ -154,7 +162,7 @@ func ll_push_ended():
 		
 		ts_left.start()
 		hd_left.start()
-	elif debug_random_walk:
+	elif debug_random_walk and auto_stopped:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()
@@ -173,6 +181,7 @@ func rl_push_ended():
 				la_front.length = 0
 				ra_back.length = 0
 				go = false
+				auto_stopped = true
 			if go and distance < 1.0:
 				ll_push.length = distance / 1.0
 				rl_step.length = distance / 1.0
@@ -206,7 +215,7 @@ func rl_push_ended():
 		
 		ts_right.start()
 		hd_right.start()
-	elif debug_random_walk:
+	elif debug_random_walk and auto_stopped:
 		target.global_position = Vector3(randf_range(-2.5,2.5),0,randf_range(-2.5,2.5))
 		
 		var t := create_tween()

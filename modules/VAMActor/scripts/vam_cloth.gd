@@ -127,7 +127,9 @@ func load_mesh(library: LibraryManager,morph_id: int,cloth_id: int):
 						var value : float =  morph["value"]
 						apply_deltas(morph_vertices,vertices,{},morph["meshData"],value)
 			
-			mesh = create_mesh_surfaces(vertices,surfaces,uvs,bones,weights,mesh_materials,8)
+			var new_mesh = create_mesh_surfaces(vertices,surfaces,uvs,bones,weights,mesh_materials,8)
+			
+			call_deferred("set_mesh_safe",new_mesh)
 
 
 func generate_materials(library: LibraryManager,cloth_id: int,materials: Dictionary,materials_id: Array ) -> Array:

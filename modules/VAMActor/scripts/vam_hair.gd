@@ -131,12 +131,13 @@ func load_hair(library: LibraryManager,hair_id: int,head_tris: Dictionary):
 		#add_child(_hair_debug)
 		#_hair_debug.owner = self
 	
-	mesh = generate_hair_from_library(library,hair_id,head_tris,_how_many)
-	if mesh:
-		for i in mesh.get_surface_count():
-			set_surface_override_material(i,hair_material)
+	var new_mesh = generate_hair_from_library(library,hair_id,head_tris,_how_many)
+	if new_mesh:
+		for i in new_mesh.get_surface_count():
+			new_mesh.surface_set_material(i,hair_material)
 			#mesh.surface_set_material(i,hair_material)
 			#mesh.surface_set_material(i,debug_hair_material)
+		call_deferred("set_mesh_safe",new_mesh)
 	
 	#if _hair_debug and Engine.is_editor_hint():
 		#generate_hair_debug(file,head_tris)

@@ -38,6 +38,7 @@ var _loading_material := false
 var _hairs : Array = []
 var _clothes : Array = []
 
+signal look_loaded
 signal hairs_list_changed
 signal clothes_list_changed
 
@@ -112,13 +113,16 @@ func get_focus_camera_parent(bone: String):
 
 
 func walk_to(glb_position: Vector3):
-	_person_controller.enable_X = true
-	_person_controller.enable_Y = true
-	_person_controller.enable_Z = true
-	_person_controller.enable_rotation = true
-	
-	$Target.global_position = glb_position
-	$Movements/Walking.start()
+	if _person_controller:
+		_person_controller.enable_X = true
+		_person_controller.enable_Y = true
+		_person_controller.enable_Z = true
+		_person_controller.enable_rotation = true
+		
+		$Target.global_position = glb_position
+		$Movements/Walking.start()
+func stop_walking():
+	$Movements/Walking.stop()
 
 
 func get_hairs() -> Array:
@@ -195,7 +199,7 @@ func load_look(library: LibraryManager,lookID: int,spawn_position: Vector3):
 	load_look_sync(library,lookID,spawn_position)
 
 
-func load_look_async(library: LibraryManager,lookID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
+func load_look_async(library: LibraryManager,lookID: int,spawn_position: Vector3):
 	_mutex.lock()
 	if _loading_scene or _loading_material:
 		return
@@ -211,7 +215,7 @@ func load_look_async(library: LibraryManager,lookID: int,spawn_position: Vector3
 	
 	load_look_pre()
 	
-	_mesh_thread.start(load_look_sync.bind(library,lookID,spawn_position,signal_done))
+	_mesh_thread.start(load_look_sync.bind(library,lookID,spawn_position))
 
 
 func load_look_pre():
@@ -229,14 +233,11 @@ func load_look_pre():
 		_person_controller = null
 
 
-func load_look_sync(library: LibraryManager,lookID: int,spawn_position: Vector3,signal_done: Callable = Callable()):
+func load_look_sync(library: LibraryManager,lookID: int,spawn_position: Vector3):
 	_skeleton = load_skeleton(_daz_model,library,lookID)
 	_mesh = load_mesh(_daz_model,library,lookID,_skeleton.left_eye_bone_origin,_skeleton.right_eye_bone_origin)
 	
 	call_deferred("load_look_done",library,lookID,spawn_position,true)
-	
-	if signal_done:
-		signal_done.call()
 
 
 func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,async: bool):
@@ -256,6 +257,7 @@ func load_look_done(library: LibraryManager,lookID: int,spawn_position: Vector3,
 	#_mutex.lock()
 	_loading_scene = false
 	#_mutex.unlock()
+	look_loaded.emit(self)
 
 
 func load_materials(library: LibraryManager,lookID: int):

@@ -26,7 +26,7 @@ func _init(skeleton: Skeleton3D) -> void:
 	_skeleton = skeleton
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if _skeleton and mesh:
 		var pos := get_cog()
 		pos += _skeleton.position

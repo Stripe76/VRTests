@@ -35,14 +35,23 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 		var simulator : PhysicalBoneSimulator3D = _skeleton.get_node("Ragdoll")
 		if simulator:
 			if value:
+				_left_leg.root_on = false
+				_right_leg.root_on = false
+				
 				simulator.physical_bones_start_simulation()
+				
+				random_push(simulator.get_node("hip"),-.5)
+				random_push(simulator.get_node("head"),1.2)
+				random_push(simulator.get_node("chest"),.5)
+				random_push(simulator.get_node("lHand"),.2)
+				random_push(simulator.get_node("rHand"),.2)
 			else:
 				simulator.physical_bones_stop_simulation()
-			random_push(simulator.get_node("hip"),-.5)
-			random_push(simulator.get_node("head"),1.2)
-			random_push(simulator.get_node("chest"),.5)
-			random_push(simulator.get_node("lHand"),.2)
-			random_push(simulator.get_node("rHand"),.2)
+				
+				reset_pose()
+				
+				_left_leg.root_on = true
+				_left_leg.drop = 0
 	get:
 		return enable_ragdoll
 

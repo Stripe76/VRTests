@@ -84,7 +84,8 @@ func select_looks(id: int):
 		#animation_was_playing = $AnimationPlayer.is_playing()
 		#$AnimationPlayer.pause()
 		#_current_person.load_looks_async(_library,id,Vector3(_current_person_index * .50,0,_current_person_index * .50),looks_loaded)
-		_current_person.load_look_async(_library,id,_current_person.position,looks_loaded)
+		_current_person.look_loaded.connect(look_loaded)
+		_current_person.load_look_async(_library,id,_current_person.position)
 	
 	persons_list_changed.emit(self,_persons)
 
@@ -105,6 +106,10 @@ func set_focus_camera(bone: String):
 			_remote_transform.update_position = true
 			_remote_transform.update_rotation = false
 			_remote_transform.remote_path = _focus_camera
+		
+		var camera : Node3D = get_node(_focus_camera)
+		if camera:
+			camera.set_fov(32 if  bone == "head" else 72)
 		
 		var parent_node : Node3D = vam_actor.get_focus_camera_parent(bone)
 		if _remote_transform and parent_node:
@@ -129,13 +134,16 @@ func walk_person_to(glb_position: Vector3):
 		_current_person.walk_to(glb_position)
 
 
-func looks_loaded():
-	start_animation("RESET")
+func look_loaded(vam_actor: VAMActor):
+	set_focus_camera("hip")
+	#start_animation("RESET")
 
 
 var ragdoll := false
 func toggle_ragdoll():
 	if _current_person:
+		_current_person.stop_walking()
+		
 		var controller : PersonController = _current_person.get_person_controller()
 		if controller:
 			ragdoll = not ragdoll
