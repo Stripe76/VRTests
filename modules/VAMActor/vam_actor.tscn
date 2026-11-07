@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://co87d0v2j3qv" path="res://modules/person_controller/animation/move.gd" id="4_fm15u"]
 [ext_resource type="Script" uid="uid://bvlpdhvjokofl" path="res://modules/person_controller/animation/step.gd" id="5_7jqo0"]
 [ext_resource type="Script" uid="uid://boo1rs6sv38lb" path="res://modules/person_controller/animation/value_bool.gd" id="6_k8ylq"]
+[ext_resource type="Script" uid="uid://d0b8epdrhctot" path="res://debug/scripts/line_3d.gd" id="6_nqrty"]
 [ext_resource type="Script" uid="uid://c0j02twsnw813" path="res://modules/person_controller/animation/tween_float.gd" id="8_t5u52"]
 [ext_resource type="Script" uid="uid://bwwhy6om0dg86" path="res://modules/person_controller/movements/walking.gd" id="8_yitp0"]
 [ext_resource type="Script" uid="uid://o1aocex8dx43" path="res://modules/person_controller/movements/turn_to.gd" id="9_k8ylq"]
@@ -41,6 +42,13 @@ size = Vector2(3, 3)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_67ek6"]
 size = Vector3(3, 1.4794922, 3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_nqrty"]
+radius = 0.025
+height = 0.05
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_67ek6"]
+albedo_color = Color(1, 0, 1, 1)
 
 [sub_resource type="Curve" id="Curve_nqrty"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -92,23 +100,58 @@ speed_scale = 1.402
 [node name="Target" type="Marker3D" parent="." unique_id=621522795]
 transform = Transform3D(1.0000066, 0, 0, 0, 1, 0, 0, 0, 1.0000066, 0.047560565, 0, 0.26432806)
 
-[node name="Floor" type="Node3D" parent="." unique_id=1994609413]
+[node name="Debug" type="Node3D" parent="." unique_id=950841338]
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=1696262441]
+[node name="Floor" type="Node3D" parent="Debug" unique_id=1994609413]
+
+[node name="Mesh" type="MeshInstance3D" parent="Debug/Floor" unique_id=1696262441]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.065, 0)
 mesh = SubResource("PlaneMesh_yitp0")
-skeleton = NodePath("../..")
+skeleton = NodePath("../../..")
 surface_material_override/0 = ExtResource("4_47l0a")
 
-[node name="Colliison" type="StaticBody3D" parent="Floor" unique_id=204482647]
+[node name="Colliison" type="StaticBody3D" parent="Debug/Floor" unique_id=204482647]
 
-[node name="Shape" type="CollisionShape3D" parent="Floor/Colliison" unique_id=456052800]
+[node name="Shape" type="CollisionShape3D" parent="Debug/Floor/Colliison" unique_id=456052800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7602539, 0)
 shape = SubResource("BoxShape3D_67ek6")
 
+[node name="Debug1" type="MeshInstance3D" parent="Debug" unique_id=704501971]
+mesh = SubResource("SphereMesh_nqrty")
+skeleton = NodePath("../Floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_67ek6")
+
+[node name="Line3D_1" type="MeshInstance3D" parent="Debug" unique_id=1302844173]
+transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.99999344, 0, 0, 0)
+top_level = true
+visible = false
+skeleton = NodePath("../..")
+script = ExtResource("6_nqrty")
+
+[node name="Line3D_2" type="MeshInstance3D" parent="Debug" unique_id=160578635]
+transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.99999344, 0, 0, 0)
+top_level = true
+visible = false
+skeleton = NodePath("../..")
+script = ExtResource("6_nqrty")
+
+[node name="Line3D_3" type="MeshInstance3D" parent="Debug" unique_id=577144142]
+transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.99999344, 0, 0, 0)
+top_level = true
+visible = false
+skeleton = NodePath("../..")
+script = ExtResource("6_nqrty")
+
+[node name="Line3D_4" type="MeshInstance3D" parent="Debug" unique_id=101945795]
+transform = Transform3D(0.9999935, 0, 0, 0, 1, 0, 0, 0, 0.99999344, 0, 0, 0)
+top_level = true
+visible = false
+skeleton = NodePath("../..")
+script = ExtResource("6_nqrty")
+
 [node name="Movements" type="Node" parent="." unique_id=359695925 node_paths=PackedStringArray("person_controller")]
 script = ExtResource("3_b8mxy")
-person_controller = NodePath("")
+person_controller = NodePath("../PersonController")
 
 [node name="Head" type="Node" parent="Movements" unique_id=49203977]
 
@@ -304,7 +347,7 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 [node name="twist" type="Node" parent="Movements/Legs/StepForward/Forward" unique_id=764364851 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = 0.5
+target = 0.75
 curve = SubResource("Curve_ei043")
 duration = 0.6
 metadata/_custom_type_script = "uid://c0j02twsnw813"
@@ -406,7 +449,7 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 [node name="twist" type="Node" parent="Movements/Legs/PushBack/Back" unique_id=1572639058 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
 joint = NodePath("../../..")
-target = 0.5
+target = 0.75
 curve = SubResource("Curve_s6jmj")
 duration = 0.6
 metadata/_custom_type_script = "uid://c0j02twsnw813"
@@ -607,14 +650,13 @@ target = Vector3(0, 0, 0.96)
 speed = 2.0
 metadata/_custom_type_script = "uid://cwghg3u2a3na4"
 
-[node name="Walking" type="Node" parent="Movements" unique_id=1324564607 node_paths=PackedStringArray("target", "controller")]
+[node name="Walking" type="Node" parent="Movements" unique_id=1324564607 node_paths=PackedStringArray("controller")]
 script = ExtResource("8_yitp0")
-target = NodePath("../../Target")
-controller = NodePath("")
+controller = NodePath("../../PersonController")
 
 [node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835 node_paths=PackedStringArray("controller")]
 script = ExtResource("9_k8ylq")
-controller = NodePath("")
+controller = NodePath("../../PersonController")
 speed = -1.122
 
 [node name="VAMVagina" parent="." unique_id=949638534 instance=ExtResource("3_wpamn")]

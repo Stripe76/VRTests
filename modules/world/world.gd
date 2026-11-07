@@ -7,7 +7,10 @@ func add_person(person: Node3D):
 	_persons.add_child(person)
 
 
-func toggle_wall_visibility(wall: String,wall_visible: bool):
-	for room in $Environment.get_children():
-		if room.has_method("toggle_wall_visibility"):
-			room.toggle_wall_visibility(wall,wall_visible)
+func get_traverse_path(origin: Vector3,destination: Vector3) -> PackedVector3Array:
+	var room := $Environment/Minimalist
+	if room:
+		var navigation := room.find_child("Navigation")
+		if navigation:
+			return navigation.get_traverse_path(origin,destination)
+	return PackedVector3Array();

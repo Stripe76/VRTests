@@ -5,7 +5,7 @@ extends Node3D
 @onready var camera = $Camera3D
 
 var move_speed := Vector3(1,1,1)
-var mouse_sensitivity = 0.0025
+var mouse_sensitivity := 0.0025
 
 var delta_move := 0.0
 var last_move := Vector3()
@@ -16,7 +16,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	var move = Vector3()
+	var move := Vector3()
 	if Input.is_action_pressed("Forward"):	move.z = -move_speed.z
 	elif Input.is_action_pressed("Backward"):	move.z = move_speed.z
 	if Input.is_action_pressed("Up"):	move.y = -move_speed.y
@@ -45,7 +45,7 @@ func _unhandled_input(event):
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			camera.fov *= 1.05
 	
-	var right_button_pressed = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+	var right_button_pressed := Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	
 	if right_button_pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -60,6 +60,3 @@ func _unhandled_input(event):
 func set_as_active():
 	camera.current = visible
 	process_mode = Node.PROCESS_MODE_INHERIT if visible else Node.PROCESS_MODE_DISABLED
-	
-	if visible:
-		get_tree().call_group("WallsVisibility","toggle_wall_visibility","All",true)

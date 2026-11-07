@@ -92,5 +92,4 @@ func person_clicked(person_id: int):
 
 
 func floor_clicked(event_position: Vector3,_camera_position: Vector3):
-	#_scene_manager.set_person_position(camera_position,event_position)
 	_scene_manager.walk_person_to(event_position)

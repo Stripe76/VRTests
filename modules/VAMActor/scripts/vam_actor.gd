@@ -57,7 +57,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint() and not get_parent() is Node3D:
 		debug_generate_model()
 	else:
-		$Floor.queue_free()
+		$Debug/Floor.queue_free()
 
 
 func _exit_tree():
@@ -89,7 +89,7 @@ func debug_generate_model():
 		_library = LibraryManager.new()
 		_library.LoadData("/mnt/data/Projects/Godot/library/")
 	if _library:
-		load_look(_library,test_look_id)
+		load_look_async(_library,test_look_id)
 
 
 func debug_set_textures():
@@ -106,21 +106,32 @@ func debug_set_ragdoll():
 		_person_controller.enable_ragdoll = _ragdoll_active
 
 
-func get_focus_camera_parent(bone: String):
+func get_focus_camera_parent(bone: String) -> Node3D:
 	if _skeleton:
 		return _skeleton.find_child(bone)
 	return null
 
 
-func walk_to(glb_position: Vector3):
+func walk_to(path: PackedVector3Array,await_signal: Signal):
 	if _person_controller:
 		_person_controller.enable_X = true
 		_person_controller.enable_Y = true
 		_person_controller.enable_Z = true
 		_person_controller.enable_rotation = true
 		
-		$Target.global_position = glb_position
-		$Movements/Walking.start()
+		#var debug_path := PackedVector3Array()
+		#debug_path.push_back(_person_controller.person_position+Vector3(0,0.05,0))
+		#for v in path:
+			#debug_path.push_back(v+Vector3(0,0.05,0))
+		#$Debug/Line3D_1.draw_path(debug_path)
+		#
+		#$Movements/Walking.await_signal = await_signal
+#
+		#$Movements/Walking.twist_line = $Debug/Line3D_2
+		#$Movements/Walking.target_line = $Debug/Line3D_3
+		#$Movements/Walking.forward_line = $Debug/Line3D_4
+		#$Movements/Walking.next_step_marker = $Debug/Debug1
+		$Movements/Walking.walk_to(path,await_signal)
 func stop_walking():
 	$Movements/Walking.stop()
 

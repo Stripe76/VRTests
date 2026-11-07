@@ -20,6 +20,16 @@ const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 @export var person_forward : Vector3:
 	get:
 		return _skeleton.global_transform.basis.z
+@export var left_foot_forward : Vector3:
+	get:
+		if _left_foot:
+			return _left_foot.global_transform.basis.z
+		return Vector3.ZERO
+@export var right_foot_forward : Vector3:
+	get:
+		if _right_foot:
+			return _right_foot.global_transform.basis.z
+		return Vector3.ZERO
 
 @export_group("Ragdoll")
 @export var enable_ragdoll : bool:
@@ -118,6 +128,9 @@ var _right_leg: PersonLeg
 
 var _left_eye_aabb: AABB
 var _right_eye_aabb: AABB
+
+var _left_foot: Node3D
+var _right_foot: Node3D
 
 
 var _editor_owner
@@ -294,7 +307,7 @@ func initialize(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D) -> voi
 
 
 func set_eye_bones(skeleton: Skeleton3D):
-	var origin = _left_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
+	var origin := _left_eye_aabb.get_center() - skeleton.get_bone_global_rest(Bones.HEAD_BONE).origin
 	skeleton.set_bone_rest(Bones.EYE_LEFT_BONE,Transform3D(Basis( ),origin))
 	skeleton.set_bone_pose_position(Bones.EYE_LEFT_BONE,origin)
 	
@@ -426,8 +439,8 @@ func create_collisions(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D)
 	add_physical_bone(Bones.HIP_RIGHT_BONE,skeleton,parent,simulator,right_hip)
 	add_physical_bone(Bones.KNEE_LEFT_BONE,skeleton,parent,simulator,left_knee)
 	add_physical_bone(Bones.KNEE_RIGHT_BONE,skeleton,parent,simulator,right_knee)
-	add_physical_bone(Bones.ANKLE_LEFT_BONE,skeleton,parent,simulator,left_ankle,Vector3.ONE,false,_left_leg)
-	add_physical_bone(Bones.ANKLE_RIGHT_BONE,skeleton,parent,simulator,right_ankle,Vector3.ONE,false,_right_leg)
+	_left_foot = add_physical_bone(Bones.ANKLE_LEFT_BONE,skeleton,parent,simulator,left_ankle,Vector3.ONE,false,_left_leg)
+	_right_foot = add_physical_bone(Bones.ANKLE_RIGHT_BONE,skeleton,parent,simulator,right_ankle,Vector3.ONE,false,_right_leg)
 	add_physical_bone(Bones.TOE_LEFT_BONE,skeleton,parent,simulator)
 	add_physical_bone(Bones.TOE_RIGHT_BONE,skeleton,parent,simulator)
 	
@@ -641,31 +654,38 @@ func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
 	return bones_vertices
 
 
-func add_physical_bone(bone_idx: int,
+func add_physical_bone( bone_idx: int,
 						skeleton: Skeleton3D,
 						parent: Node3D,
 						simulator: PhysicalBoneSimulator3D = null,
 						joint: JointController = null,
 						multiplier: Vector3 = Vector3.ONE,
 						no_collision: bool = false,
-						limb : PersonLimb = null) -> void:
+						limb : PersonLimb = null) -> Node3D:
 	var bone_name := skeleton.get_bone_name(bone_idx)
 	var bone = ModifierBoneTarget3D.new()
 	bone.name = bone_name
 	bone.bone_name = bone_name
 	#bone.bone = bone_idx
 
-	var mesh = Area3D.new()
+	var mesh := Area3D.new()
 	mesh.name = "Mesh"
 	mesh.collision_layer = MESH_MASK
 	bone.add_child(mesh)
 	
-	var capsule = PersonHandle.new()
+	var capsule := PersonHandle.new()
 	capsule.name = "Capsule"
 	capsule.collision_layer = CAPSULE_MASK
 	#if bones_vertices.size() > 0:
 	#	bone.spring_pusher = add_spring_pusher(bone_name,skeleton.find_child(name),collision,parent)
 	bone.add_child(capsule)
+	
+	var line_3d: Line3D
+	if bone_name.contains("Foot"):
+		line_3d = Line3D.new()
+		line_3d.name = "Line3D"
+		line_3d.draw_back_path()
+		bone.add_child(line_3d)
 	
 	if limb:
 		capsule.limb = limb
@@ -676,6 +696,8 @@ func add_physical_bone(bone_idx: int,
 	bone.owner = parent
 	mesh.owner = parent
 	capsule.owner = parent
+	if line_3d:
+		line_3d.owner = parent
 	
 	if simulator:
 		var physical_bone := RagdollBone.new(_person_id,bone_idx)
@@ -699,7 +721,8 @@ func add_physical_bone(bone_idx: int,
 		
 		simulator.add_child(physical_bone)
 		physical_bone.owner = parent
-
+	
+	return bone
 
 func add_spring_pusher(pusher_name:String,bone: SpringBoneSimulator3D,shape: CollisionShape3D,parent: Node3D):
 	var pusher := SpringPusher.new(bone,shape)

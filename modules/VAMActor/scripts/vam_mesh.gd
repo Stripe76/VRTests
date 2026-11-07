@@ -77,7 +77,7 @@ func debug_generate_model():
 		
 		load_mesh(daz_model,_library,lookID,included_bones,bones_treshold)
 		self.mesh = full_body
-		load_materials(_library,lookID)
+		load_materials_async(_library,lookID)
 
 
 func load_mesh_async(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bones_to_include: Array = [],treshold: float = 0.0):

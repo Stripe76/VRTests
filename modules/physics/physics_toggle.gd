@@ -11,7 +11,7 @@ extends Node3D
 var positions : Dictionary = {}
 
 func _activate_physics( b ):
-	if Engine.is_editor_hint():
+	if Engine.is_editor_hint() and self.get_parent():
 		for n in self.get_parent().get_children():
 			if n is RigidBody3D:
 				if activate_physics:

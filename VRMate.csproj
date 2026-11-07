@@ -5,6 +5,8 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="assets\rooms\bedrooms\minimalist\navigation.gd" />
+    <Content Include="assets\rooms\bedrooms\minimalist\navigation.gd.uid" />
     <Content Include="modules\person_controller\limbs\arm.gd" />
     <Content Include="modules\person_controller\limbs\arm.gd.uid" />
     <Content Include="modules\person_controller\limbs\head.gd" />
@@ -19,7 +21,8 @@
     <Content Include="modules\person_controller\movements\walking.gd.uid" />
     <Content Include="modules\person_controller\person_controller.gd" />
     <Content Include="modules\person_controller\person_controller.gd.uid" />
-    <Content Include="modules\VAMActor\hair.vab" />
+    <Content Include="modules\scene_manager\scripts\scene_manager.gd" />
+    <Content Include="modules\scene_manager\scripts\scene_manager.gd.uid" />
     <Content Include="modules\VAMActor\scripts\bones_enum.gd" />
     <Content Include="modules\VAMActor\scripts\bones_enum.gd.uid" />
     <Content Include="modules\VAMActor\scripts\bone_character_body.gd" />
@@ -52,6 +55,18 @@
     <Content Include="modules\VAMActor\scripts\vam_skeleton.gd.uid" />
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd" />
     <Content Include="modules\VAMActor\scripts\vam_vagina.gd.uid" />
+    <Content Include="modules\world\flat\scripts\flat.gd" />
+    <Content Include="modules\world\flat\scripts\flat.gd.uid" />
+    <Content Include="modules\world\flat\scripts\free_camera.gd" />
+    <Content Include="modules\world\flat\scripts\free_camera.gd.uid" />
+    <Content Include="modules\world\flat\scripts\iso_camera.gd" />
+    <Content Include="modules\world\flat\scripts\iso_camera.gd.uid" />
+    <Content Include="modules\world\flat\scripts\player.gd" />
+    <Content Include="modules\world\flat\scripts\player.gd.uid" />
+    <Content Include="modules\world\world.gd" />
+    <Content Include="modules\world\world.gd.uid" />
+    <Content Include="ui\ui.gd" />
+    <Content Include="ui\ui.gd.uid" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="re\**" />

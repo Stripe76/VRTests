@@ -1,5 +1,4 @@
-class_name SceneManager
-extends Node
+class_name SceneManager extends Node
 
 signal persons_list_changed
 signal current_person_changed
@@ -26,9 +25,16 @@ var _focus_camera : NodePath
 
 var _persons := Array()
 var _current_person : VAMActor
-var _current_person_index = -1
+var _current_controller : PersonController:
+	get:
+		if _current_person:
+			return _current_person.get_person_controller()
+		return null
+var _current_person_index: int = -1
 
 var _remote_transform : RemoteTransform3D
+
+signal next_walk_step
 
 
 func set_world(world: WorldScene):
@@ -53,7 +59,7 @@ func select_person(id: int):
 	current_person_changed.emit(self)
 
 
-func select_next_person():
+func select_next_person() -> void:
 	if _persons.size() == 0:
 		return
 	var index : int = _current_person_index + 1
@@ -67,27 +73,27 @@ func select_next_person():
 
 func select_looks(id: int):
 	if _current_person_index < 0:
-		var person_id = _persons.size()
+		var person_id := _persons.size()
 		
 		_current_person = VAM_ACTOR_SCENE.instantiate().with(person_id)
 		_current_person_index = person_id
 		_current_person.name = "Person_%s" % person_id
 		_current_person.process_mode = Node.PROCESS_MODE_ALWAYS
+		_current_person.look_loaded.connect(look_loaded)
 		
-		_persons.push_back(_current_person)
-		
+		_persons.push_back(_current_person)		
 		_world.add_person(_current_person)
 		
 		current_person_changed.emit(self)
 	
 	if _library and _current_person:
-		#animation_was_playing = $AnimationPlayer.is_playing()
-		#$AnimationPlayer.pause()
-		#_current_person.load_looks_async(_library,id,Vector3(_current_person_index * .50,0,_current_person_index * .50),looks_loaded)
-		_current_person.look_loaded.connect(look_loaded)
 		_current_person.load_look_async(_library,id)
 	
 	persons_list_changed.emit(self,_persons)
+
+
+func look_loaded(vam_actor: VAMActor):
+	set_focus_camera("hip")
 
 
 func set_person_position(origin: Vector3,position: Vector3):
@@ -129,14 +135,16 @@ func add_person_cloth(cloth_id: int):
 		_current_person.add_cloth(_library,cloth_id,true)
 
 
-func walk_person_to(glb_position: Vector3):
-	if _current_person:
-		_current_person.walk_to(glb_position)
+func walk_person_to(destination: Vector3):
+	var controller := _current_controller
+	if controller and _world:
+		var path := _world.get_traverse_path(controller.person_position,destination)
+		
+		_current_person.walk_to(path,next_walk_step)
 
 
-func look_loaded(vam_actor: VAMActor):
-	set_focus_camera("hip")
-	#start_animation("RESET")
+func next_walking_step():
+	next_walk_step.emit()
 
 
 var ragdoll := false
@@ -144,10 +152,16 @@ func toggle_ragdoll():
 	if _current_person:
 		_current_person.stop_walking()
 		
-		var controller : PersonController = _current_person.get_person_controller()
+		var controller := _current_controller
 		if controller:
 			ragdoll = not ragdoll
 			controller.enable_ragdoll = ragdoll
+
+
+func reset_person():
+	var controller := _current_controller
+	if controller:
+		controller.reset_pose()
 
 
 func toggle_animation(animation: String):

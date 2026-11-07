@@ -39,9 +39,12 @@ func _input(event: InputEvent) -> void:
 		switch_ui()
 	elif event.is_action_released("StartAnimation"):
 		#scene_manager.toggle_animation("walking_ik")
-		scene_manager.toggle_ragdoll()
+		#scene_manager.toggle_ragdoll()
+		scene_manager.reset_person()		
 	elif event.is_action_released("NextPerson"):
 		scene_manager.select_next_person()
+	elif event.is_action_pressed("NextWalkStep"):
+		scene_manager.next_walking_step()
 
 
 func switch_ui():
@@ -63,6 +66,8 @@ func generate_action_map():
 	add_action("NextPerson",[KEY_TAB])
 	
 	add_action("StartAnimation",[Key.KEY_SPACE])
+
+	add_action("NextWalkStep",[KEY_PAGEDOWN])
 
 
 func add_action(action_name: String,events: Array):
