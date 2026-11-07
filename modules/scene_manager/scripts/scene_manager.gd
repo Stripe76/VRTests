@@ -85,7 +85,7 @@ func select_looks(id: int):
 		#$AnimationPlayer.pause()
 		#_current_person.load_looks_async(_library,id,Vector3(_current_person_index * .50,0,_current_person_index * .50),looks_loaded)
 		_current_person.look_loaded.connect(look_loaded)
-		_current_person.load_look_async(_library,id,_current_person.position)
+		_current_person.load_look_async(_library,id)
 	
 	persons_list_changed.emit(self,_persons)
 

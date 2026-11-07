@@ -108,7 +108,7 @@ shape = SubResource("BoxShape3D_67ek6")
 
 [node name="Movements" type="Node" parent="." unique_id=359695925 node_paths=PackedStringArray("person_controller")]
 script = ExtResource("3_b8mxy")
-person_controller = NodePath("../PersonController")
+person_controller = NodePath("")
 
 [node name="Head" type="Node" parent="Movements" unique_id=49203977]
 
@@ -533,19 +533,19 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="TurnOut" type="Node" parent="Movements/Legs" unique_id=1808005592 node_paths=PackedStringArray("joint")]
 script = ExtResource("4_fm15u")
-joint = NodePath("../../../PersonController/LeftLeg")
+joint = NodePath("..")
 duration = 0.6
 width = 1.0
 length = 1.0
 
 [node name="Turn" type="Node" parent="Movements/Legs/TurnOut" unique_id=374225803 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
-joint = NodePath("../../../../PersonController/LeftLeg")
+joint = NodePath("../..")
 duration = 0.15
 
 [node name="twist" type="Node" parent="Movements/Legs/TurnOut/Turn" unique_id=1560958154 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
+joint = NodePath("../../..")
 target = 1.0
 curve = SubResource("Curve_s6jmj")
 duration = 0.3
@@ -555,7 +555,7 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="frontal" type="Node" parent="Movements/Legs/TurnOut/Turn" unique_id=133058449 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
+joint = NodePath("../../..")
 signal_end = true
 target = 0.10099999999999998
 curve = SubResource("Curve_s6jmj")
@@ -564,7 +564,7 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="bend" type="Node" parent="Movements/Legs/TurnOut/Turn" unique_id=294791883 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
+joint = NodePath("../../..")
 target = 0.16599999999999993
 curve = SubResource("Curve_s6jmj")
 duration = 0.15
@@ -572,12 +572,12 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="Turn2" type="Node" parent="Movements/Legs/TurnOut" unique_id=678990410 node_paths=PackedStringArray("joint")]
 script = ExtResource("5_7jqo0")
-joint = NodePath("../../../../PersonController/LeftLeg")
+joint = NodePath("../..")
 duration = 0.15
 
 [node name="frontal" type="Node" parent="Movements/Legs/TurnOut/Turn2" unique_id=1254391280 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
+joint = NodePath("../../..")
 signal_end = true
 curve = SubResource("Curve_s6jmj")
 duration = 0.15
@@ -585,7 +585,7 @@ metadata/_custom_type_script = "uid://c0j02twsnw813"
 
 [node name="bend" type="Node" parent="Movements/Legs/TurnOut/Turn2" unique_id=1751844259 node_paths=PackedStringArray("joint")]
 script = ExtResource("8_t5u52")
-joint = NodePath("../../../../../PersonController/LeftLeg")
+joint = NodePath("../../..")
 curve = SubResource("Curve_s6jmj")
 duration = 0.15
 metadata/_custom_type_script = "uid://c0j02twsnw813"
@@ -610,11 +610,11 @@ metadata/_custom_type_script = "uid://cwghg3u2a3na4"
 [node name="Walking" type="Node" parent="Movements" unique_id=1324564607 node_paths=PackedStringArray("target", "controller")]
 script = ExtResource("8_yitp0")
 target = NodePath("../../Target")
-controller = NodePath("../../PersonController")
+controller = NodePath("")
 
 [node name="TurnTo" type="Node" parent="Movements" unique_id=1130585835 node_paths=PackedStringArray("controller")]
 script = ExtResource("9_k8ylq")
-controller = NodePath("../../PersonController")
+controller = NodePath("")
 speed = -1.122
 
 [node name="VAMVagina" parent="." unique_id=949638534 instance=ExtResource("3_wpamn")]

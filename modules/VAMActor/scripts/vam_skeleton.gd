@@ -1,9 +1,12 @@
 @tool
-class_name VAMSkeleton
-extends Skeleton3D
+class_name VAMSkeleton extends Skeleton3D
 
 var left_eye_bone_origin : Vector3
 var right_eye_bone_origin : Vector3
+
+var _loading_thread : Thread
+
+signal skeleton_loaded
 
 var editor_owner
 func _notification(what: int) -> void:
@@ -15,66 +18,35 @@ func _notification(what: int) -> void:
 			owner = editor_owner
 
 
-func load_skeleton(base_model: Daz3DMesh,scene_folder: String,scene_file: String = ""):
-	if base_model:
-		var skeleton : Skeleton3D = self
-		
-		var morphs := {}
-		if scene_file != "":
-			var file := FileAccess.open(scene_folder+scene_file,FileAccess.READ)
-			if file:
-				var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
-				if scene_data:
-					morphs = load_morphs(scene_data,scene_folder)
-				file.close()
-		
-		create_skeleton(skeleton,base_model.bones,morphs)
-		
-		left_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin
-		right_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin
+func load_skelton_async(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
+	if _loading_thread:
+		_loading_thread.wait_to_finish()
+	else:
+		_loading_thread = Thread.new()
+	_loading_thread.start(load_skeleton.bind(base_model,library,looksID))
 
 
-func load_morphs(scene_data: Dictionary,scene_folder: String) -> Dictionary:
-	var bones_morphs := {}
-	var storables = get_storables(scene_data)
-	if storables:
-		for s : Dictionary in storables:
-			if s["id"] == "geometry" and s.has("morphs"):
-				var morphs = s["morphs"]
-				for m in morphs:
-					var uid : String = m["uid"]
-					if uid.begins_with("SELF:"):
-						var path = scene_folder + uid.substr(6)
-						if not path.contains("genitalia"):
-							print("Applying skeleton deltas: ",path)
-							var file := FileAccess.open(path,FileAccess.READ)
-							if file:
-								var morph_data : Dictionary = JSON.parse_string(file.get_as_text())
-								for f in morph_data["formulas"]:
-									var bone_name = f["target"]
-									if not bones_morphs.has(bone_name):
-										bones_morphs[bone_name] = []
-									bones_morphs[bone_name].push_back({f["targetType"]: float(f["multiplier"]) * 0.2 }) 
-								#print(bones_morphs)
-								file.close()
-	return bones_morphs
-
-
-func load_skeleton_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
+func load_skeleton(base_model: Daz3DMesh,library: LibraryManager,looksID: int):
 	if base_model:
 		var skeleton : Skeleton3D = self
 		
 		var morphs := {}
 		if looksID >=  0:
-			morphs = load_morphs_new(library,looksID)
+			morphs = load_morphs(library,looksID)
 		
 		create_skeleton(skeleton,base_model.bones,morphs)
 		
 		left_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_LEFT_BONE).origin
 		right_eye_bone_origin = skeleton.get_bone_global_rest(Bones.EYE_RIGHT_BONE).origin
+		
+		load_skeleton_done.call_deferred(library,looksID)
 
 
-func load_morphs_new(library: LibraryManager,looksID: int) -> Dictionary:
+func load_skeleton_done(library: LibraryManager,looksID: int):
+	skeleton_loaded.emit(self,library,looksID)
+
+
+func load_morphs(library: LibraryManager,looksID: int) -> Dictionary:
 	var bones_morphs := {}
 	var morphs : Array = library.Looks_GetMorphs(looksID)
 	for morph in morphs:

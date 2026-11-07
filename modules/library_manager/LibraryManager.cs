@@ -121,7 +121,7 @@ public partial class LibraryManager : Node
 		}
 		return new Dictionary( );
 	}
-	public Image Looks_GetTextureImage( int lookID,string textureFile )
+	public Image Looks_GetTextureImage( int lookID,string textureFile,bool mipmaps,bool compress,int scaling )
 	{
 		VAMItem? look = _looks.GetItem( lookID );
 		if( look != null )
@@ -146,7 +146,7 @@ public partial class LibraryManager : Node
 				}
 				//GD.Print(archive + " " + textureFile);
 			}
-			return LoadImage( archive,textureFile,true );
+			return LoadImage( archive,textureFile,mipmaps,compress,scaling,false );
 		}
 		return new Image( );
 	}
@@ -365,7 +365,7 @@ public partial class LibraryManager : Node
 		}
 	}
 
-	private Image LoadImage( string archiveFile,string filename,bool trace = false )
+	private Image LoadImage( string archiveFile,string filename,bool mipmaps,bool compress,int scaling,bool trace = false )
 	{
 		var image = new Image( );
 		try
@@ -375,7 +375,7 @@ public partial class LibraryManager : Node
 			{
 				if( trace )
 					TraceArchiveFile( archiveFile,filename );
-				
+
 				var entry = archive.GetEntry( filename );
 				if( entry != null )
 				{
@@ -392,11 +392,18 @@ public partial class LibraryManager : Node
 							//GD.Print( "LoadJpgFromBuffer" );
 							image.LoadJpgFromBuffer( data );
 						}
-						else if( filename.EndsWith( ".png" ))
+						else if( filename.EndsWith( ".png" ) )
 						{
 							//GD.Print( "LoadPngFromBuffer" );
 							image.LoadPngFromBuffer( data );
-						}                    }
+						}
+						if( scaling > 1 )
+							image.Resize( image.GetWidth(  ) / scaling,image.GetHeight(  ) / scaling );
+						if( mipmaps )
+							image.GenerateMipmaps( );
+						if( compress )
+							image.Compress( Image.CompressMode.S3Tc );
+					}
 				}
 			}
 		}

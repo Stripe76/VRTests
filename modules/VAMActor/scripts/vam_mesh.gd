@@ -27,6 +27,11 @@ var left_eye_aabb : AABB
 var right_eye_aabb : AABB
 var eye_template : VAMEye = load("res://modules/VAMActor/vam_eye.tscn").instantiate()
 
+var _loading_thread : Thread
+
+signal mesh_loaded
+signal materials_loaded
+
 enum {MESH_BODY = 0, MESH_GENITALS = 1}
 enum {MATERIAL_HEAD = 0, MATERIAL_BODY = 1, MATERIAL_LIMBS = 2, MATERIAL_GENITALS = 3, MATERIAL_LEFT_EYE = 4, MATERIAL_RIGHT_EYE = 5, MATERIAL_OTHER = -1}
 
@@ -70,53 +75,20 @@ func debug_generate_model():
 	if _library:
 		var daz_model : Daz3DMesh = load("res://modules/VAMActor/resources/Genesis2Female.dsf")
 		
-		load_mesh_new(daz_model,_library,lookID,included_bones,bones_treshold)
+		load_mesh(daz_model,_library,lookID,included_bones,bones_treshold)
 		self.mesh = full_body
-		load_materials_new(_library,lookID)
+		load_materials(_library,lookID)
 
 
-func load_mesh(base_model: Daz3DMesh,vam_scene_folder: String,vam_scene_file: String,bones_to_include: Array = [],treshold: float = 0.0):
-	if not base_model:
-		return
-	var model_vertices : PackedVector3Array = base_model.vertices.duplicate()
-	var model_normals : PackedVector3Array = base_model.normals
-	var model_indices : Array = base_model.indeces
-	var model_uvs : PackedVector2Array = base_model.uvs
-	var model_weights : Array = base_model.weights
-	var model_linked : Dictionary = base_model.linked_vertices
-	var model_vertex_groups : Dictionary = base_model.vertex_groups
-	
-	if vam_scene_file != "":
-		#print("Scene loading",)
-		var file := FileAccess.open(vam_scene_folder+vam_scene_file,FileAccess.READ)
-		if file:
-			var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
-			if scene_data:
-				#print("Morphs application",)
-				add_morphs(model_vertices,model_linked,scene_data,vam_scene_folder)
-	
-	#print("Weights padding")
-	weights_padding(model_weights)
-	
-	#print("Meshes creation")
-	var meshes : Array = create_meshes(base_model,
-										model_vertices,
-										model_normals,
-										model_indices,
-										model_uvs,
-										model_weights,
-										model_vertex_groups,
-										bones_to_include,
-										treshold)
-	
-	#print("Materials settings")
-	set_materials(meshes[MESH_BODY])
-	
-	full_body = meshes[MESH_BODY]
-	genitals = meshes[MESH_GENITALS]
+func load_mesh_async(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bones_to_include: Array = [],treshold: float = 0.0):
+	if _loading_thread and _loading_thread.is_alive():
+		_loading_thread.wait_to_finish()
+	else:
+		_loading_thread = Thread.new()
+	_loading_thread.start(load_mesh.bind(base_model,library,looksID,bones_to_include,treshold))
 
 
-func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bones_to_include: Array = [],treshold: float = 0.0):
+func load_mesh(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bones_to_include: Array = [],treshold: float = 0.0):
 	if not base_model:
 		return
 	
@@ -145,35 +117,42 @@ func load_mesh_new(base_model: Daz3DMesh,library: LibraryManager,looksID: int,bo
 									bones_to_include,
 									treshold)
 	
-	#print("Materials settings")
-	set_materials(meshes[MESH_BODY])
-	
 	full_body = meshes[MESH_BODY]
 	genitals = meshes[MESH_GENITALS]
-
-
-func load_materials(library_folder: String,vam_scene_folder: String,vam_scene_file: String):
-	if self.mesh and vam_scene_file != "" || true:
-		var file := FileAccess.open(vam_scene_folder+vam_scene_file,FileAccess.READ)
-		if file:
-			var scene_data : Dictionary = JSON.parse_string(file.get_as_text())
-			if scene_data:
-				print("Textures loading")
-				var textures = load_textures(scene_data,library_folder,vam_scene_folder)
 	
-				textures["faceMicroDetailUrl"] = "/mnt/data/Projects/Godot/VRTests/modules/VAMActor/shaders/human_shaders/Resources/MicroDetail/skin_micro_nrm_ao.png"
+	load_mesh_done.call_deferred(library,looksID)
+
+
+func load_mesh_done(library: LibraryManager,lookID: int):
+	mesh = full_body
 	
-				#print("Material textures setting")
-				set_materials_textures(self.mesh,textures)
+	mesh_loaded.emit(self,library,lookID)
 
 
-func load_materials_new(library: LibraryManager,looksID: int):
-	var textures = library.Looks_GetTextures(looksID)
+func load_materials_async(library: LibraryManager,lookID: int):
+	if _loading_thread and _loading_thread.is_alive():
+		_loading_thread.wait_to_finish()
+	else:
+		_loading_thread = Thread.new()
+	_loading_thread.start(load_materials.bind(library,lookID))
+
+
+func load_materials(library: LibraryManager,lookID: int):
+	var textures = library.Looks_GetTextures(lookID)
 	
-	set_materials_textures_new(library,looksID,mesh,textures)
+	set_materials_textures(library,lookID,textures)
+	
+	load_materials_done.call_deferred(library,lookID)
 
 
-func set_materials(mesh: ArrayMesh)-> void:
+func load_materials_done(library: LibraryManager,lookID: int):
+	#print("Materials settings")
+	set_materials()
+	
+	materials_loaded.emit(self,library,lookID)
+
+
+func set_materials()-> void:
 	mesh.surface_set_material(MATERIAL_HEAD,head_material)
 	mesh.surface_set_material(MATERIAL_BODY,body_material)
 	mesh.surface_set_material(MATERIAL_LIMBS,limbs_material)
@@ -518,7 +497,7 @@ func apply_deltas_new(vertices: PackedVector3Array, linked_vertices: Dictionary,
 			continue
 
 
-func set_materials_textures(array_mesh: ArrayMesh, textures : Dictionary):
+func set_materials_textures(library: LibraryManager,looksID: int, textures : Dictionary):
 	var enable_decal := true
 	#var diffuse := "standard_diffuse"
 	#var normal := "standard_normal"
@@ -526,83 +505,39 @@ func set_materials_textures(array_mesh: ArrayMesh, textures : Dictionary):
 	var diffuse := "texture_albedo"
 	var normal := "texture_normal"
 	
-	load_material_texture(head_material,textures,"faceDiffuseUrl",diffuse)
-	load_material_texture(head_material,textures,"faceNormalUrl",normal)
+	load_material_texture(library,looksID,head_material,textures,"faceDiffuseUrl",diffuse)
+	load_material_texture(library,looksID,head_material,textures,"faceNormalUrl",normal)
 	if textures.has("faceDecalUrl") && enable_decal:
-		load_material_texture(head_material,textures,"faceDecalUrl",decal)
+		load_material_texture(library,looksID,head_material,textures,"faceDecalUrl",decal)
 	else:
-		load_material_texture(head_material,textures,"white",decal)
+		load_material_texture(library,looksID,head_material,textures,"white",decal)
 	if textures.has("faceMicroDetailUrl"):
-		load_material_texture(head_material,textures,"faceMicroDetailUrl","texture_micro_detail")
+		load_material_texture(library,looksID,head_material,textures,"faceMicroDetailUrl","texture_micro_detail")
 	
-	load_material_texture(body_material,textures,"torsoDiffuseUrl",diffuse)
-	load_material_texture(body_material,textures,"torsoNormalUrl",normal)
+	load_material_texture(library,looksID,body_material,textures,"torsoDiffuseUrl",diffuse)
+	load_material_texture(library,looksID,body_material,textures,"torsoNormalUrl",normal)
 	if textures.has("torsoDecalUrl") && enable_decal:
-		load_material_texture(body_material,textures,"torsoDecalUrl",decal)
+		load_material_texture(library,looksID,body_material,textures,"torsoDecalUrl",decal)
 	else:
-		load_material_texture(body_material,textures,"white",decal)
+		load_material_texture(library,looksID,body_material,textures,"white",decal)
 	
-	load_material_texture(limbs_material,textures,"limbsDiffuseUrl",diffuse)
-	load_material_texture(limbs_material,textures,"limbsNormalUrl",normal)
+	load_material_texture(library,looksID,limbs_material,textures,"limbsDiffuseUrl",diffuse)
+	load_material_texture(library,looksID,limbs_material,textures,"limbsNormalUrl",normal)
 	if textures.has("limbsDecalUrl") && enable_decal:
-		load_material_texture(limbs_material,textures,"limbsDecalUrl",decal)
+		load_material_texture(library,looksID,limbs_material,textures,"limbsDecalUrl",decal)
 	else:
-		load_material_texture(limbs_material,textures,"white",decal)
+		load_material_texture(library,looksID,limbs_material,textures,"white",decal)
 	
-	load_material_texture(genitals_material,textures,"genitalsDiffuseUrl",diffuse)
-	load_material_texture(genitals_material,textures,"genitalsNormalUrl",normal)
-	load_material_texture(genitals_material,textures,"genitalsDiffuseUrl",decal)
+	load_material_texture(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",diffuse)
+	load_material_texture(library,looksID,genitals_material,textures,"genitalsNormalUrl",normal)
+	load_material_texture(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",decal)
 
 
-func set_materials_textures_new(library: LibraryManager,looksID: int,array_mesh: ArrayMesh, textures : Dictionary):
-	var enable_decal := true
-	#var diffuse := "standard_diffuse"
-	#var normal := "standard_normal"
-	var decal := "standard_decal"
-	var diffuse := "texture_albedo"
-	var normal := "texture_normal"
-	
-	load_material_texture_new(library,looksID,head_material,textures,"faceDiffuseUrl",diffuse)
-	load_material_texture_new(library,looksID,head_material,textures,"faceNormalUrl",normal)
-	if textures.has("faceDecalUrl") && enable_decal:
-		load_material_texture_new(library,looksID,head_material,textures,"faceDecalUrl",decal)
-	else:
-		load_material_texture_new(library,looksID,head_material,textures,"white",decal)
-	if textures.has("faceMicroDetailUrl"):
-		load_material_texture_new(library,looksID,head_material,textures,"faceMicroDetailUrl","texture_micro_detail")
-	
-	load_material_texture_new(library,looksID,body_material,textures,"torsoDiffuseUrl",diffuse)
-	load_material_texture_new(library,looksID,body_material,textures,"torsoNormalUrl",normal)
-	if textures.has("torsoDecalUrl") && enable_decal:
-		load_material_texture_new(library,looksID,body_material,textures,"torsoDecalUrl",decal)
-	else:
-		load_material_texture_new(library,looksID,body_material,textures,"white",decal)
-	
-	load_material_texture_new(library,looksID,limbs_material,textures,"limbsDiffuseUrl",diffuse)
-	load_material_texture_new(library,looksID,limbs_material,textures,"limbsNormalUrl",normal)
-	if textures.has("limbsDecalUrl") && enable_decal:
-		load_material_texture_new(library,looksID,limbs_material,textures,"limbsDecalUrl",decal)
-	else:
-		load_material_texture_new(library,looksID,limbs_material,textures,"white",decal)
-	
-	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",diffuse)
-	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsNormalUrl",normal)
-	load_material_texture_new(library,looksID,genitals_material,textures,"genitalsDiffuseUrl",decal)
-
-
-func load_material_texture(material: Material,textures : Dictionary,field: String,param_name: String):
+func load_material_texture(library: LibraryManager,looksID: int,material: Material,textures : Dictionary,field: String,param_name: String):
 	if field == "white":
 		material.set_shader_parameter(param_name,ResourceLoader.load("res://modules/VAMActor/resources/white.png"))
 	elif textures.has(field):
-		var image = Image.load_from_file(textures.get(field))
-		material.set_shader_parameter(param_name,ImageTexture.create_from_image(image))
-
-
-func load_material_texture_new(library: LibraryManager,looksID: int,material: Material,textures : Dictionary,field: String,param_name: String):
-	if field == "white":
-		material.set_shader_parameter(param_name,ResourceLoader.load("res://modules/VAMActor/resources/white.png"))
-	elif textures.has(field):
-		var image = library.Looks_GetTextureImage(looksID,textures.get(field))
+		var image = library.Looks_GetTextureImage(looksID,textures.get(field),true,true,1)
 		material.set_shader_parameter(param_name,ImageTexture.create_from_image(image))
 
 
