@@ -117,6 +117,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7602539, 0)
 shape = SubResource("BoxShape3D_67ek6")
 
 [node name="Debug1" type="MeshInstance3D" parent="Debug" unique_id=704501971]
+visible = false
 mesh = SubResource("SphereMesh_nqrty")
 skeleton = NodePath("../Floor")
 surface_material_override/0 = SubResource("StandardMaterial3D_67ek6")

@@ -4,7 +4,7 @@ class_name PersonController extends Node3D
 const MESH_MASK := 0b0000_0000_0000_0000_0000_0001_0000_0000
 const CAPSULE_MASK := 0b0000_0000_0000_0100_0000_0000_0000_0101
 
-@export_tool_button("Reset","Reload") var reset_action = reset_pose
+@export_tool_button("Reset","Reload") var reset_action: Callable = reset_pose
 
 @export_group("Root")
 @export var enable_X : bool
@@ -156,7 +156,7 @@ func _on_skeleton_updated():
 
 func random_push(bone: PhysicalBone3D,forward: float):
 	if bone:
-		var angle := randf_range(0.0,2.0 * PI)
+		#var angle := randf_range(0.0,2.0 * PI)
 		var push_direction := person_forward.normalized()
 		if forward > 0:
 			push_direction = push_direction.rotated(Vector3.UP,randf_range(-PI/4,PI/4))
@@ -193,16 +193,16 @@ func update_root_on(apply : bool = true) -> Vector3:
 		last_delta_pos = delta_position
 		
 		if apply:
-			var bone_pose : Transform3D = _skeleton.get_bone_global_pose(_current_root.ik_bone_idx)
-			var foot_y_rotation = bone_pose.basis.get_euler().y
-			var delta_rotation : float = _current_root.ro_y_rotation - foot_y_rotation
+			var bone_pose: Transform3D = _skeleton.get_bone_global_pose(_current_root.ik_bone_idx)
+			var foot_y_rotation := bone_pose.basis.get_euler().y
+			var delta_rotation: float = _current_root.ro_y_rotation - foot_y_rotation
 			
 			if abs(delta_rotation) > 0.001 and enable_rotation:
 				# IL FULCRO (PIVOT): Usiamo la posizione di ancoraggio fissa a terra
-				var world_pivot = _current_root.ro_position
+				var world_pivot := _current_root.ro_position
 				
 				# Trova la distanza vettoriale tra l'origine globale dello scheletro e il piede a terra
-				var offset_skeleton = _skeleton.global_transform.origin - world_pivot
+				var offset_skeleton := _skeleton.global_transform.origin - world_pivot
 				
 				# Ruota lo scheletro sul proprio asse globale
 				_skeleton.global_rotate(Vector3.UP,delta_rotation)
@@ -299,9 +299,9 @@ func initialize(parent: Node3D,skeleton: Skeleton3D,mesh: MeshInstance3D) -> voi
 	create_joints(skeleton)
 	
 	create_controllers( )
-	create_collisions(parent,skeleton,mesh)
-	create_center_of_gravity(skeleton,parent)
 	create_iks(skeleton,parent)
+	create_collisions(parent,skeleton,mesh)
+	#create_center_of_gravity(skeleton,parent)
 	
 	reset_pose()
 
@@ -617,7 +617,7 @@ func add_placeholder(mesh: MeshInstance3D,color: Color,radius: float = 0.025) ->
 
 
 func create_center_of_gravity(skeleton: Skeleton3D,parent: Node3D) -> void:
-	var cog = CenterOfGravity.new(skeleton,)
+	var cog := CenterOfGravity.new(skeleton,)
 	cog.name = "CoG"
 	cog.left_leg = find_child("LeftLeg")
 	cog.right_leg = find_child("RightLeg")
@@ -640,8 +640,8 @@ func get_bones_vertices(surfaces: Array,bones_number: int) -> Dictionary:
 			for v in vertices.size() / 3:
 				for c in 3:
 					for b in bones_number:
-						var bone = bones[v*24+c*8+b]
-						var weight = weights[v*24+c*8+b]
+						var bone := bones[v*24+c*8+b]
+						var weight := weights[v*24+c*8+b]
 						
 						if weight >= 0.15:
 							if !bones_vertices.has(bone):
@@ -681,11 +681,11 @@ func add_physical_bone( bone_idx: int,
 	bone.add_child(capsule)
 	
 	var line_3d: Line3D
-	if bone_name.contains("Foot"):
-		line_3d = Line3D.new()
-		line_3d.name = "Line3D"
-		line_3d.draw_back_path()
-		bone.add_child(line_3d)
+	#if bone_name.contains("Foot"):
+	#	line_3d = Line3D.new()
+	#	line_3d.name = "Line3D"
+	#	line_3d.draw_back_path()
+	#	bone.add_child(line_3d)
 	
 	if limb:
 		capsule.limb = limb
@@ -772,11 +772,11 @@ func create_bone_full_mesh(bone: int,bones_vertices: Dictionary,horizontal: bool
 	var mesh := ProceduralMesh.new()
 	var vertices : Array = bones_vertices[bone]
 
-	var arrays = []
+	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
 	
-	var surface_tool = SurfaceTool.new()
+	var surface_tool := SurfaceTool.new()
 	surface_tool.create_from_arrays(arrays)
 	surface_tool.commit(mesh)
 	
@@ -824,13 +824,13 @@ func add_arm_spring(spring:String,skeleton: Skeleton3D,bone: int):
 	add_spring(spring+"_wrist",skeleton,bone+3,1,1.0,0.2)
 
 
-func add_leg_spring(name:String,skeleton: Skeleton3D,bone: int):
-	add_spring(name+"_hip",skeleton,bone,1,1.0,0.5)
-	add_spring(name+"_knee",skeleton,bone+1,1,1.0,0.2)
-	add_spring(name+"_ankle",skeleton,bone+2,1,1.0,0.2)
+func add_leg_spring(spring:String,skeleton: Skeleton3D,bone: int):
+	add_spring(spring+"_hip",skeleton,bone,1,1.0,0.5)
+	add_spring(spring+"_knee",skeleton,bone+1,1,1.0,0.2)
+	add_spring(spring+"_ankle",skeleton,bone+2,1,1.0,0.2)
 
 
-func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,stiffness: float,drag: float) -> SpringBoneSimulator3D:
+func add_spring(spring_name: String,skeleton: Skeleton3D,bone: int,chain_length: int,stiffness: float,drag: float) -> SpringBoneSimulator3D:
 	var spring := SpringBoneSimulator3D.new()
 	spring.setting_count = 1
 	spring.set_root_bone(0,bone)
@@ -846,7 +846,7 @@ func add_spring(name: String,skeleton: Skeleton3D,bone: int,chain_length: int,st
 	spring.active = true;
 	
 	skeleton.add_child(spring)
-	spring.name = name
+	spring.name = spring_name
 	spring.owner = skeleton.get_parent()
 	
 	return spring
