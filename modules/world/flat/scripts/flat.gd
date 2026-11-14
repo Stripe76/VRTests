@@ -40,7 +40,7 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_released("StartAnimation"):
 		#scene_manager.toggle_animation("walking_ik")
 		#scene_manager.toggle_ragdoll()
-		scene_manager.reset_person()		
+		scene_manager.reset_person()
 	elif event.is_action_released("NextPerson"):
 		scene_manager.select_next_person()
 	elif event.is_action_pressed("NextWalkStep"):

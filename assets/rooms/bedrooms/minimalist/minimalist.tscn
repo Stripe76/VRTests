@@ -41,6 +41,7 @@ shape = SubResource("BoxShape3D_sp703")
 
 [node name="Floor" type="StaticBody3D" parent="Physics" unique_id=1665616484]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.17863321, 0)
+collision_layer = 1048577
 script = ExtResource("2_py7ai")
 
 [node name="Shape" type="CollisionShape3D" parent="Physics/Floor" unique_id=1357789654]

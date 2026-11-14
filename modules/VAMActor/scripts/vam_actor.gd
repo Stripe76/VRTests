@@ -165,7 +165,7 @@ func add_hair(library: LibraryManager,hair_id: int,remove_if_present: bool):
 	hairs_list_changed.emit(self)
 func remove_hair(hair_id: int):
 	for i in _hairs.size():
-		if _hairs[i].id == hair_id:
+		if _hairs[i].id == hair_id and _hairs[i].node:
 			var parent = _hairs[i].node.get_parent()
 			if parent:
 				parent.remove_child(_hairs[i].node)

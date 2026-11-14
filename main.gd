@@ -1,6 +1,6 @@
 extends Node3D
 
-var vr_mode := false
+var vr_mode := true
 
 func _ready() -> void:
 	if vr_mode:

@@ -1,3 +1,0 @@
-extends XRController3D
-
-	

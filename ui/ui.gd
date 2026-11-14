@@ -8,6 +8,7 @@ class_name UI extends Control
 		if _person_selection:
 			return _person_selection.show_add_button
 		return false
+@export var pointer_sprite : Sprite2D
 
 var MAIN_MENU_SCENE : PackedScene = load("res://ui/menus/main.tscn")
 var PERSON_SELECTION_SCENE : PackedScene = load("res://ui/panels/person_selection.tscn")
@@ -15,15 +16,15 @@ var PERSON_SELECTION_SCENE : PackedScene = load("res://ui/panels/person_selectio
 var _library : LibraryManager
 var _scene_manager : SceneManager
 
-var _main_menu : Control
-var _main_panel : Control
-var _persons_list : Control
+var _main_menu : Node
+var _main_panel : Node
+var _persons_list : Node
 
 var _menu
 var _person_selection
 
 
-func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Control,main_panel: Control,persons_list:Control,focus_camera: Node3D) -> void:
+func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Node,main_panel: Node,persons_list: Node,focus_camera: Node3D) -> void:
 	_library = library
 	_scene_manager = scene_manager
 	
@@ -31,13 +32,17 @@ func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Contro
 	_main_panel = main_panel
 	_persons_list = persons_list
 	
-	_scene_manager.focus_camera = focus_camera.get_path()
+	if focus_camera:
+		_scene_manager.focus_camera = focus_camera.get_path()
 
 
 func _ready() -> void:
 	if _main_menu:
 		_menu = MAIN_MENU_SCENE.instantiate()
 		_main_menu.add_child(_menu)
+		
+		if pointer_sprite:
+			_main_menu.add_child(pointer_sprite.duplicate())
 	if _persons_list:
 		if not _person_selection:
 			_person_selection = PERSON_SELECTION_SCENE.instantiate()
@@ -66,6 +71,11 @@ func set_main_panel(panel: String,sub_panel: String):
 		if c.name == panel:
 			if c.has_method("set_sub_panel"):
 				c.set_sub_panel(sub_panel)
+			if pointer_sprite:
+				if pointer_sprite.get_parent():
+					pointer_sprite.reparent(c)
+				else:
+					c.add_child(pointer_sprite)
 			c.visible = true
 		else:
 			c.visible = false

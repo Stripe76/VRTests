@@ -15,4 +15,4 @@ script = ExtResource("1_l6ae3")
 
 [node name="PlayerVR" parent="." unique_id=505521647 instance=ExtResource("3_swt12")]
 
-[node name="SceneManager" parent="." unique_id=200279357 instance=ExtResource("5_e8w3s")]
+[node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("5_e8w3s")]

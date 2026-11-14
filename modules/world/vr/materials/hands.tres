@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bpdbpidbnbss3"]
+
+[ext_resource type="Texture2D" uid="uid://c506svon268ms" path="res://addons/godot-xr-tools/hands/textures/caucasian_baseColor.png" id="1_ur1u5"]
+[ext_resource type="Texture2D" uid="uid://b6tgv6ucbgv3r" path="res://addons/godot-xr-tools/hands/textures/hands_normal.png" id="2_bmro6"]
+[ext_resource type="Texture2D" uid="uid://h3sjbnu6uplb" path="res://addons/godot-xr-tools/hands/textures/hands_occlusionRoughnessMetallic.png" id="3_7gmay"]
+
+[resource]
+albedo_texture = ExtResource("1_ur1u5")
+roughness = 0.83
+roughness_texture = ExtResource("3_7gmay")
+normal_enabled = true
+normal_scale = 0.05
+normal_texture = ExtResource("2_bmro6")
