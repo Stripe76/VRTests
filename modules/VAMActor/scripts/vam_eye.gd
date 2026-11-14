@@ -35,6 +35,3 @@ func set_eye_color(value: float):
 			material.set_shader_parameter("iris_color_inner_1",color_in1)
 			material.set_shader_parameter("iris_color_outer_2",color_out2)
 			material.set_shader_parameter("iris_color_inner_2",color_in2)
-	
-	
-	

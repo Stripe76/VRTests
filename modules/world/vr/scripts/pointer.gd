@@ -12,7 +12,7 @@ var _ws := 1.0
 @onready var _controller : XRController3D = get_parent()
 
 func _process(_delta):
-	return
+	#return
 	_scale_ray()
 	var raycast_collider = get_collider()
 	# First of all, check if we need to release a previous mouse click.
@@ -23,12 +23,9 @@ func _process(_delta):
 
 
 func _try_send_input_to_gui(raycast_collider):
-	var sprite = raycast_collider.get_child(0) as Sprite3D
-	#if not (viewport is Viewport):
-		#return # This isn't something we can give input to.
-	if not sprite:
-		return
-	var viewport = sprite.viewport as SubViewport
+	var viewport : Viewport = raycast_collider.get_child(0)
+	if not (viewport is Viewport):
+		return # This isn't something we can give input to.
 
 	var collider_transform = raycast_collider.global_transform
 	if (collider_transform * global_transform.origin).z < 0:
@@ -38,7 +35,7 @@ func _try_send_input_to_gui(raycast_collider):
 	var shape_size = raycast_collider.get_child(1).shape.extents * 2
 	var collision_point = get_collision_point()	
 	var collider_scale = collider_transform.basis.get_scale()
-	var local_point = sprite.to_local(collision_point)
+	var local_point = viewport.to_local(collision_point)
 	#local_point /= (collider_scale * collider_scale)
 	local_point /= shape_size
 	local_point += Vector3(0.5, -0.5, 0) # X is about 0 to 1, Y is about 0 to -1.	

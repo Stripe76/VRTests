@@ -63,6 +63,10 @@
     <Content Include="modules\world\flat\scripts\iso_camera.gd.uid" />
     <Content Include="modules\world\flat\scripts\player.gd" />
     <Content Include="modules\world\flat\scripts\player.gd.uid" />
+    <Content Include="modules\world\vr\scripts\player_vr.gd" />
+    <Content Include="modules\world\vr\scripts\player_vr.gd.uid" />
+    <Content Include="modules\world\vr\scripts\vr.gd" />
+    <Content Include="modules\world\vr\scripts\vr.gd.uid" />
     <Content Include="modules\world\world.gd" />
     <Content Include="modules\world\world.gd.uid" />
     <Content Include="ui\ui.gd" />

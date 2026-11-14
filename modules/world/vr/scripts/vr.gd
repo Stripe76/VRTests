@@ -1,9 +1,13 @@
 extends Node3D
 
+@onready var world :  WorldScene = $World
 @onready var player : PlayerVR = $PlayerVR
 @onready var scene_manager : SceneManager = $SceneManager
 
 var xrInterface : XRInterface
+
+var ui : UI
+var ui_active := false
 
 var _library := LibraryManager.new()
 
@@ -23,24 +27,25 @@ func _ready() -> void:
 			XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT,true)
 			
 	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	#_library.LoadData("/mnt/data/Projects/Godot/library/")
 	
-	player.next_mesh.connect(next_mesh)
-	player.next_materials.connect(next_materials)
-	
-	scene_manager.set_world($World)
+	scene_manager.set_world(world)
 	scene_manager.set_library(_library)
 	#scene_manager.select_looks(39)
+	
+	ui = UI.new(_library,
+				scene_manager,
+				$PlayerVR/MainMenu,
+				$PlayerVR/MainPanel,
+				null,
+				null)
+	
+	ui.pointer_sprite = PointerSprite.new()
+	ui.pointer_sprite.visible = false
+	player.mouse_pointer = ui.pointer_sprite
+	
+	add_child(ui)
 
 
 func _on_openxr_pose_recentered():
 	XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT, true)
-
-
-var n = 0
-func next_mesh():
-	scene_manager.select_looks(n)
-	n += 1
-
-
-func next_materials():
-	scene_manager.toggle_animation("walking_ik 2")

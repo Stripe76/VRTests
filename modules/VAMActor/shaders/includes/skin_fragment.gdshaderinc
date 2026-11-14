@@ -12,7 +12,7 @@ void fragment() {
 	else
 		ALBEDO = texture(texture_albedo,UV).rgb;
 	
-	NORMAL_MAP_DEPTH = 0.55;
+	NORMAL_MAP_DEPTH = -0.55;
 	NORMAL_MAP = texture(texture_normal,UV).rgb;
 	
 	//float sss_strength_value = 0.2;

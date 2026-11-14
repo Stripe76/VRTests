@@ -1,5 +1,7 @@
 [gd_resource type="Theme" format=3 uid="uid://dycf72gpi34jc"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ct1h"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tekt2"]
 content_margin_left = 5.0
 content_margin_top = 5.0
@@ -15,6 +17,7 @@ content_margin_bottom = 5.0
 bg_color = Color(0.16754988, 0.40555593, 0.53338236, 1)
 
 [resource]
+Button/styles/hover = SubResource("StyleBoxFlat_7ct1h")
 SelectedButton/base_type = &"Button"
 SelectedButton/styles/hover = SubResource("StyleBoxFlat_tekt2")
 SelectedButton/styles/normal = SubResource("StyleBoxFlat_d4nwg")

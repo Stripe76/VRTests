@@ -32,7 +32,6 @@ func cycle_camera():
 		WallsHide.is_hiding_enabled = false
 
 
-
 func generate_action_map():
 	add_action( "CycleCamera",[Key.KEY_F1] )
 	

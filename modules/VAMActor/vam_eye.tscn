@@ -8,4 +8,4 @@
 mesh = ExtResource("2_ry3fp")
 surface_material_override/0 = ExtResource("3_ry3fp")
 script = ExtResource("1_7lw1u")
-eye_color = 0.907
+eye_color = 0.559

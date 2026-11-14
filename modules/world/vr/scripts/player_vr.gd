@@ -1,54 +1,49 @@
 class_name PlayerVR extends Node3D
 
-@export var target : Node3D
-@export var collision : Vector3
+#@export var target : Node3D
+@export var mouse_pointer : Sprite2D:
+	set(value):
+		mouse_pointer = value
+		
+		#if main_menu:
+			#main_menu.mouse_pointer = mouse_pointer
+		if main_panel:
+			main_panel.mouse_pointer = mouse_pointer
+	get:
+		return mouse_pointer
 
-signal next_mesh()
-signal next_materials()
+@onready var main_menu := $XRPlayer/MainMenu
+@onready var main_panel := $XRPlayer/MainPanel
 
-signal slider_changed(value)
+@onready var left_hand := $XRPlayer/LeftHand
+@onready var right_hand := $XRPlayer/RightHand
 
 var ui_visible : bool = true
 
+
 func _ready() -> void:
-	target = $XRPlayer
-#	var a = get_node("XRPlayer/RightHand/RightHand/Hand_Nails_R/Armature/Skeleton3D/BoneAttachment3D/Poke") as XRToolsPoke
-#	if a:
-#		a.pointing_event.connect(func ():
-#			print("area enter")
-#			var poke = get_node("XRPlayer/RightHand/RightHand/Hand_Nails_R/Armature/Skeleton3D/BoneAttachment3D/Poke") as Node3D
-#			$XRPlayer/Navigation.mouseClick(poke.global_position)
-#			)
+	#main_menu.mouse_pointer = mouse_pointer
+	main_panel.mouse_pointer = mouse_pointer
+	
+	main_panel.gui_drag_threshold = 25
+	
+	$XRPlayer/RightHand/FunctionPointer.pointing_event.connect(pointing_event)
 
 
-func _physics_process(delta: float) -> void:
-	var pos = $XRPlayer/RightHand/RightHand/Hand_Nails_R/Armature/Skeleton3D/BoneAttachment3D/Poke.global_position
-	pos.z += 0.025
-	pos.y += 0.01
-	collision = pos
-
-
-func _on_main_panel_slider_changed(value: Variant) -> void:
-	slider_changed.emit(value)
+func _process(_delta: float) -> void:
+	if mouse_pointer and ui_visible:
+		right_hand.can_move = not mouse_pointer.visible
+	else:
+		right_hand.can_move = true
 
 
 func toggle_ui():
 	ui_visible = not ui_visible
-	$XRPlayer/Navigation.visible = ui_visible
-	$XRPlayer/MainPanel.visible = ui_visible
-	$XRPlayer/UI.visible = ui_visible
-	
-
-func set_pages(pages : Dictionary):
-	$UIViewports.pages = pages
+	main_menu.visible = ui_visible
+	main_panel.visible = ui_visible
 
 
-func set_head_skin_shader(shader):
-	$UIViewports.set_head_skin_shader(shader)
-
-
-func _on_right_hand_button_pressed(button_name: String) -> void:
-	if button_name == "ax_button":
-		next_mesh.emit()
-	elif button_name == "by_button":
-		next_materials.emit()
+func pointing_event(event: XRToolsPointerEvent):
+	var parent : Node = event.target.get_parent()
+	if parent and parent.has_method("pointing_event"):
+		parent.pointing_event(event)

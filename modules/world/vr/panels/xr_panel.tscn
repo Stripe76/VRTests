@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://o0owxybjvmd6"]
+
+[ext_resource type="Script" uid="uid://cbnmlqa6qgi4c" path="res://modules/world/vr/panels/xr_panel.gd" id="1_gnnh7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_al8wa"]
+size = Vector3(0.99736327, 0.99527586, 0.1)
+
+[node name="UIPanel" type="OpenXRCompositionLayerQuad" unique_id=590852800]
+alpha_blend = true
+script = ExtResource("1_gnnh7")
+
+[node name="PanelArea" type="CharacterBody3D" parent="." unique_id=235374765]
+collision_layer = 1048576
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PanelArea" unique_id=1675690023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
+shape = SubResource("BoxShape3D_al8wa")

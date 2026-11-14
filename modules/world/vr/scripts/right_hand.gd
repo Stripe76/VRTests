@@ -10,6 +10,10 @@ var base_hand_rotation
 var ui_visible : bool = false;
 var b_was_pressed : bool = false;
 
+var can_move := true
+var grip_released := true
+
+
 func _physics_process(delta: float) -> void:
 	var stick = get_vector2("primary")
 	
@@ -20,26 +24,35 @@ func _physics_process(delta: float) -> void:
 		elif diff.y < -0.2:
 			selected_slider.value -= 1
 	
-	if stick.y > 0.5:
-			var trans = Vector3(0,(stick.y-0.5)*delta,0)						
-			player.translate(trans)
-	if stick.y < -0.5:
-			var trans = Vector3(0,(stick.y+0.5)*delta,0)						
-			player.translate(trans)
-			
+	if can_move:
+		if stick.y > 0.5:
+				var trans = Vector3(0,(stick.y-0.5)*delta,0)
+				player.translate(trans)
+		if stick.y < -0.5:
+				var trans = Vector3(0,(stick.y+0.5)*delta,0)
+				player.translate(trans)
+				
 	if stick.x > 0.2 or stick.x < -0.2:
 		if stick.x > 0.2:
 			stick.x -= 0.2
 		elif stick.x < -0.2:
 			stick.x += 0.2
 		player.rotate(Vector3(0,1,0),stick.x*-delta)
-	
+		
 	if is_button_pressed("by_button"):
 		if not b_was_pressed:
 			b_was_pressed = true
 			get_tree().call_group("UI","toggle_ui")
 	else:
-		b_was_pressed = false	
+		b_was_pressed = false
+		
+	if get_input("grip"):
+		if grip_released:
+			grip_released = false
+			
+			$Flashlight.visible = not $Flashlight.visible
+	else:
+		grip_released = true
 
 
 func _on_main_panel_slider_clicked(slider) -> void:

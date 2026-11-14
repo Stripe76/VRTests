@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bt32yf15w0a6n"]
 
-[ext_resource type="Script" uid="uid://chgen3aojikw7" path="res://modules/world/flat/scripts/player.gd" id="1_mexil"]
+[ext_resource type="Script" uid="uid://chgen3aojikw7" path="res://modules/world/flat/scripts/player_flat.gd" id="1_mexil"]
 [ext_resource type="Script" uid="uid://motedb30etf2" path="res://modules/world/flat/scripts/free_camera.gd" id="2_20j0k"]
 [ext_resource type="Script" uid="uid://t83u5wbquq42" path="res://modules/world/flat/scripts/iso_camera.gd" id="2_p14d7"]
 
