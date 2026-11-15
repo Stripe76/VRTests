@@ -9,42 +9,55 @@
 [ext_resource type="Material" uid="uid://bpdbpidbnbss3" path="res://modules/world/vr/materials/hands.tres" id="4_tfw7p"]
 [ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="5_h57j3"]
 [ext_resource type="PackedScene" uid="uid://o0owxybjvmd6" path="res://modules/world/vr/panels/xr_panel.tscn" id="8_cw3wl"]
-[ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="10_wewym"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tfw7p"]
-animation = &"Grip"
+[ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://modules/world/vr/xr-tools/function_pointer.tscn" id="10_wewym"]
+[ext_resource type="Script" uid="uid://56er7txrx5k3" path="res://modules/world/vr/scripts/draggable_panel.gd" id="11_pqdlc"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pqdlc"]
 animation = &"Grip"
 
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8xehe"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8xehe"]
+animation = &"Grip"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_fthr4"]
 filter_enabled = true
 filters = ["Armature/Skeleton3D:Little_Distal_R", "Armature/Skeleton3D:Little_Intermediate_R", "Armature/Skeleton3D:Little_Metacarpal_R", "Armature/Skeleton3D:Little_Proximal_R", "Armature/Skeleton3D:Middle_Distal_R", "Armature/Skeleton3D:Middle_Intermediate_R", "Armature/Skeleton3D:Middle_Metacarpal_R", "Armature/Skeleton3D:Middle_Proximal_R", "Armature/Skeleton3D:Ring_Distal_R", "Armature/Skeleton3D:Ring_Intermediate_R", "Armature/Skeleton3D:Ring_Metacarpal_R", "Armature/Skeleton3D:Ring_Proximal_R", "Armature/Skeleton3D:Thumb_Distal_R", "Armature/Skeleton3D:Thumb_Metacarpal_R", "Armature/Skeleton3D:Thumb_Proximal_R", "Armature/Skeleton:Little_Distal_R", "Armature/Skeleton:Little_Intermediate_R", "Armature/Skeleton:Little_Proximal_R", "Armature/Skeleton:Middle_Distal_R", "Armature/Skeleton:Middle_Intermediate_R", "Armature/Skeleton:Middle_Proximal_R", "Armature/Skeleton:Ring_Distal_R", "Armature/Skeleton:Ring_Intermediate_R", "Armature/Skeleton:Ring_Proximal_R", "Armature/Skeleton:Thumb_Distal_R", "Armature/Skeleton:Thumb_Proximal_R"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fthr4"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tw6n4"]
 animation = &"Grip 5"
 
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_tw6n4"]
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_mogth"]
 filter_enabled = true
 filters = ["Armature/Skeleton3D:Index_Distal_R", "Armature/Skeleton3D:Index_Intermediate_R", "Armature/Skeleton3D:Index_Metacarpal_R", "Armature/Skeleton3D:Index_Proximal_R", "Armature/Skeleton:Index_Distal_R", "Armature/Skeleton:Index_Intermediate_R", "Armature/Skeleton:Index_Proximal_R"]
 
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_mogth"]
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_wxodu"]
 graph_offset = Vector2(-552.664, 107.301)
-nodes/ClosedHand1/node = SubResource("AnimationNodeAnimation_tfw7p")
+nodes/ClosedHand1/node = SubResource("AnimationNodeAnimation_pqdlc")
 nodes/ClosedHand1/position = Vector2(-600, 300)
-nodes/ClosedHand2/node = SubResource("AnimationNodeAnimation_pqdlc")
+nodes/ClosedHand2/node = SubResource("AnimationNodeAnimation_8xehe")
 nodes/ClosedHand2/position = Vector2(-360, 300)
-nodes/Grip/node = SubResource("AnimationNodeBlend2_8xehe")
+nodes/Grip/node = SubResource("AnimationNodeBlend2_fthr4")
 nodes/Grip/position = Vector2(0, 40)
-nodes/OpenHand/node = SubResource("AnimationNodeAnimation_fthr4")
+nodes/OpenHand/node = SubResource("AnimationNodeAnimation_tw6n4")
 nodes/OpenHand/position = Vector2(-600, 100)
-nodes/Trigger/node = SubResource("AnimationNodeBlend2_tw6n4")
+nodes/Trigger/node = SubResource("AnimationNodeBlend2_mogth")
 nodes/Trigger/position = Vector2(-360, 40)
 node_connections = [&"output", 0, &"Grip", &"Grip", 0, &"Trigger", &"Grip", 1, &"ClosedHand2", &"Trigger", 0, &"OpenHand", &"Trigger", 1, &"ClosedHand1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqdlc"]
 shading_mode = 0
 albedo_color = Color(0.99116415, 0.99116427, 0.99116415, 0.4509804)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_8xehe"]
+radius = 0.007
+height = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fthr4"]
+shading_mode = 0
+albedo_color = Color(0.50534403, 0.5053441, 0.50534403, 1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pqdlc"]
+radius = 0.025
+height = 0.25
 
 [node name="PlayerVR" type="Node3D" unique_id=285117254 groups=["UI"]]
 script = ExtResource("1_hrm7i")
@@ -82,7 +95,7 @@ mask = 4294967295
 stiffness = 1.0
 
 [node name="AnimationTree" parent="XRPlayer/RightHand/RightHand" index="1" unique_id=799333417]
-tree_root = SubResource("AnimationNodeBlendTree_mogth")
+tree_root = SubResource("AnimationNodeBlendTree_wxodu")
 
 [node name="FunctionPickup" parent="XRPlayer/RightHand" unique_id=133735314 instance=ExtResource("5_h57j3")]
 ranged_distance = 0.5
@@ -112,34 +125,58 @@ player = NodePath("../..")
 [node name="LeftHand" parent="XRPlayer/LeftHand" unique_id=700928615 instance=ExtResource("4_rd6tk")]
 hand_material_override = ExtResource("4_tfw7p")
 
-[node name="Persons" parent="XRPlayer" unique_id=590852800 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
-transform = Transform3D(0.66833913, 0, -0.7438569, 0, 1, 0, 0.7438569, 0, 0.66833913, 0.6151397, 0.21622539, -0.59522027)
+[node name="Panels" type="StaticBody3D" parent="XRPlayer" unique_id=31400323 node_paths=PackedStringArray("camera")]
+transform = Transform3D(0.8025364, 0, -0.5966031, 0, 1, 0, 0.5966031, 0, 0.8025364, 0.578807, -0.24606895, -0.7898631)
+collision_layer = 5242880
+script = ExtResource("11_pqdlc")
+camera = NodePath("../XRCamera3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="XRPlayer/Panels" unique_id=1497353482]
+transform = Transform3D(-2.9802322e-08, 0.99999994, -4.371139e-08, 0, -4.371139e-08, -1, -0.99999994, -2.9802322e-08, 0, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_8xehe")
+surface_material_override/0 = SubResource("StandardMaterial3D_fthr4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="XRPlayer/Panels" unique_id=2010085175]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_pqdlc")
+
+[node name="Persons" type="RemoteTransform3D" parent="XRPlayer/Panels" unique_id=294699440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5634252, 0)
+remote_path = NodePath("../../Persons")
+
+[node name="MainMenu" type="RemoteTransform3D" parent="XRPlayer/Panels" unique_id=1458178191]
+transform = Transform3D(0.89232594, 0, 0.45139158, 0, 1, 0, -0.45139158, 0, 0.89232594, -0.30679432, 0.27426142, 0.020736039)
+remote_path = NodePath("../../MainMenu")
+
+[node name="MainPanel" type="RemoteTransform3D" parent="XRPlayer/Panels" unique_id=2042564269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27566695, 0)
+remote_path = NodePath("../../MainPanel")
+
+[node name="Persons" parent="XRPlayer" unique_id=590852800 node_paths=PackedStringArray("layer_viewport", "controller") instance=ExtResource("8_cw3wl")]
+transform = Transform3D(0.8025364, 0, -0.5966031, 0, 1, 0, 0.5966031, 0, 0.8025364, 0.578807, 0.31735623, -0.7898631)
 layer_viewport = NodePath("../../Persons")
 sort_order = -1
 alpha_blend = false
 enable_hole_punch = true
 quad_size = Vector2(0.5, 0.05)
-camera = NodePath("../XRCamera3D")
 controller = NodePath("../RightHand")
 
-[node name="MainMenu" parent="XRPlayer" unique_id=1717046543 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
-transform = Transform3D(0.9460007, 0, -0.3241651, 0, 1.0000001, 0, 0.3241651, 0, 0.9460006, 0.37053993, -0.090063244, -0.818709)
+[node name="MainMenu" parent="XRPlayer" unique_id=1717046543 node_paths=PackedStringArray("layer_viewport", "controller") instance=ExtResource("8_cw3wl")]
+transform = Transform3D(0.9854257, 0, -0.17010623, 0, 1, 0, 0.17010623, 0, 0.9854257, 0.3202222, 0.02819246, -0.95625615)
 layer_viewport = NodePath("../../MainMenu")
 sort_order = -1
 alpha_blend = false
 enable_hole_punch = true
 quad_size = Vector2(0.1, 0.5)
-camera = NodePath("../XRCamera3D")
 controller = NodePath("../RightHand")
 
-[node name="MainPanel" parent="XRPlayer" unique_id=541376139 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
-transform = Transform3D(0.66833913, 0, -0.7438569, 0, 1, 0, 0.7438569, 0, 0.66833913, 0.6057421, -0.08957034, -0.5862334)
+[node name="MainPanel" parent="XRPlayer" unique_id=541376139 node_paths=PackedStringArray("layer_viewport", "controller") instance=ExtResource("8_cw3wl")]
+transform = Transform3D(0.8025364, 0, -0.5966031, 0, 1, 0, 0.5966031, 0, 0.8025364, 0.578807, 0.029597998, -0.7898631)
 layer_viewport = NodePath("../../MainPanel")
 sort_order = -1
 alpha_blend = false
 enable_hole_punch = true
 quad_size = Vector2(0.5, 0.5)
-camera = NodePath("../XRCamera3D")
 controller = NodePath("../RightHand")
 
 [node name="Persons" type="SubViewport" parent="." unique_id=63544744]

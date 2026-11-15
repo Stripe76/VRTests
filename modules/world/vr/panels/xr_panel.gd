@@ -2,12 +2,7 @@ extends OpenXRCompositionLayerQuad
 
 const NO_INTERSECTION = Vector2(-1.0, -1.0)
 
-@export var camera : XRCamera3D
 @export var controller : XRController3D
-
-@export var hand_action : String = "trigger_click"
-@export var mouse_action : String = "ax_button"
-
 @export var mouse_pointer : Sprite2D 
 
 @onready var initial_offset : Vector3 = position
@@ -28,11 +23,6 @@ func _process(_delta):
 	if not visible:
 		return
 		
-	if camera:
-		var camera_pos := camera.position
-		camera_pos = Vector3((camera.position.x*2) as int / 2.0,(camera.position.y*2) as int / 2.0,(camera.position.z*2) as int / 2.0)
-		position = initial_offset + camera_pos
-	
 	if controller and layer_viewport:
 		var controller_t : Transform3D = controller.global_transform
 		var intersect : Vector2 = intersects_ray(controller_t.origin,-controller_t.basis.z)
