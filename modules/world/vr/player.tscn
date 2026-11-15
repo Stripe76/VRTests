@@ -43,6 +43,8 @@ nodes/Trigger/position = Vector2(-360, 40)
 node_connections = [&"output", 0, &"Grip", &"Grip", 0, &"Trigger", &"Grip", 1, &"ClosedHand2", &"Trigger", 0, &"OpenHand", &"Trigger", 1, &"ClosedHand1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqdlc"]
+shading_mode = 0
+albedo_color = Color(0.99116415, 0.99116427, 0.99116415, 0.4509804)
 
 [node name="PlayerVR" type="Node3D" unique_id=285117254 groups=["UI"]]
 script = ExtResource("1_hrm7i")
@@ -110,8 +112,18 @@ player = NodePath("../..")
 [node name="LeftHand" parent="XRPlayer/LeftHand" unique_id=700928615 instance=ExtResource("4_rd6tk")]
 hand_material_override = ExtResource("4_tfw7p")
 
+[node name="Persons" parent="XRPlayer" unique_id=590852800 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
+transform = Transform3D(0.66833913, 0, -0.7438569, 0, 1, 0, 0.7438569, 0, 0.66833913, 0.6151397, 0.21622539, -0.59522027)
+layer_viewport = NodePath("../../Persons")
+sort_order = -1
+alpha_blend = false
+enable_hole_punch = true
+quad_size = Vector2(0.5, 0.05)
+camera = NodePath("../XRCamera3D")
+controller = NodePath("../RightHand")
+
 [node name="MainMenu" parent="XRPlayer" unique_id=1717046543 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
-transform = Transform3D(0.9815139, 0, -0.19139147, 0, 1.0000001, 0, 0.1913915, 0, 0.9815138, 0.3566798, -0.090063244, -1.1774956)
+transform = Transform3D(0.9460007, 0, -0.3241651, 0, 1.0000001, 0, 0.3241651, 0, 0.9460006, 0.37053993, -0.090063244, -0.818709)
 layer_viewport = NodePath("../../MainMenu")
 sort_order = -1
 alpha_blend = false
@@ -121,7 +133,7 @@ camera = NodePath("../XRCamera3D")
 controller = NodePath("../RightHand")
 
 [node name="MainPanel" parent="XRPlayer" unique_id=541376139 node_paths=PackedStringArray("layer_viewport", "camera", "controller") instance=ExtResource("8_cw3wl")]
-transform = Transform3D(0.7640213, 0, -0.645191, 0, 1, 0, 0.645191, 0, 0.7640213, 0.6196022, -0.08957034, -0.99344015)
+transform = Transform3D(0.66833913, 0, -0.7438569, 0, 1, 0, 0.7438569, 0, 0.66833913, 0.6057421, -0.08957034, -0.5862334)
 layer_viewport = NodePath("../../MainPanel")
 sort_order = -1
 alpha_blend = false
@@ -129,6 +141,10 @@ enable_hole_punch = true
 quad_size = Vector2(0.5, 0.5)
 camera = NodePath("../XRCamera3D")
 controller = NodePath("../RightHand")
+
+[node name="Persons" type="SubViewport" parent="." unique_id=63544744]
+size = Vector2i(1024, 104)
+render_target_update_mode = 4
 
 [node name="MainMenu" type="SubViewport" parent="." unique_id=647060294]
 size = Vector2i(208, 1024)

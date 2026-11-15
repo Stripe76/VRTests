@@ -37,7 +37,7 @@ func _ready() -> void:
 				scene_manager,
 				$PlayerVR/MainMenu,
 				$PlayerVR/MainPanel,
-				null,
+				$PlayerVR/Persons,
 				null)
 	
 	ui.pointer_sprite = PointerSprite.new()

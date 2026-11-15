@@ -46,6 +46,10 @@ enabled=PackedStringArray("res://addons/daz3d_import/plugin.cfg", "res://addons/
 
 import/blender/enabled=false
 
+[global_group]
+
+Scene=""
+
 [gui]
 
 theme/custom="uid://dycf72gpi34jc"
