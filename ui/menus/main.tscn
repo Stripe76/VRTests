@@ -15,18 +15,6 @@ grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_wt3dt")
 
-[node name="MainButtons" type="ScrollContainer" parent="." unique_id=612786669]
-layout_mode = 2
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 3
-
-[node name="Buttons" type="VBoxContainer" parent="MainButtons" unique_id=1823885100 node_paths=PackedStringArray("sub_menu")]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-script = ExtResource("2_taq5d")
-sub_menu = NodePath("../../SubButtons/Buttons")
-
 [node name="SubButtons" type="ScrollContainer" parent="." unique_id=809677291]
 layout_mode = 2
 horizontal_scroll_mode = 0
@@ -38,6 +26,19 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_taq5d")
+
+[node name="MainButtons" type="ScrollContainer" parent="." unique_id=612786669]
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Buttons" type="VBoxContainer" parent="MainButtons" unique_id=1823885100 node_paths=PackedStringArray("menu_items", "sub_menu")]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_taq5d")
+menu_items = NodePath("../../Menu")
+sub_menu = NodePath("../../SubButtons/Buttons")
 
 [node name="Menu" parent="." unique_id=809672406 instance=ExtResource("3_k44pi")]
 
@@ -56,6 +57,7 @@ metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 script = ExtResource("4_qmvml")
 command = "set_main_panel"
 parameter = "hair"
+sub_parameter = "all"
 metadata/_custom_type_script = "uid://bhacmcxoek4dp"
 
 [node name="Main Clothes" type="Node" parent="Menu" unique_id=1672859486]

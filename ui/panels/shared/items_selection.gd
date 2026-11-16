@@ -64,6 +64,7 @@ func update_items() -> void:
 		if child_count < item_count:
 			for i in item_count - child_count:
 				var button : ItemButton = _button_script.new(_library,child_count+i,_map_index_to_id(_filter,child_count+i),_filter,_min_button_size)
+				button.name = "Item_" + str(child_count+i)
 				button.button_selected.connect(button_selected)
 				_items.add_child(button)
 

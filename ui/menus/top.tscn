@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://xr0kkwm541nf"]
+
+[ext_resource type="Script" uid="uid://mlm2qu0ahgy" path="res://ui/scripts/buttons_menu.gd" id="1_rwx6h"]
+[ext_resource type="PackedScene" uid="uid://v1qisajyx4yd" path="res://ui/nodes/menu_item.tscn" id="2_6ft35"]
+
+[node name="Top" type="HBoxContainer" unique_id=1694354571 node_paths=PackedStringArray("menu_items")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rwx6h")
+menu_items = NodePath("Menu")
+
+[node name="Placeholder" type="Control" parent="." unique_id=1863879896]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Menu" parent="." unique_id=1330199191 instance=ExtResource("2_6ft35")]
+
+[node name="UI" parent="Menu" unique_id=1129125929 instance=ExtResource("2_6ft35")]
+command = "toggle_ui"
+
+[node name="Mode" parent="Menu" unique_id=1351086383 instance=ExtResource("2_6ft35")]
+command = "cycle_camera"

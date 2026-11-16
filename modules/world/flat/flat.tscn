@@ -12,7 +12,7 @@ bg_color = Color(0, 0, 0, 1)
 [node name="Flat" type="Node3D" unique_id=571182130]
 script = ExtResource("1_0shs7")
 
-[node name="World" parent="." unique_id=2127073411 groups=["WallsVisibility"] instance=ExtResource("1_02e27")]
+[node name="World" parent="." unique_id=2127073411 instance=ExtResource("1_02e27")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
 
@@ -43,17 +43,17 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MainMenu" type="Control" parent="UI/Container/UI" unique_id=195969589]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-mouse_filter = 2
-
 [node name="MainPanel" type="Control" parent="UI/Container/UI" unique_id=1409399728]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="MainMenu" type="Control" parent="UI/Container/UI" unique_id=195969589]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="WorldView" type="SubViewportContainer" parent="UI/Container" unique_id=1811776497]
 layout_mode = 2
@@ -63,7 +63,7 @@ mouse_target = true
 
 [node name="SubViewport" type="SubViewport" parent="UI/Container/WorldView" unique_id=2100921644]
 handle_input_locally = false
-size = Vector2i(712, 678)
+size = Vector2i(958, 980)
 render_target_update_mode = 4
 
 [node name="FocusCamera" type="Node3D" parent="UI/Container/WorldView/SubViewport" unique_id=1422861674]
@@ -77,12 +77,24 @@ current = true
 fov = 72.0
 size = 5.0
 
-[node name="Persons" type="Control" parent="." unique_id=618002716]
-unique_name_in_owner = true
+[node name="Persons" type="CenterContainer" parent="." unique_id=994736092]
 custom_minimum_size = Vector2(0, 100)
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1428.0
-offset_bottom = 100.0
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="TopMenu" type="HBoxContainer" parent="Persons" unique_id=1540258550]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Menu" type="HBoxContainer" parent="Persons/TopMenu" unique_id=2060931452]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Persons" type="HBoxContainer" parent="Persons/TopMenu" unique_id=230979397]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
 
 [node name="SceneManager" parent="." unique_id=200279357 groups=["Scene"] instance=ExtResource("6_hw5o8")]

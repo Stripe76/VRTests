@@ -60,6 +60,11 @@ func _ready() -> void:
 		#load_materials("/mnt/data/Projects/Godot/library/","/mnt/data/Projects/Godot/library/Anita/","Saves/scene/Anita.json")
 
 
+func _exit_tree() -> void:
+	if _loading_thread and _loading_thread.is_alive():
+		_loading_thread.wait_to_finish()
+
+
 func _validate_property(property: Dictionary):
 	#print(property["name"])
 	if ["mesh","head_material","body_material","limbs_material","eyes_material","genitals_material","hair_material"].has(property["name"]):

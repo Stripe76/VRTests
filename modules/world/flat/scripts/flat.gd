@@ -8,6 +8,7 @@ extends Node3D
 
 var ui : UI
 var ui_active := false
+var top_menu_visible := true
 
 var _library := LibraryManager.new()
 
@@ -17,26 +18,33 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
-	#_library.LoadData("/mnt/data/Projects/Godot/library/")
+	#_library.LoadData("/mnt/data/Games/Virtamate/AddonPackages/")
+	_library.LoadData("/mnt/data/Projects/Godot/library/")
 	
 	scene_manager.set_world(world)
 	scene_manager.set_library(_library)
 	
 	ui = UI.new(_library,
 				scene_manager,
+				%Menu,
 				%MainMenu,
 				%MainPanel,
 				%Persons,
 				%FocusCamera)
 	add_child(ui)
 	
-	switch_ui()
+	add_to_group("UI")
+	
+	toggle_ui()
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("SwitchMode"):
-		switch_ui()
+		toggle_ui()
+	if event.is_action_released("HideTopMenu"):
+		if not ui_active:
+			top_menu_visible = not top_menu_visible
+			%TopMenu.visible = top_menu_visible
 	elif event.is_action_released("StartAnimation"):
 		#scene_manager.toggle_animation("walking_ik")
 		#scene_manager.toggle_ragdoll()
@@ -47,14 +55,16 @@ func _input(event: InputEvent) -> void:
 		scene_manager.next_walking_step()
 
 
-func switch_ui():
+func toggle_ui():
 	ui_active = not ui_active
 	
 	if ui_active:
 		player.visible = false
+		%TopMenu.visible = true
 		player.process_mode = Node.PROCESS_MODE_DISABLED
 	else:
 		player.visible = true
+		%TopMenu.visible = top_menu_visible
 		player.process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	container.visible = ui_active
@@ -63,6 +73,7 @@ func switch_ui():
 
 func generate_action_map():
 	add_action("SwitchMode",[KEY_ESCAPE])
+	add_action("HideTopMenu",[KEY_F4])
 	add_action("NextPerson",[KEY_TAB])
 	
 	add_action("StartAnimation",[Key.KEY_SPACE])

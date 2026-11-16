@@ -8,11 +8,14 @@ class_name PersonButton extends Button
 	get:
 		return is_selected
 
-@onready var _notifier : VisibleOnScreenNotifier2D = $Notifier
-
 var _personID : int
 var _looksID : int
 var _library : LibraryManager
+
+var _min_size := Vector2(100,100)
+
+signal button_selected
+signal button_middle_selected
 
 
 func with_data(library : LibraryManager,personID: int,looksID: int) -> PersonButton:
@@ -23,11 +26,23 @@ func with_data(library : LibraryManager,personID: int,looksID: int) -> PersonBut
 
 
 func _ready() -> void:
-	_notifier.screen_entered.connect(screen_entered)
+	var notifier = VisibleOnScreenNotifier2D.new()
+	notifier.name = "Notifier"
+	add_child(notifier)
 	
-	#text = _library.Looks_GetTitle(_looksID)
+	notifier.screen_entered.connect(screen_entered)
 	
-	pressed.connect(func (): get_tree().call_group("Scene","select_person",_personID))
+	pressed.connect(func (): button_selected.emit(self,_personID))
+	
+	clip_text = true
+	expand_icon = true
+	custom_minimum_size = _min_size
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_MIDDLE:
+			button_middle_selected.emit(self,_personID)
 
 
 func screen_entered():

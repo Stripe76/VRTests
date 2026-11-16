@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://b6f0p6m70kq87"]
+
+[ext_resource type="Script" uid="uid://boixipcry5kdn" path="res://ui/panels/persons/person_selection.gd" id="1_bmdrt"]
+
+[node name="PersonSelection" type="HBoxContainer" unique_id=462829900]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bmdrt")
+
+[node name="Items" type="HBoxContainer" parent="." unique_id=548171295]
+layout_mode = 2
+
+[node name="Placeholder" type="Control" parent="." unique_id=465129533]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2

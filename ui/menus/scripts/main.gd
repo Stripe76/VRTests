@@ -2,9 +2,6 @@ extends Control
 
 @onready var menu: MenuItem = $Menu
 
-func _ready() -> void:
-	$MainButtons/Buttons.set_buttons(menu)
-
 
 func set_selected_item(parameter: String,sub_parameter: String):
 	if menu:

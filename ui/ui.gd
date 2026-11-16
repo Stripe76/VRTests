@@ -1,4 +1,4 @@
-class_name UI extends Control
+class_name UI extends Node
 
 @export var show_add_button : bool:
 	set(value):
@@ -10,25 +10,37 @@ class_name UI extends Control
 		return false
 @export var pointer_sprite : Sprite2D
 
+var TOP_MENU_SCENE : PackedScene = load("res://ui/menus/top.tscn")
 var MAIN_MENU_SCENE : PackedScene = load("res://ui/menus/main.tscn")
-var PERSON_SELECTION_SCENE : PackedScene = load("res://ui/panels/person_selection.tscn")
+var PERSON_SELECTION_SCENE : PackedScene = load("res://ui/panels/persons/person_selection.tscn")
 
 var _library : LibraryManager
 var _scene_manager : SceneManager
 
-var _main_menu : Node
+var _top_menu_panel : Node
+var _main_menu_panel : Node
 var _main_panel : Node
 var _persons_list : Node
 
-var _menu
+var _top_menu
+var _main_menu
 var _person_selection
 
 
-func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Node,main_panel: Node,persons_list: Node,focus_camera: Node3D) -> void:
+func _init( library: LibraryManager,
+			scene_manager: SceneManager,
+			top_menu: Node,
+			main_menu: Node,
+			main_panel: Node,
+			persons_list: Node,
+			focus_camera: Node3D) -> void:
+	name = "UIManager"
+	
 	_library = library
 	_scene_manager = scene_manager
 	
-	_main_menu = main_menu
+	_top_menu_panel = top_menu
+	_main_menu_panel = main_menu
 	_main_panel = main_panel
 	_persons_list = persons_list
 	
@@ -37,12 +49,15 @@ func _init(library: LibraryManager,scene_manager: SceneManager,main_menu: Node,m
 
 
 func _ready() -> void:
-	if _main_menu:
-		_menu = MAIN_MENU_SCENE.instantiate()
-		_main_menu.add_child(_menu)
+	if _top_menu_panel:
+		_top_menu = TOP_MENU_SCENE.instantiate()
+		_top_menu_panel.add_child(_top_menu)
+	if _main_menu_panel:
+		_main_menu = MAIN_MENU_SCENE.instantiate()
+		_main_menu_panel.add_child(_main_menu)
 		
-		if pointer_sprite:
-			_main_menu.add_child(pointer_sprite.duplicate())
+		#if pointer_sprite:
+			#_main_menu.add_child(pointer_sprite.duplicate())
 	if _persons_list:
 		if not _person_selection:
 			_person_selection = PERSON_SELECTION_SCENE.instantiate()
@@ -64,8 +79,8 @@ func set_main_panel(panel: String,sub_panel: String):
 		
 		_main_panel.add_child(scene)
 	
-	if _menu:
-		_menu.set_selected_item(panel,sub_panel)
+	if _main_menu:
+		_main_menu.set_selected_item(panel,sub_panel)
 	
 	for c : Control in _main_panel.get_children():
 		if c.name == panel:

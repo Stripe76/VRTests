@@ -4,6 +4,14 @@ class_name WallsHide extends Node3D
 
 static var is_hiding_enabled: bool = false
 
+var wall_origin : Vector3
+
+func _ready() -> void:
+	var origin : Marker3D = find_child("WallOrigin")
+	if origin:
+		wall_origin = origin.global_position
+
+
 func _process(_delta: float) -> void:
 	#if not is_hiding_enabled:
 		#if not visible:
@@ -13,13 +21,10 @@ func _process(_delta: float) -> void:
 	if not camera:
 		return
 	
-	var camera_forward: Vector3 = -camera.global_transform.basis.z.normalized()
-	var global_wall_normal: Vector3 = global_transform.basis * wall_normal.normalized()
-
-	var dot_limit = 0.24
-	if wall_normal.y > 0 or wall_normal.y < 0:
-		dot_limit = 0.1
-	if camera_forward.dot(global_wall_normal) > dot_limit: 
+	var camera_forward: Vector3 = (wall_origin - camera.global_transform.origin).normalized()
+	var global_wall_normal: Vector3 = wall_normal
+	
+	if camera_forward.dot(global_wall_normal) < 0: 
 		visible = false
 	else:
 		visible = true

@@ -1,6 +1,12 @@
-extends VBoxContainer
+extends BoxContainer
 
+@export var menu_items: MenuItem
 @export var sub_menu: BoxContainer
+
+func _ready() -> void:
+	if menu_items:
+		set_buttons(menu_items)
+
 
 func set_buttons(menuItem: MenuItem,clear: bool = false):
 	if clear:
@@ -21,7 +27,12 @@ func set_buttons(menuItem: MenuItem,clear: bool = false):
 			if i.command != "":
 				if sub_menu:
 					sub_menu.clear_buttons()
-				get_tree().call_group("UI",i.command,i.parameter,i.sub_parameter)
+				if i.parameter and i.sub_parameter:
+					get_tree().call_group("UI",i.command,i.parameter,i.sub_parameter)
+				elif i.parameter:
+					get_tree().call_group("UI",i.command,i.parameter)
+				else:
+					get_tree().call_group("UI",i.command)
 			elif sub_menu:
 				sub_menu.set_buttons(i,true)
 		)

@@ -60,15 +60,31 @@ func select_person(id: int):
 
 
 func select_next_person() -> void:
-	if _persons.size() == 0:
-		return
 	var index : int = _current_person_index + 1
 	if index >= _persons.size():
 		index = 0
+	if index >= _persons.size():
+		index = -1
 	_current_person_index = index
-	_current_person = _persons[_current_person_index]
+	if _current_person_index >= 0 and _current_person_index < _persons.size():
+		_current_person = _persons[_current_person_index]
+	else:
+		_current_person = null
 	
 	current_person_changed.emit(self)
+
+
+func remove_person(id: int):
+	if id >= 0 and id < _persons.size():
+		_world.remove_person(_persons[id])
+		_persons.remove_at(id)
+		
+		if id < _current_person_index:
+			_current_person_index -= 1
+		if id == _current_person_index:
+			select_next_person()
+	
+	persons_list_changed.emit(self,_persons)
 
 
 func select_looks(id: int):
@@ -81,7 +97,7 @@ func select_looks(id: int):
 		_current_person.process_mode = Node.PROCESS_MODE_ALWAYS
 		_current_person.look_loaded.connect(look_loaded)
 		
-		_persons.push_back(_current_person)		
+		_persons.push_back(_current_person)
 		_world.add_person(_current_person)
 		
 		current_person_changed.emit(self)

@@ -12,6 +12,8 @@ func _ready() -> void:
 	pivot_camera.set_as_active()
 	
 	cycle_camera()
+	
+	add_to_group("UI")
 
 
 func _unhandled_input(event: InputEvent) -> void:
