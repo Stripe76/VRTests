@@ -12,6 +12,7 @@ class_name PlayerVR extends Node3D
 	get:
 		return mouse_pointer
 
+@onready var panels := $XRPlayer/Panels
 @onready var persons := $XRPlayer/Persons
 @onready var main_menu := $XRPlayer/MainMenu
 @onready var main_panel := $XRPlayer/MainPanel
@@ -40,6 +41,7 @@ func _process(_delta: float) -> void:
 
 func toggle_ui():
 	ui_visible = not ui_visible
+	panels.visible = ui_visible
 	persons.visible = ui_visible
 	main_menu.visible = ui_visible
 	main_panel.visible = ui_visible

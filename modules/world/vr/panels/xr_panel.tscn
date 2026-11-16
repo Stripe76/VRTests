@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cbnmlqa6qgi4c" path="res://modules/world/vr/panels/xr_panel.gd" id="1_gnnh7"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_al8wa"]
+resource_local_to_scene = true
 size = Vector3(0.99736327, 0.99527586, 0.1)
 
 [node name="UIPanel" type="OpenXRCompositionLayerQuad" unique_id=590852800]
